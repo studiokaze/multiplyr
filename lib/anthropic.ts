@@ -14,8 +14,8 @@ export function anthropic(): Anthropic {
     // The desktop build stores the key in the OS keychain, so telling a
     // desktop user to edit .env.local would send them nowhere useful.
     throw new Error(
-      process.env.MULTIPYLER_DESKTOP === "1"
-        ? "No Anthropic API key set. Open the File menu (multipyler menu on macOS) and choose “Anthropic API key…” to add one."
+      process.env.MULTIPLYR_DESKTOP === "1"
+        ? "No Anthropic API key set. Open the File menu (Multiplyr menu on macOS) and choose “Anthropic API key…” to add one."
         : "ANTHROPIC_API_KEY is not set. Copy .env.example to .env.local and add your key.",
     );
   }

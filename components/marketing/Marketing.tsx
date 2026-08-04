@@ -5,7 +5,6 @@ import Footer from "./Footer";
 import Hero from "./Hero";
 import MarketingNav from "./MarketingNav";
 import Orbit from "./Orbit";
-import Thread from "./Thread";
 import WorkspaceShot from "./WorkspaceShot";
 
 export default function Marketing() {
@@ -40,13 +39,8 @@ export default function Marketing() {
           </div>
         </section>
 
-        {/* The thread runs down the page between sections, carrying a pulse —
-            the pipeline motif as a background detail. */}
-        <Thread height={130} />
         <Features />
-        <Thread height={110} delay={900} duration={5.2} />
         <Orbit />
-        <Thread height={110} delay={1800} duration={4.8} />
         <Faq />
         <Footer />
       </main>

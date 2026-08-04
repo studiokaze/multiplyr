@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
-  multipyler design tokens.
+  Multiplyr design tokens.
   Committed to a single light treatment — warm paper, true ink, hairline rules.
   Colour is rationed: the only saturated pixels in the product are the verdict,
   because the verdict is the product.
@@ -375,35 +375,6 @@ body {
   animation-delay: var(--d, 0ms);
 }
 
-/* --------------------------------------------------------------------------
-   Signal thread — a hairline running between the middle sections with a pulse
-   travelling down it. This is the site's own motif: the pipeline carrying an
-   idea from one stage to the next, stated as a background detail rather than
-   a whole section.
-   -------------------------------------------------------------------------- */
-
-@keyframes thread-travel {
-  0% {
-    top: -10%;
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  85% {
-    opacity: 1;
-  }
-  100% {
-    top: 100%;
-    opacity: 0;
-  }
-}
-
-.thread-pulse {
-  animation: thread-travel var(--t, 4.5s) var(--ease-house) infinite;
-  animation-delay: var(--d, 0ms);
-}
-
 /* A signal circulating the stack ring, faster than the ring itself. */
 @keyframes pulse-glow {
   0%,
@@ -587,7 +558,6 @@ body {
   .float-y,
   .orbit-tile,
   .hero-word,
-  .thread-pulse,
   .pulse-glow {
     animation: none !important;
     transition: none !important;

@@ -6,7 +6,7 @@
  * Set NEXT_PUBLIC_GITHUB_REPO to "owner/repo" once the repo exists.
  */
 export const GITHUB_REPO =
-  process.env.NEXT_PUBLIC_GITHUB_REPO ?? "your-org/multipyler";
+  process.env.NEXT_PUBLIC_GITHUB_REPO ?? "your-org/multiplyr";
 
 /**
  * Whether installers are actually downloadable.
@@ -36,26 +36,26 @@ export const DOWNLOADS: Record<Exclude<Platform, "unknown">, Download[]> = {
     {
       label: "Download for Windows",
       sub: "64-bit installer · .exe",
-      href: `${RELEASE_BASE}/multipyler-setup.exe`,
+      href: `${RELEASE_BASE}/Multiplyr-setup.exe`,
     },
   ],
   mac: [
     {
       label: "Download for macOS",
       sub: "Apple silicon · .dmg",
-      href: `${RELEASE_BASE}/multipyler-mac-arm64.dmg`,
+      href: `${RELEASE_BASE}/Multiplyr-mac-arm64.dmg`,
     },
     {
       label: "Download for macOS",
       sub: "Intel · .dmg",
-      href: `${RELEASE_BASE}/multipyler-mac-x64.dmg`,
+      href: `${RELEASE_BASE}/Multiplyr-mac-x64.dmg`,
     },
   ],
   linux: [
     {
       label: "Download for Linux",
       sub: "x86_64 · AppImage",
-      href: `${RELEASE_BASE}/multipyler-linux-x86_64.AppImage`,
+      href: `${RELEASE_BASE}/Multiplyr-linux-x86_64.AppImage`,
     },
   ],
 };

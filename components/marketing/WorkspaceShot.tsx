@@ -51,7 +51,7 @@ export default function WorkspaceShot() {
         <span className="h-[10px] w-[10px] rounded-full bg-white/12" />
         <span className="h-[10px] w-[10px] rounded-full bg-white/12" />
         <span className="mx-auto font-mono text-[10px] tracking-[0.06em] text-chalk-faint">
-          multipyler
+          Multiplyr
         </span>
       </div>
 

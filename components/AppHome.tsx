@@ -10,7 +10,7 @@ const EXAMPLES = [
   "AI that turns podcast episodes into newsletters",
 ];
 
-const STORAGE_PREFIX = "multipyler:session:";
+const STORAGE_PREFIX = "Multiplyr:session:";
 
 const ORDER: StageId[] = [
   "brainstorm",

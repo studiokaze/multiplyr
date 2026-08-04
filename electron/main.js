@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * Electron shell for multipyler.
+ * Electron shell for Multiplyr.
  *
  * The app's API routes need a server, so rather than statically exporting the
  * UI we run Next's standalone server as a child process on a loopback port and
@@ -149,7 +149,7 @@ async function startServer() {
       HOSTNAME: "127.0.0.1",
       ANTHROPIC_API_KEY: loadApiKey(),
       // Lets the app tailor its "no key" message to the desktop flow.
-      MULTIPYLER_DESKTOP: "1",
+      MULTIPLYR_DESKTOP: "1",
     },
     stdio: isDev
       ? "inherit"
@@ -163,7 +163,7 @@ async function startServer() {
     // A crash after the window is up leaves a dead shell; surface it.
     if (code !== 0 && !app.isQuitting) {
       dialog.showErrorBox(
-        "multipyler stopped",
+        "Multiplyr stopped",
         "The local app server exited unexpectedly. Restart the app.",
       );
     }
@@ -233,7 +233,7 @@ function createMainWindow(initialPath) {
     minWidth: 960,
     minHeight: 600,
     backgroundColor: "#fbfaf8",
-    title: "multipyler",
+    title: "Multiplyr",
     show: false,
     autoHideMenuBar: process.platform !== "darwin",
     webPreferences: {
@@ -362,7 +362,7 @@ if (!singleInstance) {
       await startServer();
     } catch (err) {
       dialog.showErrorBox(
-        "multipyler failed to start",
+        "Multiplyr failed to start",
         `${String(err.message ?? err)}\n\nDetails were written to:\n${path.join(
           app.getPath("userData"),
           "server.log",

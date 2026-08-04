@@ -19,7 +19,7 @@ import {
 /** Seconds the user gets to override the top framing before it auto-runs. */
 export const AUTO_PICK_SECONDS = 6;
 
-const STORAGE_PREFIX = "multipyler:session:";
+const STORAGE_PREFIX = "multiplyr:session:";
 
 function storageKey(idea: string) {
   return STORAGE_PREFIX + idea;

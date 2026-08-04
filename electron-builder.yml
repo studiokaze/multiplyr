@@ -1,6 +1,6 @@
-appId: app.multipyler.desktop
-productName: multipyler
-copyright: multipyler
+appId: app.multiplyr.desktop
+productName: Multiplyr
+copyright: Multiplyr
 
 directories:
   output: dist
@@ -38,31 +38,31 @@ win:
   target:
     - target: nsis
       arch: [x64]
-  artifactName: multipyler-setup.exe
+  artifactName: Multiplyr-setup.exe
 
 nsis:
   oneClick: false
   perMachine: false
   allowToChangeInstallationDirectory: true
-  shortcutName: multipyler
+  shortcutName: Multiplyr
 
 mac:
   target:
     - target: dmg
       arch: [x64, arm64]
-  artifactName: multipyler-mac-${arch}.dmg
+  artifactName: Multiplyr-mac-${arch}.dmg
   category: public.app-category.developer-tools
   # Unsigned builds: users get the Gatekeeper warning documented in the README.
   identity: null
 
 dmg:
-  title: multipyler
+  title: Multiplyr
 
 linux:
   target:
     - target: AppImage
       arch: [x64]
-  artifactName: multipyler-linux-x86_64.AppImage
+  artifactName: Multiplyr-linux-x86_64.AppImage
   category: Development
 
 publish:
