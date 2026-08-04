@@ -19,6 +19,8 @@
 
 # production
 /build
+# …except the app icon, which electron-builder needs in CI
+!/build/icon.png
 
 # misc
 .DS_Store
@@ -39,3 +41,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# desktop build output
+/dist*

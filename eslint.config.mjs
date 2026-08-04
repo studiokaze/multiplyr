@@ -12,7 +12,23 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Packaged desktop output (dist, and any dist2/dist-tmp variants).
+    "dist*/**",
   ]),
+  {
+    // The Electron main and preload processes are CommonJS by requirement —
+    // preload scripts in particular cannot be ES modules — and electron-builder
+    // loads its lifecycle hooks with require(), so the TypeScript import rules
+    // from the Next config do not apply to either.
+    files: ["electron/**/*.js", "scripts/*.js"],
+    languageOptions: {
+      sourceType: "commonjs",
+      globals: { __dirname: "readonly", process: "readonly" },
+    },
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

@@ -1,0 +1,70 @@
+appId: app.multipyler.desktop
+productName: multipyler
+copyright: multipyler
+
+directories:
+  output: dist
+  buildResources: build
+
+# Re-copies static assets into the standalone bundle and refuses to package
+# without them — see scripts/before-pack.js.
+beforePack: scripts/before-pack.js
+# Verifies the packaged app can actually boot (server + its node_modules).
+afterPack: scripts/after-pack.js
+
+# Only the Electron shell goes in the asar; the Next server is an extra
+# resource so it keeps its own node_modules layout and stays forkable.
+files:
+  - electron/**/*
+  - package.json
+
+extraResources:
+  # electron-builder filters node_modules out of extraResources by default, so
+  # the runtime deps are copied as their own explicit entry. Without this the
+  # packaged app starts and immediately dies on "Cannot find module 'next'".
+  - from: .next/standalone
+    to: server
+    filter:
+      - "**/*"
+      - "!node_modules"
+  - from: .next/standalone/node_modules
+    to: server/node_modules
+    filter:
+      - "**/*"
+
+# Fixed artifact names so the landing page can link to
+# /releases/latest/download/<name> without knowing the version.
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  artifactName: multipyler-setup.exe
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  shortcutName: multipyler
+
+mac:
+  target:
+    - target: dmg
+      arch: [x64, arm64]
+  artifactName: multipyler-mac-${arch}.dmg
+  category: public.app-category.developer-tools
+  # Unsigned builds: users get the Gatekeeper warning documented in the README.
+  identity: null
+
+dmg:
+  title: multipyler
+
+linux:
+  target:
+    - target: AppImage
+      arch: [x64]
+  artifactName: multipyler-linux-x86_64.AppImage
+  category: Development
+
+publish:
+  provider: github
+  releaseType: release

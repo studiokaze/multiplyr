@@ -1,0 +1,67 @@
+"use client";
+
+import { AGENTS } from "./agents";
+import DownloadCTA from "./DownloadCTA";
+
+/**
+ * The page's only entrance animation. The headline enters word by word —
+ * each word pulls into focus with a slight rise — then the subhead, CTA and
+ * stage chips follow, one beat each, in reading order. Below this section,
+ * nothing ever animates in.
+ */
+const HEADLINE = ["Jarvis", "for", "apps"];
+
+function at(stagger: number): React.CSSProperties {
+  return { "--stagger": stagger } as React.CSSProperties;
+}
+
+export default function Hero() {
+  // Beats: words are 1..n, then subhead, CTA, chips.
+  const afterWords = HEADLINE.length;
+
+  return (
+    <section className="relative px-6 pb-20 pt-40 sm:px-10 sm:pt-48">
+      <div className="mx-auto max-w-[62rem] text-center">
+        <h1 className="display mx-auto max-w-[15ch] text-[2.75rem] text-chalk sm:text-[4.5rem]">
+          {HEADLINE.map((word, i) => (
+            <span key={i} className="hero-word" style={at(1 + i)}>
+              {word}
+            </span>
+          ))}
+        </h1>
+
+        <p
+          className="enter mx-auto mt-7 max-w-[54ch] text-[16px] leading-[1.65] text-chalk-soft sm:text-[17px]"
+          style={at(afterWords + 1)}
+        >
+          Five agents in one workspace, in the order that actually gets it
+          right. Your idea is sharpened, researched, weighed against the market
+          and pressure-tested on real demand — and only then built.
+        </p>
+
+        <div className="enter mt-10" style={at(afterWords + 2)}>
+          <DownloadCTA />
+        </div>
+
+        <ul
+          className="enter mx-auto mt-14 flex max-w-[46rem] flex-wrap items-center justify-center gap-x-2 gap-y-2"
+          style={at(afterWords + 3)}
+        >
+          {AGENTS.map((a, i) => (
+            <li key={a.n} className="flex items-center gap-2">
+              <span className="rounded-full border border-edge bg-void-2/60 px-3 py-1.5 text-[12.5px] text-chalk-soft">
+                {a.name}
+              </span>
+              {i < AGENTS.length - 1 && (
+                <span
+                  aria-hidden="true"
+                  className="hidden h-px w-4 bg-edge-strong sm:block"
+                />
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}

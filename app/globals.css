@@ -1,26 +1,719 @@
 @import "tailwindcss";
 
+/*
+  multipyler design tokens.
+  Committed to a single light treatment — warm paper, true ink, hairline rules.
+  Colour is rationed: the only saturated pixels in the product are the verdict,
+  because the verdict is the product.
+*/
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #fbfaf8;
+  --surface: #ffffff;
+  --sunk: #f4f2ee;
+
+  --ink: #0a0a0a;
+  --ink-soft: #57554f;
+  --ink-faint: #8c8981;
+
+  --rule: #e7e4dd;
+  --rule-strong: #d6d2c8;
+
+  --build: #0f6b45;
+  --build-bg: #edf5f0;
+  --iterate: #96601a;
+  --iterate-bg: #f8f2e7;
+  --kill: #a52822;
+  --kill-bg: #f9eeed;
+
+  /*
+    The marketing site is a separate visual system from the app: the site
+    sells and hands over a download, the app is a working instrument. Dark,
+    centred, one bright call to action. These tokens are used only under
+    .marketing so the app's light surface is untouched.
+  */
+  --void: #08080a;
+  --void-2: #0d0d10;
+  --void-3: #131317;
+  --chalk: #f6f5f2;
+  --chalk-soft: #a2a19c;
+  --chalk-faint: #6b6a66;
+  --edge: rgba(255, 255, 255, 0.08);
+  --edge-strong: rgba(255, 255, 255, 0.16);
+
+  /*
+    One signal colour, warm amber. It marks the live stage and nothing else.
+    Chosen against the two obvious defaults: pure monochrome reads as a
+    reference site, and the blue/violet gradient is the AI-product cliché.
+  */
+  --signal: #e9b44c;
+  --signal-dim: rgba(233, 180, 76, 0.16);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-sunk: var(--sunk);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-build: var(--build);
+  --color-build-bg: var(--build-bg);
+  --color-iterate: var(--iterate);
+  --color-iterate-bg: var(--iterate-bg);
+  --color-kill: var(--kill);
+  --color-kill-bg: var(--kill-bg);
+  --color-void: var(--void);
+  --color-void-2: var(--void-2);
+  --color-void-3: var(--void-3);
+  --color-chalk: var(--chalk);
+  --color-chalk-soft: var(--chalk-soft);
+  --color-chalk-faint: var(--chalk-faint);
+  --color-edge: var(--edge);
+  --color-edge-strong: var(--edge-strong);
+  --color-signal: var(--signal);
+  --color-signal-dim: var(--signal-dim);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  /* The scaffold left this as Arial; the loaded faces were never applied. */
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: "cv11", "ss01";
+}
+
+/* Display type: medium weight, tightly tracked — reads light at size. */
+.display {
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+}
+
+/* All metadata, paths, counts and stage labels are mono. */
+.label {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.rule-t {
+  border-top: 1px solid var(--rule);
+}
+
+/* Motion budget: three effects, all short, none decorative.
+   1. content arriving  2. work in progress  3. the verdict landing */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.animate-rise {
+  animation: rise 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-breathe {
+  animation: breathe 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-breathe {
+    animation: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Marketing surface
+   -------------------------------------------------------------------------- */
+
+.marketing {
+  background: var(--void);
+  color: var(--chalk);
+}
+
+.marketing ::selection {
+  background: var(--chalk);
+  color: var(--void);
+}
+
+.marketing .label {
+  color: var(--chalk-faint);
+}
+
+.marketing :where(button, input, a):focus-visible {
+  outline: 2px solid var(--chalk);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   Motion
+   Two primitives only: things arrive, and the spine draws itself. Everything
+   uses the same easing and the same short duration so the page feels like one
+   object rather than a collection of effects.
+   -------------------------------------------------------------------------- */
+
+.marketing {
+  /* House curves, from the source-level study of the reference: one ease-out
+     for everything that moves, one spring reserved for hover accents. */
+  --ease-house: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Ours: a long decelerating tail, so things settle rather than stop. */
+  --ease-resolve: cubic-bezier(0.16, 0.84, 0.24, 1);
+}
+
+/*
+  Scroll-triggered animation is deliberately absent — the references don't do
+  it. The motion budget, in full: a hero-only staggered entrance, ambient
+  loops running inside otherwise still cards, orbit drift, and hover states.
+*/
+
+/* --------------------------------------------------------------------------
+   Entrance — hero only. Elements pull into focus: blur + a short rise,
+   staggered in reading order. Nothing below the hero ever enters.
+   -------------------------------------------------------------------------- */
+
+/*
+  The house entrance is a RESOLVE, not a slide: type arrives out of focus and
+  loosely tracked, then sharpens and condenses into position. It is the
+  product's own argument in motion — a vague idea being brought into focus —
+  and it is deliberately not the blur-and-rise every other builder site uses.
+*/
+@keyframes resolve-word {
+  from {
+    opacity: 0;
+    filter: blur(9px);
+    letter-spacing: 0.14em;
+    transform: translateY(3px);
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    letter-spacing: -0.035em; /* matches .display */
+    transform: none;
+  }
+}
+
+@keyframes resolve-block {
+  from {
+    opacity: 0;
+    filter: blur(7px);
+    transform: translateY(12px) scale(0.988);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+
+.enter {
+  animation: resolve-block 780ms var(--ease-resolve) both;
+  animation-delay: calc(var(--stagger, 0) * 85ms);
+}
+
+/* Headline words animate individually; inline-block so transforms apply. */
+.hero-word {
+  display: inline-block;
+  margin-right: 0.26em;
+  animation: resolve-word 900ms var(--ease-resolve) both;
+  animation-delay: calc(var(--stagger, 0) * 85ms);
+}
+
+.hero-word:last-child {
+  margin-right: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Ambient loops — the life inside static sections. Each draws itself, holds
+   long enough to read as a finished chart, then quietly resets. Shared 7s
+   period keeps siblings in phase.
+   -------------------------------------------------------------------------- */
+
+@keyframes fill-y {
+  0% {
+    transform: scaleY(0);
+  }
+  16% {
+    transform: scaleY(1);
+  }
+  86% {
+    transform: scaleY(1);
+  }
+  100% {
+    transform: scaleY(0);
+  }
+}
+
+.fill-y {
+  transform-origin: bottom;
+  animation: fill-y 7s var(--ease-house) infinite both;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes arc-draw {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  24% {
+    stroke-dashoffset: var(--arc-rest, 20);
+  }
+  86% {
+    stroke-dashoffset: var(--arc-rest, 20);
+  }
+  100% {
+    stroke-dashoffset: 100;
+  }
+}
+
+.arc-draw {
+  stroke-dasharray: 100;
+  animation: arc-draw 7s var(--ease-house) infinite both;
+}
+
+@keyframes type-line {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  10% {
+    clip-path: inset(0 0 0 0);
+  }
+  90% {
+    clip-path: inset(0 0 0 0);
+  }
+  100% {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+
+.type-line {
+  animation: type-line 7s steps(22) infinite both;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes caret-blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.caret {
+  animation: caret-blink 1.1s steps(1) infinite;
+}
+
+/* Hover accent: the one place the spring curve is allowed. */
+.spring-hover {
+  transition: transform 350ms var(--ease-spring);
+}
+
+.spring-hover:hover {
+  transform: translateY(-2px);
+}
+
+/*
+  Blanket smoothness: every interactive surface on the site eases the same
+  properties over the same duration on the same curve. Without this, half the
+  page snaps and half glides — which is most of what reads as "not smooth".
+*/
+.marketing :where(a, button, summary, details, input) {
+  transition:
+    color 220ms var(--ease-house),
+    background-color 220ms var(--ease-house),
+    border-color 220ms var(--ease-house),
+    opacity 220ms var(--ease-house),
+    transform 220ms var(--ease-house);
+}
+
+/* Ambient float — the largest object on the page shouldn't sit dead still.
+   4px over 9s: perceptible only if you look for it. */
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.float-y {
+  animation: float-y 9s ease-in-out infinite;
+  animation-delay: var(--d, 0ms);
+}
+
+/* --------------------------------------------------------------------------
+   Signal thread — a hairline running between the middle sections with a pulse
+   travelling down it. This is the site's own motif: the pipeline carrying an
+   idea from one stage to the next, stated as a background detail rather than
+   a whole section.
+   -------------------------------------------------------------------------- */
+
+@keyframes thread-travel {
+  0% {
+    top: -10%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+.thread-pulse {
+  animation: thread-travel var(--t, 4.5s) var(--ease-house) infinite;
+  animation-delay: var(--d, 0ms);
+}
+
+/* A signal circulating the stack ring, faster than the ring itself. */
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2.4s ease-in-out infinite;
+}
+
+/* Orbit tiles lift out of the ring on hover. */
+.orbit-tile {
+  transition:
+    transform 300ms var(--ease-spring),
+    border-color 220ms var(--ease-house);
+}
+
+.orbit-tile:hover {
+  transform: scale(1.08);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+/* --------------------------------------------------------------------------
+   Feature rotation — the active feature's progress line fills linearly over
+   the rotation period, then the stage swaps with a short rise.
+   -------------------------------------------------------------------------- */
+
+@keyframes progress-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.progress-x {
+  transform-origin: left;
+  animation: progress-x var(--rot, 9s) linear both;
+}
+
+@keyframes stage-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.stage-in {
+  animation: stage-in 360ms var(--ease-house) both;
+}
+
+/* --------------------------------------------------------------------------
+   Living backdrop — dot-matrix patches behind the whole page, breathing on
+   long staggered periods and crawling one grid cell so the loop is seamless.
+   Slow and dim by design: felt, not watched.
+   -------------------------------------------------------------------------- */
+
+/* Brighter grid for the backdrop layers — the base .dot-field reads as
+   texture; this one reads as light. */
+.dot-field-bright {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(255, 255, 255, 0.34) 1px,
+    transparent 0
+  );
+  background-size: 22px 22px;
+}
+
+@keyframes dots-breathe {
+  0%,
+  100% {
+    opacity: var(--o, 0.9);
+  }
+  50% {
+    opacity: calc(var(--o, 0.9) * 0.35);
+  }
+}
+
+.dots-breathe {
+  animation: dots-breathe var(--t, 8s) ease-in-out infinite;
+  animation-delay: var(--d, 0ms);
+}
+
+/* One grid cell per cycle so the loop is seamless; fast enough to see. */
+@keyframes dots-crawl {
+  to {
+    background-position: 22px 22px;
+  }
+}
+
+.dots-crawl {
+  animation: dots-crawl 8s linear infinite;
+}
+
+/* A band of light sweeping through the dots — the clearly-visible layer.
+   The band is a mask over a brighter dot grid, travelling corner to corner. */
+@keyframes dots-sweep {
+  from {
+    -webkit-mask-position: 130% 0;
+    mask-position: 130% 0;
+  }
+  to {
+    -webkit-mask-position: -130% 0;
+    mask-position: -130% 0;
+  }
+}
+
+.dots-sweep {
+  -webkit-mask-image: linear-gradient(
+    115deg,
+    transparent 32%,
+    #000 50%,
+    transparent 68%
+  );
+  mask-image: linear-gradient(115deg, transparent 32%, #000 50%, transparent 68%);
+  -webkit-mask-size: 260% 100%;
+  mask-size: 260% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  animation: dots-sweep var(--sweep, 7s) linear infinite;
+  animation-delay: var(--d, 0ms);
+}
+
+/* Orbit rings. Counter-rotation on children keeps wordmarks upright. */
+@keyframes orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.orbit-ring {
+  animation: orbit-spin var(--orbit-t, 60s) linear infinite;
+}
+
+.orbit-item {
+  animation: orbit-spin var(--orbit-t, 60s) linear infinite reverse;
+}
+
+/* The live station's ring. Slow and low-contrast: a pulse, not a beacon. */
+@keyframes halo {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--signal-dim);
+  }
+  50% {
+    box-shadow: 0 0 0 7px transparent;
+  }
+}
+
+.halo {
+  animation: halo 2.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enter,
+  .fill-y,
+  .arc-draw,
+  .type-line,
+  .caret,
+  .spring-hover,
+  .halo,
+  .orbit-ring,
+  .orbit-item,
+  .progress-x,
+  .stage-in,
+  .dots-breathe,
+  .dots-crawl,
+  .dots-sweep,
+  .float-y,
+  .orbit-tile,
+  .hero-word,
+  .thread-pulse,
+  .pulse-glow {
+    animation: none !important;
+    transition: none !important;
+    clip-path: none !important;
+    filter: none !important;
+    transform: none !important;
+  }
+}
+
+/* Fine dot lattice. Structure, not decoration — it gives the black a scale. */
+.dot-field {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(255, 255, 255, 0.14) 1px,
+    transparent 0
+  );
+  background-size: 22px 22px;
+}
+
+/* The light behind the headline: mostly white with a faint amber undertone —
+   our signal colour warming the source, which is the site's signature and a
+   deliberate step away from the references' pure-neutral glows. */
+.hero-glow {
+  background:
+    radial-gradient(
+      ellipse 44% 36% at 50% 0%,
+      rgba(233, 180, 76, 0.07),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 60% 50% at 50% 0%,
+      rgba(255, 255, 255, 0.08),
+      transparent 70%
+    );
+}
+
+/* Hairline that fades out at both ends, so section breaks do not read as
+   hard table borders. */
+.rule-fade {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--edge) 15%,
+    var(--edge) 85%,
+    transparent
+  );
+}
+
+/* Focus: a crisp ink ring, never a coloured glow. */
+:where(button, input, a):focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* Scrollbars, so panels read as instrument surfaces rather than web pages. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule-strong) transparent;
+}
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--rule-strong);
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 99px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   Marketing scrollbar. The default light-theme bar is a bright gash down the
+   side of a black page; this one belongs to the surface — a slim translucent
+   rail that brightens on hover.
+   -------------------------------------------------------------------------- */
+
+.marketing {
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+}
+
+/* The page scrollbar is owned by the root element, not by .marketing, so the
+   dark treatment has to be set there — scoped to when the site is mounted. */
+html:has(.marketing) {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+  /* Anchor links glide instead of teleporting. */
+  scroll-behavior: smooth;
+}
+
+html:has(.marketing)::-webkit-scrollbar,
+.marketing ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+html:has(.marketing)::-webkit-scrollbar-track,
+.marketing ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html:has(.marketing)::-webkit-scrollbar-thumb,
+.marketing ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 99px;
+  transition: background 200ms var(--ease-house, ease);
+}
+
+html:has(.marketing)::-webkit-scrollbar-thumb:hover,
+.marketing ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+  background-clip: content-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:has(.marketing) {
+    scroll-behavior: auto;
+  }
 }
