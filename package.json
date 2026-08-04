@@ -7,7 +7,7 @@
   "// repository": "electron-builder reads this to publish releases. Update the URL and NEXT_PUBLIC_GITHUB_REPO together.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/multipyler.git"
+    "url": "https://github.com/studiokaze/multipyler.git"
   },
   "main": "electron/main.js",
   "scripts": {

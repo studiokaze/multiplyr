@@ -9,12 +9,17 @@ export const GITHUB_REPO =
   process.env.NEXT_PUBLIC_GITHUB_REPO ?? "your-org/multipyler";
 
 /**
- * Until a real repo is configured, every release URL points at a repository
- * that does not exist — so the buttons would hand visitors a GitHub 404.
- * When this is false the UI offers no dead links.
+ * Whether installers are actually downloadable.
+ *
+ * Deliberately an explicit opt-in rather than something inferred from the repo
+ * name: a configured repo does not mean a published release, and a private
+ * repo's assets are not publicly downloadable at all. Set
+ * NEXT_PUBLIC_RELEASES_PUBLISHED=true only once `gh release view` shows the
+ * installers attached to a public release — until then the UI shows
+ * "coming soon" instead of handing visitors a GitHub 404.
  */
 export const RELEASES_PUBLISHED =
-  !GITHUB_REPO.startsWith("your-org/") && GITHUB_REPO.includes("/");
+  process.env.NEXT_PUBLIC_RELEASES_PUBLISHED === "true";
 
 const RELEASE_BASE = `https://github.com/${GITHUB_REPO}/releases/latest/download`;
 
