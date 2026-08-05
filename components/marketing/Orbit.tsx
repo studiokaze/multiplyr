@@ -14,12 +14,12 @@ import { STACK_TILES } from "./stack";
 const ORBIT_S = 36;
 
 export default function Orbit() {
-  const R = 200; // orbit radius in px
+  const R = 150; // orbit radius in px
 
   return (
     <section
       id="stack"
-      className="relative scroll-mt-28 overflow-hidden px-6 py-16 sm:px-10"
+      className="relative scroll-mt-28 overflow-hidden px-6 py-10 sm:px-10"
     >
       <div
         aria-hidden="true"
@@ -37,7 +37,7 @@ export default function Orbit() {
           </p>
         </div>
 
-        <div className="relative mx-auto mt-2 flex h-[540px] max-w-[600px] items-center justify-center">
+        <div className="relative mx-auto -mt-2 flex h-[380px] max-w-[440px] items-center justify-center">
           <div
             aria-hidden="true"
             className="orbit-ring absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.08]"
@@ -70,11 +70,11 @@ export default function Orbit() {
                   >
                     <span
                       title={t.name}
-                      className={`orbit-tile flex h-[96px] w-[96px] items-center justify-center rounded-[24px] border border-white/10 ${t.bg} shadow-[0_24px_60px_-14px_rgba(0,0,0,0.9)]`}
+                      className={`orbit-tile flex h-[76px] w-[76px] items-center justify-center rounded-[20px] border border-white/10 ${t.bg} shadow-[0_24px_60px_-14px_rgba(0,0,0,0.9)]`}
                     >
                       <svg
-                        width="46"
-                        height="46"
+                        width="38"
+                        height="38"
                         viewBox="0 0 24 24"
                         fill={t.fill}
                         role="img"
@@ -90,8 +90,8 @@ export default function Orbit() {
           </div>
 
           {/* our tile, centre */}
-          <div className="relative z-10 flex h-[112px] w-[112px] items-center justify-center rounded-[28px] border border-white/10 bg-[#141418] shadow-[0_30px_80px_-16px_rgba(0,0,0,0.95)]">
-            <svg width="46" height="46" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <div className="relative z-10 flex h-[88px] w-[88px] items-center justify-center rounded-[22px] border border-white/10 bg-[#141418] shadow-[0_30px_80px_-16px_rgba(0,0,0,0.95)]">
+            <svg width="36" height="36" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <path
                 d="M2.5 3.5L6.5 8L2.5 12.5"
                 stroke="#f6f5f2"
