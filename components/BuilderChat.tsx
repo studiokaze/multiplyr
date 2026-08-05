@@ -1,9 +1,11 @@
 "use client";
 
+import NicheMap from "@/components/NicheMap";
 import type {
   AnalysisResult,
   BrainstormResult,
   Framing,
+  MarketingResult,
   ResearchResult,
   SimulationResult,
   StageId,
@@ -17,6 +19,13 @@ const STAGE_META: Record<StageId, { n: string; label: string }> = {
   analyze: { n: "03", label: "Market analysis" },
   simulate: { n: "04", label: "Simulate" },
   build: { n: "05", label: "Build" },
+  market: { n: "06", label: "Market" },
+};
+
+const PLATFORM_LABEL: Record<MarketingResult["posts"][number]["platform"], string> = {
+  x: "X",
+  linkedin: "LinkedIn",
+  reddit: "Reddit",
 };
 
 const VERDICT: Record<
@@ -125,6 +134,7 @@ export default function BuilderChat({
   analysis,
   simulation,
   buildLog,
+  marketing,
   restored,
   onChooseFraming,
   onRetry,
@@ -140,6 +150,7 @@ export default function BuilderChat({
   analysis: AnalysisResult | null;
   simulation: SimulationResult | null;
   buildLog: string[];
+  marketing: MarketingResult | null;
   restored: boolean;
   onChooseFraming: (f: Framing) => void;
   onRetry: (id: StageId) => void;
@@ -354,6 +365,11 @@ export default function BuilderChat({
             </div>
           </div>
         )}
+        {analysis?.niches && analysis.niches.length > 0 && (
+          <div className="mt-4">
+            <NicheMap niches={analysis.niches} best={analysis.bestNiche} />
+          </div>
+        )}
       </Stage>
 
       {/* The gate. Reachable next steps, so a non-build verdict is not a dead end. */}
@@ -473,6 +489,58 @@ export default function BuilderChat({
             </li>
           ))}
         </ul>
+      </Stage>
+
+      <Stage id="market" stages={stages} onRetry={onRetry}>
+        {marketing && (
+          <div className="space-y-4">
+            <div className="rounded-[8px] border border-rule bg-sunk p-3">
+              <span className="label">Positioning</span>
+              <p className="mt-1.5 text-[12.5px] leading-[1.55] text-ink">
+                {marketing.positioning}
+              </p>
+              <p className="mt-2 text-[11.5px] leading-[1.5] text-ink-faint">
+                Copy written to answer: {marketing.answeredObjection}
+              </p>
+            </div>
+
+            <div>
+              <span className="label">Drafted posts</span>
+              <ul className="mt-2 space-y-2">
+                {marketing.posts.map((post, i) => (
+                  <li
+                    key={i}
+                    className="overflow-hidden rounded-[8px] border border-rule"
+                  >
+                    <div className="flex items-baseline justify-between border-b border-rule bg-sunk px-3 py-2">
+                      <span className="text-[12px] font-medium text-ink">
+                        {PLATFORM_LABEL[post.platform]}
+                      </span>
+                      <span className="label">{post.where}</span>
+                    </div>
+                    <p className="whitespace-pre-wrap px-3 py-2.5 text-[12.5px] leading-[1.55] text-ink-soft">
+                      {post.content}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <span className="label">Where to show up first</span>
+              <ul className="mt-2 space-y-1.5">
+                {marketing.channels.map((c, i) => (
+                  <li
+                    key={i}
+                    className="border-l border-rule-strong pl-3 text-[12.5px] leading-[1.5] text-ink-soft"
+                  >
+                    {c}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
       </Stage>
     </div>
   );

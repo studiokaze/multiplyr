@@ -8,6 +8,7 @@ import {
   type BuildEvent,
   type Framing,
   type GeneratedFile,
+  type MarketingResult,
   type PipelineSnapshot,
   type ResearchResult,
   type SimulationResult,
@@ -42,9 +43,10 @@ function load(idea: string): PipelineSnapshot | null {
     const raw = sessionStorage.getItem(storageKey(idea));
     if (!raw) return null;
     const snap = JSON.parse(raw) as PipelineSnapshot;
-    // Snapshots from the 4-stage era lack the analyze/simulate keys; a
-    // partial restore would crash the UI, so start those sessions fresh.
-    if (!snap.stages?.analyze || !snap.stages?.simulate) return null;
+    // Snapshots from before the current stage set lack keys; a partial
+    // restore would crash the UI, so start those sessions fresh.
+    if (!snap.stages?.analyze || !snap.stages?.simulate || !snap.stages?.market)
+      return null;
     return { ...snap, stages: settle(snap.stages) };
   } catch {
     return null;
@@ -99,6 +101,9 @@ export function usePipeline(idea: string) {
   );
   const [files, setFiles] = useState<GeneratedFile[]>(() => boot?.files ?? []);
   const [buildLog, setBuildLog] = useState<string[]>(() => boot?.buildLog ?? []);
+  const [marketing, setMarketing] = useState<MarketingResult | null>(
+    () => boot?.marketing ?? null,
+  );
   const restored = boot !== null;
 
   const booted = useRef(false);
@@ -147,6 +152,30 @@ export function usePipeline(idea: string) {
   }, []);
 
   // ---- individual stages -------------------------------------------------
+
+  const runMarket = useCallback(
+    async (
+      framing: Framing,
+      analysisResult: AnalysisResult,
+      simulationResult: SimulationResult | null,
+      signal: AbortSignal,
+    ) => {
+      setStage("market", "running");
+      const result = await postJson<MarketingResult>(
+        "/api/agents/market",
+        {
+          framing,
+          analysis: analysisResult,
+          simulation: simulationResult,
+          research: data.current.research,
+        },
+        signal,
+      );
+      setMarketing(result);
+      setStage("market", "done");
+    },
+    [setStage],
+  );
 
   const runBuild = useCallback(
     async (
@@ -221,8 +250,9 @@ export function usePipeline(idea: string) {
         throw new Error("Builder stream ended before the agent finished.");
       }
       setStage("build", "done");
+      await runMarket(framing, analysisResult, simulationResult, signal);
     },
-    [setStage],
+    [runMarket, setStage],
   );
 
   const runSimulate = useCallback(
@@ -267,6 +297,7 @@ export function usePipeline(idea: string) {
       if (verdict.verdict !== "build") {
         setStage("simulate", "blocked");
         setStage("build", "blocked");
+        setStage("market", "blocked");
         return;
       }
       await runSimulate(framing, researchResult, verdict, signal);
@@ -338,12 +369,14 @@ export function usePipeline(idea: string) {
       setSimulation(null);
       setFiles([]);
       setBuildLog([]);
+      setMarketing(null);
       setStages((s) => ({
         ...s,
         research: { status: "running" },
         analyze: { status: "idle" },
         simulate: { status: "idle" },
         build: { status: "idle" },
+        market: { status: "idle" },
       }));
       const signal = freshSignal();
       runResearch(framing, signal).catch(attribute);
@@ -366,12 +399,14 @@ export function usePipeline(idea: string) {
     setSimulation(null);
     setFiles([]);
     setBuildLog([]);
+    setMarketing(null);
     setStages((s) => ({
       ...s,
       research: { status: "idle" },
       analyze: { status: "idle" },
       simulate: { status: "idle" },
       build: { status: "idle" },
+      market: { status: "idle" },
     }));
   }, [cancel]);
 
@@ -388,6 +423,7 @@ export function usePipeline(idea: string) {
         setSimulation(null);
         setFiles([]);
         setBuildLog([]);
+        setMarketing(null);
         setStages({ ...IDLE_STAGES, brainstorm: { status: "running" } });
         data.current = {
           framing: null,
@@ -423,11 +459,13 @@ export function usePipeline(idea: string) {
         setSimulation(null);
         setFiles([]);
         setBuildLog([]);
+        setMarketing(null);
         setStages((s) => ({
           ...s,
           analyze: { status: "running" },
           simulate: { status: "idle" },
           build: { status: "idle" },
+          market: { status: "idle" },
         }));
         runAnalyze(framing, r, signal).catch(attribute);
         return;
@@ -440,10 +478,12 @@ export function usePipeline(idea: string) {
         setSimulation(null);
         setFiles([]);
         setBuildLog([]);
+        setMarketing(null);
         setStages((s) => ({
           ...s,
           simulate: { status: "running" },
           build: { status: "idle" },
+          market: { status: "idle" },
         }));
         runSimulate(framing, r, a, signal).catch(attribute);
         return;
@@ -451,6 +491,16 @@ export function usePipeline(idea: string) {
 
       const a = data.current.analysis;
       if (!a) return;
+
+      if (from === "market") {
+        runMarket(framing, a, data.current.simulation, signal).catch(
+          attribute,
+        );
+        return;
+      }
+
+      setMarketing(null);
+      setStages((s) => ({ ...s, market: { status: "idle" } }));
       runBuild(framing, a, data.current.simulation, signal).catch(attribute);
     },
     [
@@ -460,6 +510,7 @@ export function usePipeline(idea: string) {
       runAnalyze,
       runBrainstorm,
       runBuild,
+      runMarket,
       runSimulate,
     ],
   );
@@ -533,6 +584,7 @@ export function usePipeline(idea: string) {
       simulation,
       files,
       buildLog,
+      marketing,
     };
     try {
       sessionStorage.setItem(storageKey(idea), JSON.stringify(snapshot));
@@ -550,6 +602,7 @@ export function usePipeline(idea: string) {
     simulation,
     files,
     buildLog,
+    marketing,
   ]);
 
   const clearSession = useCallback(() => {
@@ -574,6 +627,7 @@ export function usePipeline(idea: string) {
     simulation,
     files,
     buildLog,
+    marketing,
     busy,
     restored,
     chooseFraming,

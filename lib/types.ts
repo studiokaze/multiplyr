@@ -74,12 +74,31 @@ export type GeneratedFile = {
   content: string;
 };
 
+export type MarketingPost = {
+  platform: "x" | "linkedin" | "reddit";
+  /** Where exactly this goes: a subreddit, a hashtag community, etc. */
+  where: string;
+  content: string;
+};
+
+/** Output of the marketing agent (stage 06). */
+export type MarketingResult = {
+  /** One sentence that positions the product for the exact segment. */
+  positioning: string;
+  posts: MarketingPost[];
+  /** Ranked places to show up first, each with the reason. */
+  channels: string[];
+  /** The objection from the simulation the copy must pre-answer. */
+  answeredObjection: string;
+};
+
 export type StageId =
   | "brainstorm"
   | "research"
   | "analyze"
   | "simulate"
-  | "build";
+  | "build"
+  | "market";
 export type StageStatus =
   | "idle"
   | "running"
@@ -97,6 +116,7 @@ export const IDLE_STAGES: Stages = {
   analyze: { status: "idle" },
   simulate: { status: "idle" },
   build: { status: "idle" },
+  market: { status: "idle" },
 };
 
 /** Everything the workspace needs to rehydrate after a refresh. */
@@ -110,6 +130,7 @@ export type PipelineSnapshot = {
   simulation: SimulationResult | null;
   files: GeneratedFile[];
   buildLog: string[];
+  marketing: MarketingResult | null;
 };
 
 /** Server-sent event payloads emitted by /api/agents/build. */

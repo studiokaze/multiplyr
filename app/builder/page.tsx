@@ -9,6 +9,7 @@ import { usePipeline } from "@/hooks/usePipeline";
 import type { StageId } from "@/lib/types";
 
 const ORDER: StageId[] = [
+  "market",
   "build",
   "simulate",
   "analyze",
@@ -22,6 +23,7 @@ const STAGE_LABEL: Record<StageId, string> = {
   analyze: "Market analysis",
   simulate: "Simulate",
   build: "Build",
+  market: "Market",
 };
 
 type View = "preview" | "code";
@@ -49,7 +51,7 @@ function Workspace() {
   }
 
   const running = ORDER.find((id) => p.stages[id].status === "running");
-  const done = p.stages.build.status === "done";
+  const done = p.stages.market.status === "done";
 
   const reset = () => {
     p.clearSession();
@@ -136,6 +138,7 @@ function Workspace() {
             analysis={p.analysis}
             simulation={p.simulation}
             buildLog={p.buildLog}
+            marketing={p.marketing}
             restored={p.restored}
             onChooseFraming={p.chooseFraming}
             onRetry={p.retry}
