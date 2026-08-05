@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import DownloadCTA from "@/components/marketing/DownloadCTA";
 import Footer from "@/components/marketing/Footer";
 import MarketingNav from "@/components/marketing/MarketingNav";
+import WorkspaceShot from "@/components/marketing/WorkspaceShot";
 import { GITHUB_REPO } from "@/lib/downloads";
 import {
   assetLabel,
@@ -10,7 +12,10 @@ import {
 } from "@/lib/github";
 
 export const metadata: Metadata = {
-  title: "Download Multiplyer",
+  title: "Download",
+  description:
+    "Download the Multiplyer desktop app for macOS, Windows, and Linux. Free, runs on your own Anthropic key.",
+  alternates: { canonical: "/download" },
 };
 
 /** Platform column order, matching how people scan the row. */
@@ -119,14 +124,36 @@ export default async function DownloadPage() {
     <div className="marketing relative flex min-h-dvh flex-col overflow-x-clip">
       <MarketingNav />
 
-      <main className="relative flex-1 px-6 pb-24 pt-40 sm:px-10">
+      <main className="relative flex-1 px-6 pb-24 pt-32 sm:px-10">
         <div className="mx-auto max-w-[68rem]">
-          <h1 className="display max-w-[24ch] text-[1.75rem] text-chalk sm:text-[2.25rem]">
-            The Multiplyer desktop app is available for macOS, Windows, and
-            Linux.
+          {/* Cursor-style top: headline, then the one surface we ship —
+              a Desktop card with the product in it and the button below. */}
+          <h1 className="display max-w-[22ch] text-[1.75rem] text-chalk sm:text-[2.25rem]">
+            Use Multiplyer where you build.
           </h1>
+          <p className="mt-3 text-[15px] text-chalk-soft">
+            The desktop app, for macOS, Windows, and Linux.
+          </p>
 
-          <div className="mt-12 space-y-12">
+          <div className="mt-10 rounded-[20px] border border-edge bg-void-2 p-4 sm:p-6">
+            <WorkspaceShot />
+            <div className="mt-6 flex flex-col gap-5 px-2 pb-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h2 className="text-[16px] font-medium text-chalk">Desktop</h2>
+                <p className="mt-1.5 max-w-[44ch] text-[13.5px] leading-[1.6] text-chalk-soft">
+                  All six agents in one native window, on your own key.
+                </p>
+              </div>
+              <DownloadCTA />
+            </div>
+          </div>
+
+          {/* Scroll: every installer, per release. */}
+          <h2 className="mt-24 text-[15px] font-medium text-chalk-soft">
+            All downloads
+          </h2>
+
+          <div className="mt-6 space-y-12">
             {withAssets.length > 0 ? (
               withAssets.map((r, i) => (
                 <ReleaseBlock key={r.tag_name} release={r} latest={i === 0} />

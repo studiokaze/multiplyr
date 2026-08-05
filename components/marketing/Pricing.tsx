@@ -88,12 +88,7 @@ export default function Pricing() {
     : "#faq";
 
   return (
-    <section id="pricing" className="relative scroll-mt-28 px-6 py-24 sm:px-10">
-      <div
-        aria-hidden="true"
-        className="dot-field dots-live pointer-events-none absolute left-1/2 top-0 h-[420px] w-[620px] -translate-x-1/2 opacity-[0.4] [mask-image:radial-gradient(ellipse_55%_55%_at_50%_35%,black,transparent_72%)]"
-      />
-
+    <section id="pricing" className="relative scroll-mt-28 px-6 py-14 sm:px-10">
       <div className="relative mx-auto max-w-[68rem]">
         <div className="text-center">
           <h2 className="display mx-auto text-[1.75rem] sm:text-[2.5rem]">

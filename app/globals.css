@@ -546,110 +546,12 @@ details[open] .faq-mark {
 }
 
 /* --------------------------------------------------------------------------
-   Living backdrop — dot-matrix patches behind the whole page, breathing on
-   long staggered periods and crawling one grid cell so the loop is seamless.
-   Slow and dim by design: felt, not watched.
+   Gloss — the backdrop. No motion: a black surface with a glossy shine in a
+   few portions, like light resting on piano black. Static by request.
    -------------------------------------------------------------------------- */
-
-/* --------------------------------------------------------------------------
-   Aurora field — the page's own background motion.
-   Three soft colour bodies drifting on different periods and directions. The
-   periods are deliberately coprime (37s / 43s / 53s) so they never resync into
-   a visible loop: the composite takes ~22 hours to repeat, which is another
-   way of saying it never does. Blurred and low-opacity, so it reads as the
-   black itself being faintly coloured rather than as shapes moving.
-   -------------------------------------------------------------------------- */
-
-/* A wide, soft sheet of light crossing the page. Travelling a full screen
-   width, it has the page edges as a reference, so it reads as motion rather
-   than as a tint. Monochrome — the black stays black. */
-@keyframes glow-sweep {
-  0% {
-    transform: translate3d(-70%, 0, 0) rotate(12deg);
-  }
-  100% {
-    transform: translate3d(170%, 0, 0) rotate(12deg);
-  }
-}
-
-.glow-band {
+.gloss {
   position: absolute;
-  top: -20%;
-  height: 140%;
-  width: 34%;
-  filter: blur(46px);
-  will-change: transform;
-  animation: glow-sweep var(--t, 16s) linear var(--d, 0s) infinite;
-}
-
-/* Brighter grid for the backdrop layers — the base .dot-field reads as
-   texture; this one reads as light. */
-.dot-field-bright {
-  background-image: radial-gradient(
-    circle at 1px 1px,
-    rgba(255, 255, 255, 0.34) 1px,
-    transparent 0
-  );
-  background-size: 22px 22px;
-}
-
-@keyframes dots-breathe {
-  0%,
-  100% {
-    opacity: var(--o, 0.9);
-  }
-  50% {
-    opacity: calc(var(--o, 0.9) * 0.35);
-  }
-}
-
-/* NOTE: two classes that each set the `animation` shorthand cannot be
-   composed on one element — the one declared later in this file wins outright
-   and the other never runs. The dot layers need breathe AND crawl (and sweep
-   AND crawl), so each pairing is one declaration with a comma-separated list.
-   Animating different properties, they stack instead of cancelling. */
-.dots-live {
-  animation:
-    dots-breathe var(--t, 8s) ease-in-out var(--d, 0ms) infinite,
-    dots-crawl 8s linear infinite;
-}
-
-/* One grid cell per cycle so the loop is seamless; fast enough to see. */
-@keyframes dots-crawl {
-  to {
-    background-position: 22px 22px;
-  }
-}
-
-
-/* A band of light sweeping through the dots — the clearly-visible layer.
-   The band is a mask over a brighter dot grid, travelling corner to corner. */
-@keyframes dots-sweep {
-  from {
-    -webkit-mask-position: 130% 0;
-    mask-position: 130% 0;
-  }
-  to {
-    -webkit-mask-position: -130% 0;
-    mask-position: -130% 0;
-  }
-}
-
-.dots-sweep {
-  -webkit-mask-image: linear-gradient(
-    115deg,
-    transparent 32%,
-    #000 50%,
-    transparent 68%
-  );
-  mask-image: linear-gradient(115deg, transparent 32%, #000 50%, transparent 68%);
-  -webkit-mask-size: 260% 100%;
-  mask-size: 260% 100%;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  animation:
-    dots-sweep var(--sweep, 7s) linear var(--d, 0ms) infinite,
-    dots-crawl 8s linear infinite;
+  pointer-events: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -661,10 +563,7 @@ details[open] .faq-mark {
   .spring-hover,
   .progress-x,
   .stage-in,
-  .dots-live,
-  .dots-sweep,
   .float-y,
-  .glow-band,
   .hero-word,
   .pulse-glow {
     animation: none !important;
@@ -673,17 +572,13 @@ details[open] .faq-mark {
     filter: none !important;
     transform: none !important;
   }
-
-  .glow-band {
-    display: none;
-  }
 }
 
-/* Fine dot lattice. Structure, not decoration — it gives the black a scale. */
+/* Fine dot lattice (app surfaces only). */
 .dot-field {
   background-image: radial-gradient(
-    circle at 1px 1px,
-    rgba(255, 255, 255, 0.14) 1px,
+    circle at 1.5px 1.5px,
+    rgba(255, 255, 255, 0.32) 1.5px,
     transparent 0
   );
   background-size: 22px 22px;
@@ -766,7 +661,7 @@ details[open] .faq-mark {
    dark treatment has to be set there — scoped to when the site is mounted. */
 html:has(.marketing) {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.4) transparent;
   /* Anchor links glide instead of teleporting. */
   scroll-behavior: smooth;
 }
@@ -784,8 +679,9 @@ html:has(.marketing)::-webkit-scrollbar-track,
 
 html:has(.marketing)::-webkit-scrollbar-thumb,
 .marketing ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.14);
-  border: 3px solid transparent;
+  /* Bright enough to actually find — 0.14 on black was invisible. */
+  background: rgba(255, 255, 255, 0.38);
+  border: 2px solid transparent;
   background-clip: content-box;
   border-radius: 99px;
   transition: background 200ms var(--ease-house, ease);
@@ -793,7 +689,7 @@ html:has(.marketing)::-webkit-scrollbar-thumb,
 
 html:has(.marketing)::-webkit-scrollbar-thumb:hover,
 .marketing ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.6);
   background-clip: content-box;
 }
 

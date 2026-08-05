@@ -46,13 +46,9 @@ const COLUMNS: { heading: string; links: { label: string; href: string; external
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden px-6 pb-10 pt-20 sm:px-10">
-      {/* dot cluster behind the brand column */}
-      <div
-        aria-hidden="true"
-        className="dot-field pointer-events-none absolute bottom-[8%] left-[16%] h-[360px] w-[380px] opacity-[0.45] [mask-image:radial-gradient(ellipse_55%_60%_at_45%_55%,black,transparent_72%)]"
-      />
-
+    // Solid black on its own layer: the page backdrop can never show through,
+    // so the footer stays still and pure black by construction.
+    <footer className="relative bg-void px-6 pb-10 pt-12 sm:px-10">
       <div className="relative mx-auto max-w-[68rem]">
         <div className="grid gap-12 lg:grid-cols-[1.2fr_repeat(3,minmax(0,1fr))] lg:gap-8">
           <div>

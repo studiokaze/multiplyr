@@ -19,7 +19,7 @@ export default function Hero() {
   const afterWords = HEADLINE.length;
 
   return (
-    <section className="relative px-6 pb-20 pt-40 sm:px-10 sm:pt-48">
+    <section className="relative px-6 pb-14 pt-36 sm:px-10 sm:pt-40">
       <div className="mx-auto max-w-[62rem] text-center">
         <h1 className="display mx-auto max-w-[15ch] text-[2.75rem] text-chalk sm:text-[4.5rem]">
           {HEADLINE.map((word, i) => (

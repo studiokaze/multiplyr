@@ -13,7 +13,7 @@ export default function ClosingCta() {
   const primary = platform === "unknown" ? null : DOWNLOADS[platform][0];
 
   return (
-    <section className="relative overflow-hidden px-6 py-32 sm:px-10">
+    <section className="relative overflow-hidden px-6 py-20 sm:px-10">
       <div className="relative mx-auto max-w-[62rem] text-center">
         <h2 className="display text-[2.25rem] text-chalk sm:text-[3.5rem]">
           Try Multiplyer now.

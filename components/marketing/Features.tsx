@@ -276,7 +276,7 @@ export default function Features() {
   const Stage = STAGES[active];
 
   return (
-    <section id="features" className="scroll-mt-28 px-6 py-28 sm:px-10">
+    <section id="features" className="scroll-mt-28 px-6 py-14 sm:px-10">
       <div className="mx-auto max-w-[68rem]">
         <div className="mb-16 text-center">
           <h2 className="display mx-auto max-w-[20ch] text-[2rem] sm:text-[3rem]">
@@ -306,14 +306,14 @@ export default function Features() {
                     <h3
                       className={`display flex items-center gap-3 text-[1.5rem] transition-colors duration-300 sm:text-[1.9rem] ${
                         isActive
-                          ? "text-signal"
+                          ? "text-chalk"
                           : "text-chalk-faint group-hover/row:text-chalk"
                       }`}
                     >
                       <FeatureIcon
                         index={i}
                         className={`shrink-0 transition-colors duration-300 ${
-                          isActive ? "text-signal" : "text-chalk-faint"
+                          isActive ? "text-chalk" : "text-chalk-faint"
                         }`}
                       />
                       {f.title}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { GITHUB_REPO, RELEASES_PUBLISHED } from "@/lib/downloads";
 import { Glyph, usePlatform } from "./DownloadCTA";
 import Mark from "./Mark";
@@ -34,13 +35,14 @@ export default function MarketingNav() {
             : "border-transparent bg-transparent"
         }`}
       >
-        <a
-          href="#top"
-          aria-label="Multiplyer, back to top"
+        {/* Always the landing hero — from any page, not just an in-page jump */}
+        <Link
+          href="/"
+          aria-label="Multiplyer home"
           className="text-chalk transition-opacity duration-200 hover:opacity-80"
         >
           <Mark size={22} />
-        </a>
+        </Link>
 
         <div className="hidden items-center gap-7 md:flex">
           {LINKS.map((l) => (

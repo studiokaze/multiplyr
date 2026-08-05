@@ -32,7 +32,7 @@ const QA: { q: string; a: string }[] = [
 
 export default function Faq() {
   return (
-    <section id="faq" className="scroll-mt-28 px-6 py-20 sm:px-10">
+    <section id="faq" className="scroll-mt-28 px-6 py-14 sm:px-10">
       <div className="mx-auto max-w-[46rem]">
         <div className="text-center">
           <h2 className="display mx-auto text-[1.75rem] sm:text-[2.5rem]">
