@@ -8,6 +8,7 @@ import Mark from "./Mark";
 const LINKS = [
   { label: "Features", href: "#features" },
   { label: "Stack", href: "#stack" },
+  { label: "Pricing", href: "#pricing" },
   { label: "FAQ", href: "#faq" },
 ];
 

@@ -13,6 +13,7 @@ const COLUMNS: { heading: string; links: { label: string; href: string; external
     links: [
       { label: "Features", href: "#features" },
       { label: "Stack", href: "#stack" },
+      { label: "Pricing", href: "#pricing" },
       { label: "FAQ", href: "#faq" },
     ],
   },

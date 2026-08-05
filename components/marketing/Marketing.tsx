@@ -5,6 +5,7 @@ import Footer from "./Footer";
 import Hero from "./Hero";
 import MarketingNav from "./MarketingNav";
 import Orbit from "./Orbit";
+import Pricing from "./Pricing";
 import WorkspaceShot from "./WorkspaceShot";
 
 export default function Marketing() {
@@ -41,6 +42,7 @@ export default function Marketing() {
 
         <Features />
         <Orbit />
+        <Pricing />
         <Faq />
         <Footer />
       </main>
