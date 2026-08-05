@@ -67,7 +67,7 @@ function ReleaseBlock({ release, latest }: { release: Release; latest: boolean }
   return (
     <section className="border-t border-edge pt-8">
       <div className="flex items-center gap-3">
-        <h2 className="display text-[1.5rem] text-chalk">
+        <h2 className="brand text-[1.15rem] text-chalk">
           {release.tag_name.replace(/^v/, "")}
         </h2>
         {latest && (
@@ -128,7 +128,7 @@ export default async function DownloadPage() {
         <div className="mx-auto max-w-[68rem]">
           {/* Cursor-style top: headline, then the one surface we ship —
               a Desktop card with the product in it and the button below. */}
-          <h1 className="display max-w-[22ch] text-[1.75rem] text-chalk sm:text-[2.25rem]">
+          <h1 className="brand max-w-[24ch] text-[1.3rem] text-chalk sm:text-[1.7rem]">
             Use Multiplyer where you build.
           </h1>
           <p className="mt-3 text-[15px] text-chalk-soft">
@@ -149,7 +149,7 @@ export default async function DownloadPage() {
           </div>
 
           {/* Scroll: every installer, per release. */}
-          <h2 className="mt-24 text-[15px] font-medium text-chalk-soft">
+          <h2 className="brand mt-24 text-[0.95rem] text-chalk-soft">
             All downloads
           </h2>
 

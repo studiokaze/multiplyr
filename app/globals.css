@@ -100,6 +100,19 @@ body {
   line-height: 1.04;
 }
 
+/* The brand voice: the engineered wide face from the lockup, always
+   uppercase. Applied to marketing headings and wordmarks explicitly — never
+   blanket-applied, because the workspace mocks inside the site must keep
+   looking like the app, and the app itself is a workspace, not a poster.
+   Wide by construction, so sizes step down wherever it replaces the sans. */
+.brand {
+  font-family: var(--font-brand), var(--font-geist-sans), sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.18;
+}
+
 /* All metadata, paths, counts and stage labels are mono. */
 .label {
   font-family: var(--font-geist-mono), ui-monospace, monospace;

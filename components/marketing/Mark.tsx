@@ -51,11 +51,10 @@ export default function Mark({
   return (
     <span className={`flex items-center gap-2.5 ${className}`}>
       <MarkGlyph size={size} />
-      {/* Uppercase and tracked wide, matching the lockup's engineered look. */}
+      {/* The lockup's own face — Michroma carries the engineered look, so
+          the tracking does less work than the placeholder needed. */}
       {wordmark && (
-        <span className="text-[12.5px] font-semibold uppercase tracking-[0.22em]">
-          Multiplyer
-        </span>
+        <span className="brand text-[11px] tracking-[0.14em]">Multiplyer</span>
       )}
     </span>
   );

@@ -336,7 +336,7 @@ export default function Film() {
       <div className="mx-auto max-w-[62rem]">
         <div className="text-center">
           <p className="label">Product film</p>
-          <h2 className="display mx-auto mt-3 text-[1.75rem] sm:text-[2.5rem]">
+          <h2 className="brand mx-auto mt-3 text-[1.3rem] sm:text-[1.9rem]">
             See Multiplyer in action
           </h2>
         </div>

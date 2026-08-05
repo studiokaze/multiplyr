@@ -18,6 +18,14 @@ const path = require("node:path");
 
 const isDev = !app.isPackaged;
 
+/**
+ * Dev-only simulated mode: MULTIPLYER_MOCK points at a local stand-in for the
+ * Anthropic API (see scratchpad mock). Skips key onboarding and routes the
+ * server's SDK at the mock, so the whole app can be exercised with no key.
+ * Ignored in packaged builds — a shipped binary never mocks.
+ */
+const mockBaseUrl = isDev ? process.env.MULTIPLYER_MOCK || "" : "";
+
 /** Where the prepared standalone bundle lives in each mode. */
 function serverDir() {
   return isDev
@@ -147,7 +155,8 @@ async function startServer() {
       NODE_ENV: "production",
       PORT: String(serverPort),
       HOSTNAME: "127.0.0.1",
-      ANTHROPIC_API_KEY: loadApiKey(),
+      ANTHROPIC_API_KEY: mockBaseUrl ? "mock-key" : loadApiKey(),
+      ...(mockBaseUrl ? { ANTHROPIC_BASE_URL: mockBaseUrl } : {}),
       // Lets the app tailor its "no key" message to the desktop flow.
       MULTIPLYER_DESKTOP: "1",
     },
@@ -372,11 +381,14 @@ if (!singleInstance) {
       return;
     }
     // First run (no key yet) opens onboarding; every later run opens the app.
-    createMainWindow(loadApiKey() ? "/app" : "/welcome");
+    // Simulated mode needs no key, so it goes straight in.
+    const entryPath = () =>
+      mockBaseUrl || loadApiKey() ? "/app" : "/welcome";
+    createMainWindow(entryPath());
 
     app.on("activate", () => {
       if (BrowserWindow.getAllWindows().length === 0) {
-        createMainWindow(loadApiKey() ? "/app" : "/welcome");
+        createMainWindow(entryPath());
       }
     });
   });

@@ -84,7 +84,7 @@ function Workspace() {
         <div className="flex min-w-0 items-center gap-3">
           <button
             onClick={reset}
-            className="shrink-0 text-[13px] font-medium tracking-tight text-ink"
+            className="brand shrink-0 text-[10.5px] text-ink"
           >
             Multiplyer
           </button>

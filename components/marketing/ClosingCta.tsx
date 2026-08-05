@@ -15,7 +15,7 @@ export default function ClosingCta() {
   return (
     <section className="relative overflow-hidden px-6 py-20 sm:px-10">
       <div className="relative mx-auto max-w-[62rem] text-center">
-        <h2 className="display text-[2.25rem] text-chalk sm:text-[3.5rem]">
+        <h2 className="brand text-[1.6rem] text-chalk sm:text-[2.6rem]">
           Try Multiplyer now.
         </h2>
 

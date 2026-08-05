@@ -35,7 +35,7 @@ export default function Faq() {
     <section id="faq" className="scroll-mt-28 px-6 py-14 sm:px-10">
       <div className="mx-auto max-w-[46rem]">
         <div className="text-center">
-          <h2 className="display mx-auto text-[1.75rem] sm:text-[2.5rem]">
+          <h2 className="brand mx-auto text-[1.3rem] sm:text-[1.9rem]">
             Questions, answered plainly.
           </h2>
         </div>

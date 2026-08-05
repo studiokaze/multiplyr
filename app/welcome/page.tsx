@@ -81,9 +81,7 @@ export default function Welcome() {
       <div className="w-full max-w-[30rem]">
         <div className="flex items-center gap-2.5">
           <MarkGlyph size={22} className="text-ink" />
-          <span className="text-[14px] font-medium tracking-tight text-ink">
-            Multiplyer
-          </span>
+          <span className="brand text-[11.5px] text-ink">Multiplyer</span>
         </div>
 
         <h1 className="display mt-6 text-[1.75rem] text-ink">
