@@ -40,7 +40,10 @@ function settle(stages: Stages): Stages {
 function load(idea: string): PipelineSnapshot | null {
   if (typeof window === "undefined") return null;
   try {
-    const raw = sessionStorage.getItem(storageKey(idea));
+    // localStorage, not sessionStorage: a run that cost real model usage must
+    // survive a browser restart — re-running it because the tab closed would
+    // spend the user's money to recompute a result they already had.
+    const raw = localStorage.getItem(storageKey(idea));
     if (!raw) return null;
     const snap = JSON.parse(raw) as PipelineSnapshot;
     // Snapshots from before the current stage set lack keys; a partial
@@ -587,7 +590,7 @@ export function usePipeline(idea: string) {
       marketing,
     };
     try {
-      sessionStorage.setItem(storageKey(idea), JSON.stringify(snapshot));
+      localStorage.setItem(storageKey(idea), JSON.stringify(snapshot));
     } catch {
       // Quota exceeded on a large generated project — persistence is a
       // convenience, never a correctness requirement.
@@ -608,7 +611,7 @@ export function usePipeline(idea: string) {
   const clearSession = useCallback(() => {
     cancel();
     try {
-      sessionStorage.removeItem(storageKey(idea));
+      localStorage.removeItem(storageKey(idea));
     } catch {
       /* ignore */
     }

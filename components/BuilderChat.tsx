@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import NicheMap from "@/components/NicheMap";
 import type {
   AnalysisResult,
@@ -51,6 +52,36 @@ const VERDICT: Record<
     line: "Do not build this.",
   },
 };
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (timer.current) clearTimeout(timer.current);
+    },
+    [],
+  );
+
+  return (
+    <button
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(text);
+          setCopied(true);
+          if (timer.current) clearTimeout(timer.current);
+          timer.current = setTimeout(() => setCopied(false), 1600);
+        } catch {
+          // Clipboard can be denied; the text is on screen either way.
+        }
+      }}
+      className="label shrink-0 transition-colors duration-150 hover:text-ink"
+    >
+      {copied ? "Copied" : "Copy"}
+    </button>
+  );
+}
 
 function Indicator({ status }: { status: StageStatus }) {
   if (status === "running") {
@@ -512,11 +543,12 @@ export default function BuilderChat({
                     key={i}
                     className="overflow-hidden rounded-[8px] border border-rule"
                   >
-                    <div className="flex items-baseline justify-between border-b border-rule bg-sunk px-3 py-2">
+                    <div className="flex items-baseline justify-between gap-3 border-b border-rule bg-sunk px-3 py-2">
                       <span className="text-[12px] font-medium text-ink">
                         {PLATFORM_LABEL[post.platform]}
+                        <span className="label ml-2">{post.where}</span>
                       </span>
-                      <span className="label">{post.where}</span>
+                      <CopyButton text={post.content} />
                     </div>
                     <p className="whitespace-pre-wrap px-3 py-2.5 text-[12.5px] leading-[1.55] text-ink-soft">
                       {post.content}

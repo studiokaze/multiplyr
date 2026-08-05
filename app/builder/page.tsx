@@ -6,6 +6,7 @@ import BuilderChat from "@/components/BuilderChat";
 import FileTree from "@/components/FileTree";
 import PreviewPane from "@/components/PreviewPane";
 import { usePipeline } from "@/hooks/usePipeline";
+import { briefFilename, buildBrief } from "@/lib/brief";
 import type { StageId } from "@/lib/types";
 
 const ORDER: StageId[] = [
@@ -56,6 +57,25 @@ function Workspace() {
   const reset = () => {
     p.clearSession();
     router.push("/app");
+  };
+
+  const exportBrief = () => {
+    const markdown = buildBrief({
+      idea,
+      framing: p.chosenFraming,
+      research: p.research,
+      analysis: p.analysis,
+      simulation: p.simulation,
+      files: p.files,
+      marketing: p.marketing,
+    });
+    const blob = new Blob([markdown], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = briefFilename(idea);
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -117,6 +137,14 @@ function Workspace() {
                   ? `Verdict · ${p.analysis.verdict}`
                   : "Idle"}
             </span>
+          )}
+          {p.analysis && !p.busy && (
+            <button
+              onClick={exportBrief}
+              className="rounded-[6px] border border-rule px-2.5 py-1.5 text-[12px] text-ink-soft transition-colors duration-150 hover:border-rule-strong hover:text-ink"
+            >
+              Export brief
+            </button>
           )}
           <button
             onClick={reset}

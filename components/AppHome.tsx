@@ -18,6 +18,7 @@ const ORDER: StageId[] = [
   "analyze",
   "simulate",
   "build",
+  "market",
 ];
 
 type Recent = {
@@ -45,10 +46,12 @@ function readRecent(): Recent[] {
   if (typeof window === "undefined") return [];
   const out: Recent[] = [];
   try {
-    for (let i = 0; i < sessionStorage.length; i++) {
-      const key = sessionStorage.key(i);
+    // localStorage to match the pipeline's persistence: past runs are a
+    // record of spent model usage, not a per-tab convenience.
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
       if (!key?.startsWith(STORAGE_PREFIX)) continue;
-      const raw = sessionStorage.getItem(key);
+      const raw = localStorage.getItem(key);
       if (!raw) continue;
       const snap = JSON.parse(raw) as PipelineSnapshot;
       if (!snap?.idea || !snap.stages) continue;
@@ -75,6 +78,7 @@ const STAGE_LABEL: Record<string, string> = {
   analyze: "Market analysis",
   simulate: "Simulate",
   build: "Build",
+  market: "Market",
 };
 
 /**
@@ -145,7 +149,7 @@ export default function AppHome() {
 
         {recent.length > 0 && (
           <div className="mt-12">
-            <span className="label">This session</span>
+            <span className="label">Past runs</span>
             <ul className="mt-3 space-y-px overflow-hidden rounded-[10px] border border-rule bg-rule">
               {recent.map((r) => (
                 <li key={r.idea}>
