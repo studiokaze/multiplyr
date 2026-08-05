@@ -1,8 +1,13 @@
 /**
- * The site's living background: dot-matrix patches down the whole page.
- * Each patch is two layers — a base grid that breathes and crawls one cell
- * per cycle, and a brighter grid revealed only by a band of light sweeping
- * through it. The sweep is the visible life; the breathe is the undertone.
+ * The site's living background, in three layers:
+ *
+ *  1. Aurora — blue colour bodies that drift AND pulse in brightness. The
+ *     pulse is the point: a blob crossing 12px a second is perceptually
+ *     static, the same blob brightening is not.
+ *  2. Glow bands — wide soft sheets of light crossing the page edge to edge.
+ *     This is the layer you actually catch moving.
+ *  3. Dot patches — the fine lattice, breathing and crawling, with a band of
+ *     light sweeping a brighter grid through them.
  */
 
 const PATCHES: {
@@ -27,30 +32,43 @@ const PATCHES: {
 ];
 
 /**
- * Colour bodies drifting behind the page. Kept low-opacity and heavily
- * blurred so they tint the black rather than read as shapes.
+ * Colour bodies. Alpha is high enough to survive the 70px blur — the earlier
+ * pass sat around 0.12, which after blurring resolved to roughly two levels
+ * of blue on black and read as nothing at all.
  */
 const AURORAS: { className: string; rgb: string; alpha: number }[] = [
   {
     className: "aurora-a left-[-14%] top-[-8%] h-[620px] w-[720px]",
     rgb: "var(--aurora-1)",
-    alpha: 0.16,
+    alpha: 0.42,
   },
   {
-    className: "aurora-b right-[-16%] top-[22%] h-[560px] w-[660px]",
+    className: "aurora-b right-[-16%] top-[18%] h-[560px] w-[660px]",
     rgb: "var(--aurora-2)",
-    alpha: 0.12,
+    alpha: 0.3,
   },
   {
-    className: "aurora-c left-[8%] top-[58%] h-[600px] w-[700px]",
+    className: "aurora-c left-[4%] top-[40%] h-[600px] w-[700px]",
     rgb: "var(--aurora-3)",
-    alpha: 0.13,
+    alpha: 0.34,
   },
   {
-    className: "aurora-b right-[-10%] top-[80%] h-[520px] w-[620px]",
+    className: "aurora-b right-[-10%] top-[62%] h-[560px] w-[640px]",
     rgb: "var(--aurora-1)",
-    alpha: 0.1,
+    alpha: 0.32,
   },
+  {
+    className: "aurora-a left-[-8%] top-[84%] h-[520px] w-[620px]",
+    rgb: "var(--aurora-3)",
+    alpha: 0.26,
+  },
+];
+
+/** Wide sheets of light crossing the page, on periods that never align. */
+const BANDS: { top: string; height: string; rgb: string; alpha: number; t: number; d: number }[] = [
+  { top: "0%", height: "70%", rgb: "var(--aurora-1)", alpha: 0.16, t: 17, d: 0 },
+  { top: "38%", height: "60%", rgb: "var(--aurora-2)", alpha: 0.12, t: 23, d: -9 },
+  { top: "70%", height: "60%", rgb: "var(--aurora-3)", alpha: 0.13, t: 29, d: -5 },
 ];
 
 export default function Backdrop() {
@@ -68,14 +86,34 @@ export default function Backdrop() {
           }}
         />
       ))}
+
+      {BANDS.map((b, i) => (
+        <div
+          key={`band-${i}`}
+          className="absolute inset-x-0 overflow-hidden"
+          style={{ top: b.top, height: b.height }}
+        >
+          <div
+            className="glow-band"
+            style={
+              {
+                "--t": `${b.t}s`,
+                "--d": `${b.d}s`,
+                background: `linear-gradient(90deg, transparent, rgba(${b.rgb}, ${b.alpha}), transparent)`,
+              } as React.CSSProperties
+            }
+          />
+        </div>
+      ))}
+
       {PATCHES.map((p, i) => (
         <div
           key={i}
           className={`absolute ${p.className} [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,black,transparent_74%)]`}
         >
-          {/* base grid: breathes and crawls */}
+          {/* base grid: breathes and crawls (one declaration — see globals) */}
           <div
-            className="dot-field dots-breathe dots-crawl absolute inset-0"
+            className="dot-field dots-live absolute inset-0"
             style={
               {
                 "--o": p.o,
@@ -86,7 +124,7 @@ export default function Backdrop() {
           />
           {/* bright grid: revealed by the travelling band of light */}
           <div
-            className="dot-field-bright dots-sweep dots-crawl absolute inset-0"
+            className="dot-field-bright dots-sweep absolute inset-0"
             style={
               {
                 "--sweep": `${p.sweep}s`,

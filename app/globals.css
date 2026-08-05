@@ -606,21 +606,63 @@ details[open] .faq-mark {
   }
 }
 
+/* Brightness is read far faster than position: a blob drifting 12px/s is
+   perceptually static, the same blob getting brighter and dimmer is not. So
+   every body runs a drift AND a glow, on different periods, so the pair never
+   lines up and the field is always changing somewhere. */
+@keyframes aurora-glow {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 .aurora {
   position: absolute;
   border-radius: 50%;
-  filter: blur(90px);
-  will-change: transform;
+  filter: blur(70px);
+  will-change: transform, opacity;
 }
 
 .aurora-a {
-  animation: aurora-a 37s ease-in-out infinite;
+  animation:
+    aurora-a 19s ease-in-out infinite,
+    aurora-glow 11s ease-in-out infinite;
 }
 .aurora-b {
-  animation: aurora-b 43s ease-in-out infinite;
+  animation:
+    aurora-b 23s ease-in-out infinite,
+    aurora-glow 13s ease-in-out -4s infinite;
 }
 .aurora-c {
-  animation: aurora-c 53s ease-in-out infinite;
+  animation:
+    aurora-c 29s ease-in-out infinite,
+    aurora-glow 17s ease-in-out -7s infinite;
+}
+
+/* A wide, soft band of coloured light crossing the page. This is the piece
+   you actually catch moving — it travels a full screen width, so it has the
+   page edges as a reference and reads as motion rather than as a tint. */
+@keyframes glow-sweep {
+  0% {
+    transform: translate3d(-70%, 0, 0) rotate(12deg);
+  }
+  100% {
+    transform: translate3d(170%, 0, 0) rotate(12deg);
+  }
+}
+
+.glow-band {
+  position: absolute;
+  top: -20%;
+  height: 140%;
+  width: 34%;
+  filter: blur(46px);
+  will-change: transform;
+  animation: glow-sweep var(--t, 16s) linear var(--d, 0s) infinite;
 }
 
 /* Brighter grid for the backdrop layers — the base .dot-field reads as
@@ -644,9 +686,15 @@ details[open] .faq-mark {
   }
 }
 
-.dots-breathe {
-  animation: dots-breathe var(--t, 8s) ease-in-out infinite;
-  animation-delay: var(--d, 0ms);
+/* NOTE: two classes that each set the `animation` shorthand cannot be
+   composed on one element — the one declared later in this file wins outright
+   and the other never runs. The dot layers need breathe AND crawl (and sweep
+   AND crawl), so each pairing is one declaration with a comma-separated list.
+   Animating different properties, they stack instead of cancelling. */
+.dots-live {
+  animation:
+    dots-breathe var(--t, 8s) ease-in-out var(--d, 0ms) infinite,
+    dots-crawl 8s linear infinite;
 }
 
 /* One grid cell per cycle so the loop is seamless; fast enough to see. */
@@ -656,9 +704,6 @@ details[open] .faq-mark {
   }
 }
 
-.dots-crawl {
-  animation: dots-crawl 8s linear infinite;
-}
 
 /* A band of light sweeping through the dots — the clearly-visible layer.
    The band is a mask over a brighter dot grid, travelling corner to corner. */
@@ -685,8 +730,9 @@ details[open] .faq-mark {
   mask-size: 260% 100%;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
-  animation: dots-sweep var(--sweep, 7s) linear infinite;
-  animation-delay: var(--d, 0ms);
+  animation:
+    dots-sweep var(--sweep, 7s) linear var(--d, 0ms) infinite,
+    dots-crawl 8s linear infinite;
 }
 
 /* Orbit rings. Counter-rotation on children keeps wordmarks upright. */
@@ -731,14 +777,11 @@ details[open] .faq-mark {
   .orbit-item,
   .progress-x,
   .stage-in,
-  .dots-breathe,
-  .dots-crawl,
+  .dots-live,
   .dots-sweep,
-  .aurora-a,
-  .aurora-b,
-  .aurora-c,
   .float-y,
   .orbit-tile,
+  .glow-band,
   .aurora,
   .aurora-a,
   .aurora-b,
@@ -750,6 +793,15 @@ details[open] .faq-mark {
     clip-path: none !important;
     filter: none !important;
     transform: none !important;
+  }
+
+  /* The blur is the aurora's form, not its motion — stripping it would leave
+     hard-edged circles on the page. Keep it, drop only the movement. */
+  .aurora {
+    filter: blur(70px) !important;
+  }
+  .glow-band {
+    display: none;
   }
 }
 
