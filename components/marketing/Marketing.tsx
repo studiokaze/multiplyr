@@ -1,4 +1,5 @@
 import Backdrop from "./Backdrop";
+import ClosingCta from "./ClosingCta";
 import Faq from "./Faq";
 import Features from "./Features";
 import Footer from "./Footer";
@@ -44,6 +45,7 @@ export default function Marketing() {
         <Orbit />
         <Pricing />
         <Faq />
+        <ClosingCta />
         <Footer />
       </main>
     </div>
