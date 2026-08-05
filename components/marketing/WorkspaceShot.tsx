@@ -113,7 +113,7 @@ export default function WorkspaceShot() {
             </div>
           </div>
 
-          <div className="px-3 py-2.5">
+          <div className="border-b border-rule px-3 py-2.5">
             <div className="flex items-center gap-1.5">
               <span className="h-[4px] w-[4px] rounded-full bg-ink" />
               <span className="font-mono text-[8px] uppercase tracking-[0.09em] text-ink-faint">
@@ -126,6 +126,19 @@ export default function WorkspaceShot() {
               <p>&gt; wrote README.md</p>
               <p>&gt; done, 2 files generated</p>
             </div>
+          </div>
+
+          <div className="px-3 py-2.5">
+            <div className="flex items-center gap-1.5">
+              <span className="h-[4px] w-[4px] rounded-full bg-ink" />
+              <span className="font-mono text-[8px] uppercase tracking-[0.09em] text-ink-faint">
+                06
+              </span>
+              <span className="text-[9.5px] font-medium text-ink">Market</span>
+            </div>
+            <p className="mt-1 pl-[14px] text-[9px] text-ink-soft">
+              3 posts drafted · X, LinkedIn, r/freelance
+            </p>
           </div>
         </div>
 
