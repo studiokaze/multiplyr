@@ -2,15 +2,13 @@ import { RELEASES_PUBLISHED, GITHUB_REPO } from "@/lib/downloads";
 
 /**
  * Pricing. Credits are the unit because a run's cost is dominated by model
- * usage, and the stages differ wildly in what they consume: a research
- * pass with live web search costs far more than a brainstorm.
+ * usage. Copy is kept to the minimum a card needs: name, price, four lines.
  */
 
 type Plan = {
   name: string;
   price: string;
   cadence: string;
-  blurb: string;
   features: string[];
   popular?: boolean;
 };
@@ -20,48 +18,44 @@ const PLANS: Plan[] = [
     name: "Free",
     price: "$0",
     cadence: "forever",
-    blurb: "Enough to take one real idea through the whole pipeline.",
     features: [
       "$5 in credits, once",
-      "All six agents, no stages held back",
-      "Bring your own Anthropic key for unlimited runs",
-      "Every generated file is yours to keep",
+      "All six agents",
+      "Bring your own key",
+      "Your files, yours",
     ],
   },
   {
     name: "Plus",
     price: "$14",
     cadence: "per month",
-    blurb: "For validating a steady stream of ideas.",
     popular: true,
     features: [
       "$14 in credits monthly",
-      "Run history kept across sessions",
-      "Longer research passes and larger builds",
-      "Priority model capacity",
+      "Run history",
+      "Longer research passes",
+      "Priority capacity",
     ],
   },
   {
     name: "Pro",
     price: "$29",
     cadence: "per month",
-    blurb: "For people shipping, not just exploring.",
     features: [
       "$29 in credits monthly",
-      "Deeper simulation panels",
-      "Multi-file builds beyond one screen",
-      "Export a run as a brief",
+      "Deeper simulations",
+      "Larger builds",
+      "Export runs as briefs",
     ],
   },
   {
     name: "Max",
     price: "$99",
     cadence: "per month",
-    blurb: "For teams putting every idea through the gate.",
     features: [
       "$99 in credits monthly",
-      "Highest model tier on every stage",
-      "Seats for the whole team",
+      "Highest model tier",
+      "Team seats",
       "Direct support",
     ],
   },
@@ -105,9 +99,8 @@ export default function Pricing() {
           <h2 className="display mx-auto text-[1.75rem] sm:text-[2.5rem]">
             Pricing
           </h2>
-          <p className="mx-auto mt-4 max-w-[42ch] text-[14.5px] leading-[1.65] text-chalk-soft">
-            Start free. Credits cover the model usage a run consumes, and you
-            can always point the app at your own Anthropic key instead.
+          <p className="mx-auto mt-4 text-[14.5px] text-chalk-soft">
+            Start free. Or run on your own Anthropic key.
           </p>
         </div>
 
@@ -115,10 +108,10 @@ export default function Pricing() {
           {PLANS.map((p) => (
             <article
               key={p.name}
-              className={`relative flex flex-col rounded-[18px] border p-6 transition-colors duration-200 ${
+              className={`plan-card relative flex flex-col rounded-[18px] border p-6 ${
                 p.popular
                   ? "border-edge-strong bg-void-3"
-                  : "border-edge bg-void-2 hover:border-edge-strong"
+                  : "border-edge bg-void-2"
               }`}
             >
               <div className="flex items-center justify-between">
@@ -139,13 +132,9 @@ export default function Pricing() {
                 </span>
               </p>
 
-              <p className="mt-3 min-h-[2.6rem] text-[12.5px] leading-[1.55] text-chalk-soft">
-                {p.blurb}
-              </p>
-
               <a
                 href={cta}
-                className={`spring-hover mt-5 flex items-center justify-center gap-2 rounded-[10px] px-4 py-2.5 text-[13px] font-medium ${
+                className={`spring-hover mt-6 flex items-center justify-center gap-2 rounded-[10px] px-4 py-2.5 text-[13px] font-medium ${
                   p.popular
                     ? "bg-chalk text-void"
                     : "border border-edge-strong text-chalk-soft hover:text-chalk"
@@ -171,10 +160,8 @@ export default function Pricing() {
           ))}
         </div>
 
-        <p className="mt-8 text-center text-[12px] leading-[1.6] text-chalk-faint">
-          Credits are consumed by model usage, so a research-heavy run costs
-          more than a quick one. Paid plans are not live yet; the app is free to
-          download and runs on your own key today.
+        <p className="mt-8 text-center text-[12px] text-chalk-faint">
+          Paid plans are not live yet. The app is free on your own key today.
         </p>
       </div>
     </section>

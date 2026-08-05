@@ -5,7 +5,6 @@ import Features from "./Features";
 import Footer from "./Footer";
 import Hero from "./Hero";
 import MarketingNav from "./MarketingNav";
-import Orbit from "./Orbit";
 import Pricing from "./Pricing";
 import WorkspaceShot from "./WorkspaceShot";
 
@@ -18,14 +17,8 @@ export default function Marketing() {
     <div id="top" className="marketing relative flex-1 overflow-x-clip">
       <MarketingNav />
 
-      {/* Living backdrop across the whole page, then the hero's own light. */}
+      {/* Pitch black page; the backdrop's motion is the only thing on it. */}
       <Backdrop />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-[780px]"
-      >
-        <div className="hero-glow absolute inset-0" />
-      </div>
 
       <main className="relative">
         <Hero />
@@ -42,7 +35,6 @@ export default function Marketing() {
         </section>
 
         <Features />
-        <Orbit />
         <Pricing />
         <Faq />
         <ClosingCta />

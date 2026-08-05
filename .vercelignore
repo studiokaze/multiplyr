@@ -1,0 +1,14 @@
+# Electron packaging output — hundreds of MB of installers that have nothing
+# to do with the web deploy, and individually blow past Vercel's 100 MB file
+# limit. Releases are served from GitHub, not from here.
+dist
+dist-*
+build
+
+# Built locally; Vercel builds its own.
+.next
+out
+node_modules
+
+# Desktop-only surface
+electron

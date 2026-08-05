@@ -31,9 +31,11 @@
     centred, one bright call to action. These tokens are used only under
     .marketing so the app's light surface is untouched.
   */
-  --void: #08080a;
-  --void-2: #0d0d10;
-  --void-3: #131317;
+  /* True black. Cards keep two barely-lifted steps so they separate from the
+     page without reintroducing a grey wash. */
+  --void: #000000;
+  --void-2: #0a0a0c;
+  --void-3: #101014;
   --chalk: #f6f5f2;
   --chalk-soft: #a2a19c;
   --chalk-faint: #6b6a66;
@@ -509,18 +511,6 @@ details[open] .faq-mark {
   animation-delay: var(--d, 0ms);
 }
 
-/* Orbit tiles lift out of the ring on hover. */
-.orbit-tile {
-  transition:
-    transform 300ms var(--ease-spring),
-    border-color 220ms var(--ease-house);
-}
-
-.orbit-tile:hover {
-  transform: scale(1.08);
-  border-color: rgba(255, 255, 255, 0.28);
-}
-
 /* --------------------------------------------------------------------------
    Feature rotation — the active feature's progress line fills linearly over
    the rotation period, then the stage swaps with a short rise.
@@ -735,36 +725,6 @@ details[open] .faq-mark {
     dots-crawl 8s linear infinite;
 }
 
-/* Orbit rings. Counter-rotation on children keeps wordmarks upright. */
-@keyframes orbit-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.orbit-ring {
-  animation: orbit-spin var(--orbit-t, 60s) linear infinite;
-}
-
-.orbit-item {
-  animation: orbit-spin var(--orbit-t, 60s) linear infinite reverse;
-}
-
-/* The live station's ring. Slow and low-contrast: a pulse, not a beacon. */
-@keyframes halo {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 var(--signal-dim);
-  }
-  50% {
-    box-shadow: 0 0 0 7px transparent;
-  }
-}
-
-.halo {
-  animation: halo 2.6s ease-in-out infinite;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .enter,
   .fill-y,
@@ -772,15 +732,11 @@ details[open] .faq-mark {
   .type-line,
   .caret,
   .spring-hover,
-  .halo,
-  .orbit-ring,
-  .orbit-item,
   .progress-x,
   .stage-in,
   .dots-live,
   .dots-sweep,
   .float-y,
-  .orbit-tile,
   .glow-band,
   .aurora,
   .aurora-a,
@@ -815,21 +771,24 @@ details[open] .faq-mark {
   background-size: 22px 22px;
 }
 
-/* The light behind the headline: mostly white with a faint amber undertone —
-   our signal colour warming the source, which is the site's signature and a
-   deliberate step away from the references' pure-neutral glows. */
-.hero-glow {
-  background:
-    radial-gradient(
-      ellipse 44% 36% at 50% 0%,
-      rgba(233, 180, 76, 0.07),
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 60% 50% at 50% 0%,
-      rgba(255, 255, 255, 0.08),
-      transparent 70%
-    );
+/* Choosing a plan highlights the whole card, not just its edge: the border
+   brightens, the surface lifts a step, an aurora-tinted glow fills the card
+   from the top, and the card itself rises. */
+.plan-card {
+  transition:
+    transform 260ms var(--ease-house),
+    border-color 260ms var(--ease-house),
+    background-color 260ms var(--ease-house),
+    box-shadow 260ms var(--ease-house);
+}
+.plan-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.22);
+  background-color: var(--void-3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 1px rgba(var(--aurora-1), 0.14),
+    0 24px 70px -30px rgba(var(--aurora-1), 0.45);
 }
 
 /* Hairline that fades out at both ends, so section breaks do not read as

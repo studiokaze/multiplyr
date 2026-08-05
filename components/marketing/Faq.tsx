@@ -6,27 +6,27 @@
 const QA: { q: string; a: string }[] = [
   {
     q: "What is Multiplyer?",
-    a: "A desktop workspace that takes an idea through six agents in order (brainstorm, research, market analysis, simulation, build, marketing) so the thing that gets built is the version of the idea the earlier stages justified.",
+    a: "A desktop workspace that runs your idea through six agents in order — brainstorm, research, analysis, simulation, build, marketing — so what gets built is the version the earlier stages justified.",
   },
   {
     q: "How is it different from other AI builders?",
-    a: "Most builders go straight from your prompt to code. Multiplyer does the work you would do before writing code: sharpening the framing, checking who else exists, weighing demand, pressure-testing on your segment. It carries that context into the build, in one place.",
+    a: "Most builders go straight from prompt to code. Multiplyer does the thinking first, and carries it into the build.",
   },
   {
     q: "What do I need to run it?",
-    a: "Your own Anthropic API key. The app asks for it on first launch and stores it in your operating system's keychain. Nothing is bundled in the binary.",
+    a: "Your own Anthropic API key. It is stored in your OS keychain, never in the binary.",
   },
   {
     q: "What does it cost?",
-    a: "The app is a free download. You pay Anthropic directly for the model usage your runs consume. There is no markup and no subscription.",
+    a: "The app is free. You pay Anthropic directly for what your runs consume. No markup.",
   },
   {
     q: "Where does my idea go?",
-    a: "To Anthropic's API, and nowhere else. There is no account, no server of ours in the middle, and no analytics on what you type. Session state lives in your browser storage.",
+    a: "To Anthropic's API and nowhere else. No account, no middleman server, no analytics.",
   },
   {
     q: "Which platforms are supported?",
-    a: "Windows, macOS (Apple silicon and Intel) and Linux, as direct downloads. Builds are produced in public by GitHub Actions from tagged commits.",
+    a: "Windows, macOS and Linux, built in public by GitHub Actions.",
   },
 ];
 

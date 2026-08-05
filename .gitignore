@@ -47,3 +47,5 @@ next-env.d.ts
 
 # desktop build output
 /dist*
+
+.vercel
