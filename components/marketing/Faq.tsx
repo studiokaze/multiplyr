@@ -40,22 +40,27 @@ export default function Faq() {
           </h2>
         </div>
 
-        <div className="mt-10 grid gap-px overflow-hidden rounded-[14px] border border-edge bg-edge">
+        <div className="sheen relative mt-10 grid gap-px overflow-hidden rounded-[14px] border border-edge bg-edge" style={{ "--t": "11s" } as React.CSSProperties}>
           {QA.map(({ q, a }) => (
             <details key={q} className="group bg-void-2">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-6 px-6 py-5 text-[15px] font-medium text-chalk-soft hover:bg-void-3 hover:text-chalk [&::-webkit-details-marker]:hidden group-open:text-chalk">
                 {q}
                 <span
                   aria-hidden="true"
-                  className="relative h-3 w-3 shrink-0 text-chalk-faint"
+                  className="faq-mark relative h-3 w-3 shrink-0 text-chalk-faint"
                 >
                   <span className="absolute left-0 top-1/2 h-px w-full bg-current" />
-                  <span className="absolute left-1/2 top-0 h-full w-px bg-current transition-transform duration-200 group-open:scale-y-0" />
+                  <span className="absolute left-1/2 top-0 h-full w-px bg-current transition-transform duration-300 group-open:scale-y-0" />
                 </span>
               </summary>
-              <p className="px-6 pb-6 text-[14px] leading-[1.65] text-chalk-soft">
-                {a}
-              </p>
+              {/* grid 0fr -> 1fr so the row eases open without measuring height */}
+              <div className="faq-body">
+                <div>
+                  <p className="faq-answer px-6 pb-6 text-[14px] leading-[1.65] text-chalk-soft">
+                    {a}
+                  </p>
+                </div>
+              </div>
             </details>
           ))}
         </div>

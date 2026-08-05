@@ -391,6 +391,82 @@ body {
   animation: pulse-glow 2.4s ease-in-out infinite;
 }
 
+/* --------------------------------------------------------------------------
+   FAQ disclosure. <details> has no open transition of its own, so the answer
+   is wrapped and animated on open. grid-template-rows 0fr -> 1fr is the one
+   way to ease to an unknown content height without measuring it in JS.
+   -------------------------------------------------------------------------- */
+
+.faq-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 320ms var(--ease-house);
+}
+
+details[open] .faq-body {
+  grid-template-rows: 1fr;
+}
+
+.faq-body > * {
+  overflow: hidden;
+}
+
+/* The answer text drifts up slightly behind the row opening. */
+details[open] .faq-answer {
+  animation: faq-answer 380ms var(--ease-house) both;
+  animation-delay: 60ms;
+}
+
+@keyframes faq-answer {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The +/- marker rotates as the row opens. */
+.faq-mark {
+  transition: transform 320ms var(--ease-house);
+}
+
+details[open] .faq-mark {
+  transform: rotate(90deg);
+}
+
+/* --------------------------------------------------------------------------
+   Section-wide ambient motion: a slow sheen that travels across a surface.
+   Used on the feature stage and the FAQ block so no region of the page is
+   completely inert.
+   -------------------------------------------------------------------------- */
+
+@keyframes sheen {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(220%);
+  }
+}
+
+.sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.045) 50%,
+    transparent 65%
+  );
+  animation: sheen var(--t, 9s) linear infinite;
+  animation-delay: var(--d, 0ms);
+}
+
 /* Orbit tiles lift out of the ring on hover. */
 .orbit-tile {
   transition:
