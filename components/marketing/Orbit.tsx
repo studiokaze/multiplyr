@@ -1,3 +1,4 @@
+import { MarkGlyph } from "./Mark";
 import { STACK_TILES } from "./stack";
 
 /**
@@ -91,21 +92,7 @@ export default function Orbit() {
 
           {/* our tile, centre */}
           <div className="relative z-10 flex h-[88px] w-[88px] items-center justify-center rounded-[22px] border border-white/10 bg-[#141418] shadow-[0_30px_80px_-16px_rgba(0,0,0,0.95)]">
-            <svg width="36" height="36" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path
-                d="M2.5 3.5L6.5 8L2.5 12.5"
-                stroke="#f6f5f2"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M8.5 12.5H13.5"
-                stroke="#e9b44c"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            </svg>
+            <MarkGlyph size={44} className="text-chalk" />
           </div>
         </div>
       </div>

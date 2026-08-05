@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { MarkGlyph } from "@/components/marketing/Mark";
 
 /**
  * Desktop-only onboarding. The Electron main process loads this route on
@@ -79,22 +80,7 @@ export default function Welcome() {
     <main className="flex flex-1 items-center justify-center bg-paper px-6 py-12">
       <div className="w-full max-w-[30rem]">
         <div className="flex items-center gap-2.5">
-          <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <path
-              d="M2.5 3.5L6.5 8L2.5 12.5"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-ink"
-            />
-            <path
-              d="M8.5 12.5H13.5"
-              stroke="#e9b44c"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-            />
-          </svg>
+          <MarkGlyph size={22} className="text-ink" />
           <span className="text-[14px] font-medium tracking-tight text-ink">
             Multiplyer
           </span>

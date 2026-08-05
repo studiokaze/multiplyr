@@ -1,37 +1,61 @@
 /**
- * Wordmark. The glyph is two offset chevrons — the pipeline's fork between
- * build and kill — drawn rather than imported so it stays crisp at any size
- * and needs no asset pipeline.
+ * The Multiplyer mark: an isometric cube whose two front faces are cut into
+ * an M, with the lid separated by a hairline gap above it.
+ *
+ * Drawn rather than imported so it stays crisp at any size, needs no asset
+ * pipeline, and recolours with currentColor on every surface.
  */
-export default function Mark({ className = "" }: { className?: string }) {
+
+/** Lid: the isometric rhombus, floating just above the body. */
+const LID = "M32 2 L58 16 L32 30 L6 16 Z";
+
+/**
+ * Body: left face, a valley cut up the middle to form the M, right face.
+ * (32,34) is the cube's front vertical edge and the two feet are angled, so
+ * the solid reads as isometric rather than as a flat letter.
+ */
+const BODY =
+  "M6 20 L6 44 L16 49.5 L16 34 L32 43 L48 34 L48 49.5 L58 44 L58 20 L32 34 Z";
+
+export function MarkGlyph({
+  size = 20,
+  className = "",
+}: {
+  size?: number;
+  className?: string;
+}) {
   return (
-    <span className={`flex items-center gap-2 ${className}`}>
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 16 16"
-        fill="none"
-        aria-hidden="true"
-        className="shrink-0"
-      >
-        <path
-          d="M2.5 3.5L6.5 8L2.5 12.5"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M8.5 12.5H13.5"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-          opacity="0.55"
-        />
-      </svg>
-      <span className="text-[13.5px] font-medium tracking-[-0.01em]">
-        Multiplyer
-      </span>
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 64 64"
+      fill="currentColor"
+      aria-hidden="true"
+      className={`shrink-0 ${className}`}
+    >
+      <path d={LID} />
+      <path d={BODY} />
+    </svg>
+  );
+}
+
+export default function Mark({
+  className = "",
+  size = 20,
+  wordmark = true,
+}: {
+  className?: string;
+  size?: number;
+  wordmark?: boolean;
+}) {
+  return (
+    <span className={`flex items-center gap-2.5 ${className}`}>
+      <MarkGlyph size={size} />
+      {wordmark && (
+        <span className="text-[13.5px] font-medium tracking-[-0.01em]">
+          Multiplyer
+        </span>
+      )}
     </span>
   );
 }

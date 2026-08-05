@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { DOWNLOADS, GITHUB_REPO, RELEASES_PUBLISHED } from "@/lib/downloads";
 import { Glyph, usePlatform } from "./DownloadCTA";
-import Mark from "./Mark";
+import { MarkGlyph } from "./Mark";
 
 const LINKS = [
   { label: "Features", href: "#features" },
@@ -38,8 +38,13 @@ export default function MarketingNav() {
             : "border-transparent bg-transparent"
         }`}
       >
-        <a href="#top" className="text-chalk">
-          <Mark />
+        {/* mark alone in the bar — the wordmark is the hero's job */}
+        <a
+          href="#top"
+          aria-label="Multiplyer, back to top"
+          className="text-chalk transition-opacity duration-200 hover:opacity-80"
+        >
+          <MarkGlyph size={24} />
         </a>
 
         <div className="hidden items-center gap-7 md:flex">

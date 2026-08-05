@@ -57,7 +57,7 @@ export default function Footer() {
       <div className="relative mx-auto max-w-[68rem]">
         <div className="grid gap-12 lg:grid-cols-[1.2fr_repeat(3,minmax(0,1fr))] lg:gap-8">
           <div>
-            <Mark className="text-chalk" />
+            <Mark className="text-chalk" size={26} />
             <p className="mt-3 max-w-[24ch] text-[13.5px] leading-[1.6] text-chalk-soft">
               Validate first. Build once.
             </p>
