@@ -1,6 +1,6 @@
 {
   "name": "multiplyer",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": true,
   "description": "An AI app builder that validates the market before it writes code.",
   "author": "Multiplyer",
