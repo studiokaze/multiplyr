@@ -1,9 +1,12 @@
 /**
  * Generates build/icon.png (512x512 RGBA) — the app icon electron-builder
  * converts into .ico/.icns at package time. Hand-rolled PNG encoder over
- * node:zlib so the repo needs no image tooling: the mark is rasterised
- * analytically (signed distances + 1px antialiasing), matching the site's
- * chevron glyph on the dark tile.
+ * node:zlib so the repo needs no image tooling.
+ *
+ * The mark is the same two polygons the site draws (lid + M-cut body), given
+ * here in the 64-unit viewBox so the two can never drift apart. Filled by
+ * point-in-polygon with 4x4 supersampling, which is simpler and more faithful
+ * for solid shapes than the signed-distance approach the old chevron needed.
  *
  * Run: node scripts/make-icon.mjs
  */
@@ -16,43 +19,71 @@ const SIZE = 512;
 // ---- colours ---------------------------------------------------------------
 
 const BG = [11, 11, 13]; // #0b0b0d — the tile
-const CHEVRON = [246, 245, 242]; // chalk
-const DASH = [233, 180, 76]; // signal amber
+const MARK = [246, 245, 242]; // chalk
 
-// ---- geometry (scaled from the 16px viewBox of the site's Mark) ------------
+// ---- geometry --------------------------------------------------------------
 
-const S = SIZE / 16;
-const STROKE = 1.7 * S; // stroke width
 const RADIUS = SIZE * 0.225; // tile corner radius
+const INSET = 0.78; // mark occupies 78% of the tile, centred
 
-const CHEVRON_SEGS = [
-  [3.1 * S, 4.1 * S, 7.1 * S, 8.0 * S],
-  [7.1 * S, 8.0 * S, 3.1 * S, 11.9 * S],
+/** Lid, then body — identical to components/marketing/Mark.tsx. */
+const POLYS_64 = [
+  [
+    [32, 2],
+    [58, 16],
+    [32, 30],
+    [6, 16],
+  ],
+  [
+    [6, 20],
+    [6, 44],
+    [16, 49.5],
+    [16, 34],
+    [32, 43],
+    [48, 34],
+    [48, 49.5],
+    [58, 44],
+    [58, 20],
+    [32, 34],
+  ],
 ];
-const DASH_SEG = [9.0 * S, 11.9 * S, 13.1 * S, 11.9 * S];
 
-// ---- signed distances ------------------------------------------------------
+/** 64-unit space -> pixel space, scaled about the tile centre. */
+const K = (SIZE / 64) * INSET;
+const OFF = SIZE / 2 - 32 * K;
+const POLYS = POLYS_64.map((poly) =>
+  poly.map(([x, y]) => [x * K + OFF, y * K + OFF]),
+);
 
-function distToSegment(px, py, x1, y1, x2, y2) {
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-  const lengthSq = dx * dx + dy * dy;
-  const t = Math.max(
-    0,
-    Math.min(1, ((px - x1) * dx + (py - y1) * dy) / lengthSq),
-  );
-  const cx = x1 + t * dx;
-  const cy = y1 + t * dy;
-  return Math.hypot(px - cx, py - cy);
+/** Standard ray-casting test. */
+function pointInPolygon(px, py, poly) {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, yi] = poly[i];
+    const [xj, yj] = poly[j];
+    if (
+      yi > py !== yj > py &&
+      px < ((xj - xi) * (py - yi)) / (yj - yi) + xi
+    ) {
+      inside = !inside;
+    }
+  }
+  return inside;
 }
 
-/** Coverage of a round-capped stroke at this pixel, with a 1px AA band. */
-function strokeCoverage(px, py, segs) {
-  let d = Infinity;
-  for (const [x1, y1, x2, y2] of segs) {
-    d = Math.min(d, distToSegment(px, py, x1, y1, x2, y2));
+const SS = 4; // supersample grid per axis
+
+/** Coverage of the mark at this pixel, 4x4 supersampled for clean edges. */
+function markCoverage(x, y) {
+  let hits = 0;
+  for (let sy = 0; sy < SS; sy++) {
+    for (let sx = 0; sx < SS; sx++) {
+      const px = x + (sx + 0.5) / SS;
+      const py = y + (sy + 0.5) / SS;
+      if (POLYS.some((poly) => pointInPolygon(px, py, poly))) hits++;
+    }
   }
-  return Math.max(0, Math.min(1, STROKE / 2 + 0.5 - d));
+  return hits / (SS * SS);
 }
 
 /** Coverage of the rounded-square tile. */
@@ -79,18 +110,11 @@ for (let y = 0; y < SIZE; y++) {
     let g = BG[1];
     let b = BG[2];
 
-    const chev = strokeCoverage(px, py, CHEVRON_SEGS);
-    if (chev > 0) {
-      r = r + (CHEVRON[0] - r) * chev;
-      g = g + (CHEVRON[1] - g) * chev;
-      b = b + (CHEVRON[2] - b) * chev;
-    }
-
-    const dash = strokeCoverage(px, py, [DASH_SEG]);
-    if (dash > 0) {
-      r = r + (DASH[0] - r) * dash;
-      g = g + (DASH[1] - g) * dash;
-      b = b + (DASH[2] - b) * dash;
+    const cov = markCoverage(x, y);
+    if (cov > 0) {
+      r = r + (MARK[0] - r) * cov;
+      g = g + (MARK[1] - g) * cov;
+      b = b + (MARK[2] - b) * cov;
     }
 
     const i = (y * SIZE + x) * 4;

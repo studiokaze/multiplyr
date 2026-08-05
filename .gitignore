@@ -18,7 +18,10 @@
 /out/
 
 # production
-/build
+# /build/* not /build — Git cannot re-include a file whose parent directory is
+# itself excluded, so excluding the directory silently defeated the negation
+# below and shipped CI builds with the default Electron icon.
+/build/*
 # …except the app icon, which electron-builder needs in CI
 !/build/icon.png
 
