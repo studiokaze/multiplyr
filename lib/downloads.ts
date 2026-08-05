@@ -24,7 +24,7 @@ export const GITHUB_REPO =
  * "coming soon" instead of handing visitors a GitHub 404.
  */
 export const RELEASES_PUBLISHED =
-  process.env.NEXT_PUBLIC_RELEASES_PUBLISHED === "true";
+  process.env.NEXT_PUBLIC_RELEASES_PUBLISHED !== "false";
 
 const RELEASE_BASE = `https://github.com/${GITHUB_REPO}/releases/latest/download`;
 
