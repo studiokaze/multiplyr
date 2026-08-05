@@ -5,8 +5,13 @@
  *
  * Set NEXT_PUBLIC_GITHUB_REPO to "owner/repo" once the repo exists.
  */
+/**
+ * Public config, not a secret — defaulted in code rather than left to an
+ * env file. `.env.local` is gitignored, so anything that lives only there is
+ * missing from every deploy that is not this machine.
+ */
 export const GITHUB_REPO =
-  process.env.NEXT_PUBLIC_GITHUB_REPO ?? "your-org/multiplyr";
+  process.env.NEXT_PUBLIC_GITHUB_REPO ?? "studiokaze/multiplyr";
 
 /**
  * Whether installers are actually downloadable.
