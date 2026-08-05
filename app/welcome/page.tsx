@@ -20,7 +20,7 @@ type Bridge = {
 
 declare global {
   interface Window {
-    multiplyr?: Bridge;
+    multiplyer?: Bridge;
   }
 }
 
@@ -40,7 +40,7 @@ export default function Welcome() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const b = window.multiplyr;
+    const b = window.multiplyer;
     if (!b) {
       // Not the desktop shell — this page has nothing for the web.
       window.location.replace("/");
@@ -58,7 +58,7 @@ export default function Welcome() {
   if (!bridge) return null;
 
   const menuName =
-    bridge.platform === "darwin" ? "the Multiplyr menu" : "the File menu";
+    bridge.platform === "darwin" ? "the Multiplyer menu" : "the File menu";
 
   const submit = async () => {
     const trimmed = key.trim();
@@ -95,7 +95,7 @@ export default function Welcome() {
             />
           </svg>
           <span className="text-[14px] font-medium tracking-tight text-ink">
-            Multiplyr
+            Multiplyer
           </span>
         </div>
 

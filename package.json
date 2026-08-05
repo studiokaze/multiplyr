@@ -1,13 +1,13 @@
 {
-  "name": "multiplyr",
+  "name": "multiplyer",
   "version": "0.1.0",
   "private": true,
   "description": "An AI app builder that validates the market before it writes code.",
-  "author": "Multiplyr",
+  "author": "Multiplyer",
   "// repository": "electron-builder reads this to publish releases. Update the URL and NEXT_PUBLIC_GITHUB_REPO together.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/studiokaze/multiplyr.git"
+    "url": "https://github.com/studiokaze/multiplyer.git"
   },
   "main": "electron/main.js",
   "scripts": {

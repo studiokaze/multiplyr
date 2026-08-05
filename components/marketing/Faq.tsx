@@ -5,12 +5,12 @@
 
 const QA: { q: string; a: string }[] = [
   {
-    q: "What is Multiplyr?",
+    q: "What is Multiplyer?",
     a: "A desktop workspace that takes an idea through five agents in order (brainstorm, research, market analysis, simulation, build) so the thing that gets built is the version of the idea the earlier stages justified.",
   },
   {
     q: "How is it different from other AI builders?",
-    a: "Most builders go straight from your prompt to code. Multiplyr does the work you would do before writing code: sharpening the framing, checking who else exists, weighing demand, pressure-testing on your segment. It carries that context into the build, in one place.",
+    a: "Most builders go straight from your prompt to code. Multiplyer does the work you would do before writing code: sharpening the framing, checking who else exists, weighing demand, pressure-testing on your segment. It carries that context into the build, in one place.",
   },
   {
     q: "What do I need to run it?",

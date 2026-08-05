@@ -241,7 +241,7 @@ export default function Features() {
       <div className="mx-auto max-w-[68rem]">
         <div className="mb-16 text-center">
           <h2 className="display mx-auto max-w-[20ch] text-[2rem] sm:text-[3rem]">
-            What can Multiplyr do for you?
+            What can Multiplyer do for you?
           </h2>
           <p className="mx-auto mt-4 max-w-[52ch] text-[15px] leading-[1.6] text-chalk-soft">
             Three things a chat window cannot: it checks the market before it

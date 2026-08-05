@@ -21,7 +21,7 @@ export default function ClosingCta() {
 
       <div className="relative mx-auto max-w-[62rem] text-center">
         <h2 className="display text-[2.25rem] text-chalk sm:text-[3.5rem]">
-          Try Multiplyr now.
+          Try Multiplyer now.
         </h2>
 
         <div className="mt-9 flex justify-center">

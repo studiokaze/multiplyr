@@ -30,7 +30,7 @@ export default function Mark({ className = "" }: { className?: string }) {
         />
       </svg>
       <span className="text-[13.5px] font-medium tracking-[-0.01em]">
-        Multiplyr
+        Multiplyer
       </span>
     </span>
   );

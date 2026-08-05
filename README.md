@@ -1,4 +1,4 @@
-# Multiplyr
+# Multiplyer
 
 An AI app builder with a validation pipeline in front of the code generation.
 
@@ -15,7 +15,7 @@ The web build and the desktop build are different products and look it:
 | Visual system | Near-black, centred, one bright CTA | Warm paper, hairline rules, instrument density |
 
 [`app/page.tsx`](app/page.tsx) is a **server component** that forks on
-`MULTIPLYR_DESKTOP`, which [`electron/main.js`](electron/main.js) sets when it
+`MULTIPLYER_DESKTOP`, which [`electron/main.js`](electron/main.js) sets when it
 starts the bundled server. The branch happens on the server, so the marketing
 bundle never ships inside the app — and someone who already installed it is
 never shown a download button.
@@ -90,8 +90,8 @@ Ships as a direct download — no Microsoft Store, no Mac App Store.
 
 ```bash
 npm run desktop      # build the standalone bundle and run it in Electron
-npm run dist:win     # → dist/Multiplyr-setup.exe
-npm run dist:mac     # → dist/Multiplyr-mac-arm64.dmg, dist/Multiplyr-mac-x64.dmg
+npm run dist:win     # → dist/Multiplyer-setup.exe
+npm run dist:mac     # → dist/Multiplyer-mac-arm64.dmg, dist/Multiplyer-mac-x64.dmg
 ```
 
 Windows and Linux installers can be produced on any machine; the macOS `.dmg`
@@ -112,8 +112,8 @@ installer that builds happily and then dies on the user's machine:
   which shipped an app that died instantly on `Cannot find module 'next'`.
 
 If the app ever fails to start, the shell writes the server's own output to
-`server.log` in the user-data directory (`%APPDATA%/Multiplyr` on Windows,
-`~/Library/Application Support/Multiplyr` on macOS) and names that path in the
+`server.log` in the user-data directory (`%APPDATA%/Multiplyer` on Windows,
+`~/Library/Application Support/Multiplyer` on macOS) and names that path in the
 error dialog.
 
 ### How it works
@@ -136,7 +136,7 @@ omits so you can host them on a CDN.
 | `/builder` | The three-pane run. |
 
 `/app` is a **separate route rather than a branch inside `/`** because `/` is
-statically prerendered: an `if (process.env.MULTIPLYR_DESKTOP)` check there is
+statically prerendered: an `if (process.env.MULTIPLYER_DESKTOP)` check there is
 evaluated at *build* time, not per request, so the desktop app was served
 whatever the build machine produced (in practice: the marketing page, inside
 the app). Two routes, two prerenders, no ambiguity.
@@ -149,7 +149,7 @@ before it is saved** (`GET /v1/models`, in the main process) — a typo is caugh
 immediately rather than surfacing as a failed run later. On success the server
 restarts with the key and the window lands on `/app`.
 
-Re-open it any time from **File → Anthropic API key…** (the **Multiplyr** menu
+Re-open it any time from **File → Anthropic API key…** (the **Multiplyer** menu
 on macOS — the onboarding copy adapts per platform). The same screen doubles as
 the change-key screen, so there is one surface, not two.
 
@@ -158,7 +158,7 @@ the change-key screen, so there is one surface, not two.
 **No key is ever baked into the binary** — anything shipped can be extracted
 from the package. On first launch the app asks for the user's own Anthropic key
 and stores it in `userData`, encrypted with the OS keychain via Electron's
-`safeStorage`. Change it later from the File menu ("Multiplyr" menu on macOS);
+`safeStorage`. Change it later from the File menu ("Multiplyer" menu on macOS);
 saving restarts the local server, since the key is read at boot.
 
 The renderer never gets the secret back — `key:get` returns a masked hint like

@@ -11,7 +11,7 @@
  * missing from every deploy that is not this machine.
  */
 export const GITHUB_REPO =
-  process.env.NEXT_PUBLIC_GITHUB_REPO ?? "studiokaze/multiplyr";
+  process.env.NEXT_PUBLIC_GITHUB_REPO ?? "studiokaze/multiplyer";
 
 /**
  * Whether installers are actually downloadable.
@@ -41,26 +41,26 @@ export const DOWNLOADS: Record<Exclude<Platform, "unknown">, Download[]> = {
     {
       label: "Download for Windows",
       sub: "64-bit installer · .exe",
-      href: `${RELEASE_BASE}/Multiplyr-setup.exe`,
+      href: `${RELEASE_BASE}/Multiplyer-setup.exe`,
     },
   ],
   mac: [
     {
       label: "Download for macOS",
       sub: "Apple silicon · .dmg",
-      href: `${RELEASE_BASE}/Multiplyr-mac-arm64.dmg`,
+      href: `${RELEASE_BASE}/Multiplyer-mac-arm64.dmg`,
     },
     {
       label: "Download for macOS",
       sub: "Intel · .dmg",
-      href: `${RELEASE_BASE}/Multiplyr-mac-x64.dmg`,
+      href: `${RELEASE_BASE}/Multiplyer-mac-x64.dmg`,
     },
   ],
   linux: [
     {
       label: "Download for Linux",
       sub: "x86_64 · AppImage",
-      href: `${RELEASE_BASE}/Multiplyr-linux-x86_64.AppImage`,
+      href: `${RELEASE_BASE}/Multiplyer-linux-x86_64.AppImage`,
     },
   ],
 };

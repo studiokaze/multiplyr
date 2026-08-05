@@ -64,7 +64,7 @@ function Workspace() {
             onClick={reset}
             className="shrink-0 text-[13px] font-medium tracking-tight text-ink"
           >
-            Multiplyr
+            Multiplyer
           </button>
           <span aria-hidden="true" className="h-3.5 w-px shrink-0 bg-rule" />
           <span className="truncate text-[12.5px] text-ink-soft">{idea}</span>
