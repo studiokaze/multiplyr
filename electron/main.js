@@ -354,15 +354,33 @@ ipcMain.handle("onboarding:skip", () => {
 // Boot
 // ---------------------------------------------------------------------------
 
+// multiplyer:// links (the web auth flow's way back into the app). On
+// Windows/Linux a protocol launch arrives as a second instance's argv; on
+// macOS as open-url. Either way: surface the window and land on the app.
+app.setAsDefaultProtocolClient("multiplyer");
+
+function focusApp() {
+  if (!mainWindow) return;
+  if (mainWindow.isMinimized()) mainWindow.restore();
+  mainWindow.focus();
+  mainWindow.loadURL(appUrl("/app"));
+}
+
 const singleInstance = app.requestSingleInstanceLock();
 if (!singleInstance) {
   app.quit();
 } else {
-  app.on("second-instance", () => {
+  app.on("second-instance", (_event, argv) => {
     if (mainWindow) {
       if (mainWindow.isMinimized()) mainWindow.restore();
       mainWindow.focus();
+      if (argv.some((a) => a.startsWith("multiplyer://"))) focusApp();
     }
+  });
+
+  app.on("open-url", (event) => {
+    event.preventDefault();
+    focusApp();
   });
 
   app.whenReady().then(async () => {

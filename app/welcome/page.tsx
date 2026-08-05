@@ -170,6 +170,23 @@ export default function Welcome() {
         <p className="mt-4 text-[11.5px] leading-[1.6] text-ink-faint">
           Change it any time from {menuName}, then Anthropic API key.
         </p>
+
+        {/* Account sign-in happens on the web; target=_blank routes through
+            the shell's window-open handler into the system browser, and the
+            done page bounces back via multiplyer://. */}
+        <div className="mt-8 border-t border-rule pt-5 text-center">
+          <a
+            href="https://multiplyer.vercel.app/auth?from=desktop"
+            target="_blank"
+            rel="noreferrer"
+            className="text-[12.5px] font-medium text-ink underline decoration-rule-strong underline-offset-4 transition-colors duration-150 hover:decoration-ink"
+          >
+            Sign in with an account instead
+          </a>
+          <p className="mt-1.5 text-[11px] text-ink-faint">
+            Finishes in your browser and brings you back here.
+          </p>
+        </div>
       </div>
     </main>
   );

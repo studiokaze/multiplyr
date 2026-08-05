@@ -40,11 +40,20 @@ win:
       arch: [x64]
   artifactName: Multiplyer-setup.exe
 
+# Assisted wizard: welcome page, pick-your-folder page with the copy
+# progress, then a finish page whose checkbox launches the app.
 nsis:
   oneClick: false
   perMachine: false
   allowToChangeInstallationDirectory: true
+  runAfterFinish: true
+  createDesktopShortcut: true
   shortcutName: Multiplyer
+
+# The web auth flow bounces back into the app via multiplyer:// links.
+protocols:
+  - name: Multiplyer
+    schemes: [multiplyer]
 
 mac:
   target:
