@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { hasProviders, jsonChat } from "@/lib/ai";
 
 /**
  * Single place to swap the model for every agent.
@@ -46,6 +47,22 @@ export async function structured<T>(opts: {
   schema: Anthropic.Tool["input_schema"];
   maxTokens?: number;
 }): Promise<T> {
+  // Production lane: Multiplyer's own providers (Groq/Gemini/OpenRouter).
+  // The Anthropic path below survives only as the dev-mock fallback.
+  if (hasProviders()) {
+    const user =
+      typeof opts.userContent === "string"
+        ? opts.userContent
+        : opts.userContent
+            .map((b) => ("text" in b ? (b.text as string) : ""))
+            .join("\n");
+    return jsonChat<T>({
+      system: `${opts.system}\n\nTask: ${opts.toolDescription}`,
+      user,
+      schema: opts.schema,
+      maxTokens: opts.maxTokens,
+    });
+  }
   const res = await anthropic().messages.create({
     model: MODEL,
     max_tokens: opts.maxTokens ?? 8000,

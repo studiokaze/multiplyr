@@ -21,7 +21,7 @@ const PLANS: Plan[] = [
     features: [
       "$5 in credits, once",
       "All six agents",
-      "Bring your own key",
+      "Managed models, zero setup",
       "Your files, yours",
     ],
   },
@@ -95,7 +95,7 @@ export default function Pricing() {
             Pricing
           </h2>
           <p className="mx-auto mt-4 text-[14.5px] text-chalk-soft">
-            Start free. Or run on your own Anthropic key.
+            Start free. Credits cover the model usage a run consumes.
           </p>
         </div>
 
@@ -156,7 +156,7 @@ export default function Pricing() {
         </div>
 
         <p className="mt-8 text-center text-[12px] text-chalk-faint">
-          Paid plans are not live yet. The app is free on your own key today.
+          Paid plans are not live yet. The app is free while we are early.
         </p>
       </div>
     </section>

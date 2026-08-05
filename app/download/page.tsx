@@ -14,7 +14,7 @@ import {
 export const metadata: Metadata = {
   title: "Download",
   description:
-    "Download the Multiplyer desktop app for macOS, Windows, and Linux. Free, runs on your own Anthropic key.",
+    "Download the Multiplyer desktop app for macOS, Windows, and Linux. Free, nothing to configure.",
   alternates: { canonical: "/download" },
 };
 
@@ -141,7 +141,7 @@ export default async function DownloadPage() {
               <div>
                 <h2 className="text-[16px] font-medium text-chalk">Desktop</h2>
                 <p className="mt-1.5 max-w-[44ch] text-[13.5px] leading-[1.6] text-chalk-soft">
-                  All six agents in one native window, on your own key.
+                  All six agents in one native window. Nothing to configure.
                 </p>
               </div>
               <DownloadCTA />

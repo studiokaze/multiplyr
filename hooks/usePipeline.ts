@@ -56,12 +56,32 @@ function load(idea: string): PipelineSnapshot | null {
   }
 }
 
+/**
+ * Agent calls run on Multiplyer's hosted API when the desktop shell says so
+ * (our provider keys live server-side, never in the binary). On the web and
+ * in mock mode the base is "" and everything stays same-origin.
+ */
+let apiBasePromise: Promise<string> | null = null;
+function apiBase(): Promise<string> {
+  apiBasePromise ??= (async () => {
+    try {
+      const bridge = (
+        window as { multiplyer?: { apiBase?: () => Promise<string> } }
+      ).multiplyer;
+      return (await bridge?.apiBase?.()) ?? "";
+    } catch {
+      return "";
+    }
+  })();
+  return apiBasePromise;
+}
+
 async function postJson<T>(
   url: string,
   body: unknown,
   signal: AbortSignal,
 ): Promise<T> {
-  const res = await fetch(url, {
+  const res = await fetch((await apiBase()) + url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -191,7 +211,7 @@ export function usePipeline(idea: string) {
       setFiles([]);
       setBuildLog(["> builder agent invoked"]);
 
-      const res = await fetch("/api/agents/build", {
+      const res = await fetch((await apiBase()) + "/api/agents/build", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -105,7 +105,7 @@ export default function Welcome() {
         <div className="mt-8 rounded-[10px] border border-rule bg-surface p-5">
           <span className="label">Your Anthropic API key</span>
           <p className="mt-2 text-[12.5px] leading-[1.6] text-ink-soft">
-            The agents run against your own Anthropic account. The key is
+            Optional: run against your own Anthropic account instead. The key is
             checked against the API, stored encrypted on this machine, and sent
             nowhere except api.anthropic.com.
           </p>

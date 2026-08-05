@@ -1,6 +1,7 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
-import { MODEL, anthropic, errorBody, textOf } from "@/lib/anthropic";
+import { hasProviders, searchGrounded } from "@/lib/ai";
+import { MODEL, anthropic, errorBody, structured, textOf } from "@/lib/anthropic";
 import {
   RESEARCH_EXTRACT_SYSTEM,
   RESEARCH_SEARCH_SYSTEM,
@@ -22,6 +23,25 @@ export async function POST(req: Request) {
         { error: "framing is required" },
         { status: 400 },
       );
+    }
+
+    // Production lane: grounded search on our own providers, then the
+    // provider-agnostic structured() pass turns prose into the contract.
+    if (hasProviders()) {
+      const summary = await searchGrounded({
+        system: RESEARCH_SEARCH_SYSTEM,
+        user: researchUserPrompt(framing),
+      });
+      const result = await structured<ResearchResult>({
+        system: RESEARCH_EXTRACT_SYSTEM,
+        userContent: `RESEARCH NOTES\n${summary}`,
+        toolName: "submit_research",
+        toolDescription:
+          "Submit the competitors, demand signals and gaps found during research.",
+        schema: RESEARCH_TOOL_SCHEMA,
+        maxTokens: 8000,
+      });
+      return NextResponse.json({ ...result, summary });
     }
 
     const client = anthropic();

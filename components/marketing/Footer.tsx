@@ -83,8 +83,8 @@ export default function Footer() {
         <div className="mt-20 flex flex-col gap-3 border-t border-edge pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-[12px] text-chalk-faint">© Multiplyer 2026</p>
           <p className="text-[12px] text-chalk-faint">
-            Runs on your own Anthropic key. Nothing you type leaves your
-            machine except to Anthropic.
+            Models managed by Multiplyer. Nothing you type goes anywhere
+            except to our model providers.
           </p>
         </div>
       </div>

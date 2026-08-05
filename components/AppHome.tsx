@@ -235,7 +235,7 @@ export default function AppHome() {
                 {name || "You"}
               </span>
               <span className="block text-[10.5px] text-ink-faint">
-                Free · own key
+                Free plan
               </span>
             </span>
           </div>

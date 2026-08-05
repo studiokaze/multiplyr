@@ -14,15 +14,15 @@ const QA: { q: string; a: string }[] = [
   },
   {
     q: "What do I need to run it?",
-    a: "Your own Anthropic API key. It is stored in your OS keychain, never in the binary.",
+    a: "Nothing. Download it, type an idea, run — the models are managed on our side.",
   },
   {
     q: "What does it cost?",
-    a: "The app is free. You pay Anthropic directly for what your runs consume. No markup.",
+    a: "Free while we're early. Credits cover what a run consumes; paid tiers add more when they go live.",
   },
   {
     q: "Where does my idea go?",
-    a: "To Anthropic's API and nowhere else. No account, no middleman server, no analytics.",
+    a: "To the model providers we route across and nowhere else. Never sold, never used by us for training.",
   },
   {
     q: "Which platforms are supported?",

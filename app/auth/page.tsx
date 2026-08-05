@@ -71,8 +71,7 @@ export default function AuthPage() {
         </div>
 
         <p className="mt-8 text-[11.5px] leading-[1.6] text-chalk-faint">
-          Early access — accounts unlock credits when paid plans go live. The
-          app runs on your own key either way.
+          Early access — accounts unlock credits when paid plans go live.
         </p>
       </div>
     </div>

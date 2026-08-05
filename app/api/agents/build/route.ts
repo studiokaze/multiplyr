@@ -1,4 +1,5 @@
 import type Anthropic from "@anthropic-ai/sdk";
+import { hasProviders, jsonChat } from "@/lib/ai";
 import { MODEL, anthropic } from "@/lib/anthropic";
 import {
   BUILD_SYSTEM,
@@ -53,6 +54,53 @@ export async function POST(req: Request) {
         if (!framing?.angle || !analysis) {
           send({ type: "error", message: "framing and analysis are required" });
           controller.close();
+          return;
+        }
+
+        // Production lane: one structured files call on our own providers,
+        // replayed to the client as the same SSE events the UI always spoke.
+        if (hasProviders()) {
+          send({ type: "status", message: "Builder agent starting…" });
+          const out = await jsonChat<{ files: GeneratedFile[] }>({
+            system: BUILD_SYSTEM,
+            user: buildUserPrompt(framing, analysis, simulation),
+            schema: {
+              type: "object",
+              properties: {
+                files: {
+                  type: "array",
+                  minItems: 1,
+                  items: {
+                    type: "object",
+                    properties: {
+                      path: { type: "string" },
+                      content: { type: "string" },
+                    },
+                    required: ["path", "content"],
+                  },
+                },
+              },
+              required: ["files"],
+            },
+            maxTokens: 16000,
+          });
+          let written = 0;
+          for (const f of out.files ?? []) {
+            const p = safePath(f.path);
+            if (!p || typeof f.content !== "string") {
+              send({ type: "note", message: `refused path: ${String(f.path)}` });
+              continue;
+            }
+            send({ type: "file", file: { path: p, content: f.content } });
+            written++;
+          }
+          if (written === 0) {
+            send({ type: "error", message: "Builder produced no usable files." });
+          } else {
+            send({ type: "done", fileCount: written });
+          }
+          controller.close();
+          closed = true;
           return;
         }
 

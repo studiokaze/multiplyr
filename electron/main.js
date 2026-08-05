@@ -350,6 +350,12 @@ ipcMain.handle("onboarding:skip", () => {
   if (mainWindow) mainWindow.loadURL(appUrl("/app"));
 });
 
+// Agent runs execute on Multiplyer's hosted API — our provider keys never
+// ship inside the binary. Mock mode keeps everything local.
+ipcMain.handle("api:base", () =>
+  mockBaseUrl ? "" : "https://multiplyer.vercel.app",
+);
+
 ipcMain.handle("user:name", () => {
   try {
     return require("node:os").userInfo().username || "";
@@ -406,10 +412,9 @@ if (!singleInstance) {
       app.quit();
       return;
     }
-    // First run (no key yet) opens onboarding; every later run opens the app.
-    // Simulated mode needs no key, so it goes straight in.
-    const entryPath = () =>
-      mockBaseUrl || loadApiKey() ? "/app" : "/welcome";
+    // Managed providers mean no key gate: everyone lands in the app. The
+    // welcome screen stays reachable from the menu for own-key holdouts.
+    const entryPath = () => "/app";
     createMainWindow(entryPath());
 
     app.on("activate", () => {
