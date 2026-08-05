@@ -279,7 +279,7 @@ export default function Features() {
     <section id="features" className="scroll-mt-28 px-6 py-14 sm:px-10">
       <div className="mx-auto max-w-[68rem]">
         <div className="mb-16 text-center">
-          <h2 className="brand mx-auto max-w-[24ch] text-[1.5rem] sm:text-[2.2rem]">
+          <h2 className="display mx-auto max-w-[20ch] text-[2rem] sm:text-[3rem]">
             What can Multiplyer do for you?
           </h2>
           <p className="mx-auto mt-4 max-w-[52ch] text-[15px] leading-[1.6] text-chalk-soft">
@@ -304,7 +304,7 @@ export default function Features() {
                     className="group/row block w-full py-6 text-left"
                   >
                     <h3
-                      className={`brand flex items-center gap-3 text-[1.05rem] transition-colors duration-300 sm:text-[1.35rem] ${
+                      className={`display flex items-center gap-3 text-[1.5rem] transition-colors duration-300 sm:text-[1.9rem] ${
                         isActive
                           ? "text-chalk"
                           : "text-chalk-faint group-hover/row:text-chalk"

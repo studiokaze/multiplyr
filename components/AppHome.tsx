@@ -1,8 +1,34 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import type { PipelineSnapshot, StageId } from "@/lib/types";
+
+const NAME_KEY = "multiplyer:name";
+
+type DesktopBridge = { userName?: () => Promise<string> };
+
+/** "j.comtereas" or "hemant_k" -> "Hemant". First word, capitalised. */
+function prettyName(raw: string): string {
+  const first = raw.split(/[\s._-]+/).filter(Boolean)[0] ?? "";
+  return first ? first[0].toUpperCase() + first.slice(1) : "";
+}
+
+/**
+ * Claude-style greeting: rotates daily between action lines and a
+ * time-of-day line, so the app says hello differently through the week
+ * without ever being random within a session.
+ */
+function greeting(name: string): string {
+  const d = new Date();
+  const h = d.getHours();
+  const timeLine =
+    h < 5 ? "Late one" : h < 12 ? "Morning" : h < 17 ? "Afternoon" : "Evening";
+  const lines = ["Let's get rolling", "Back at it", timeLine, "Where were we"];
+  const day = Math.floor(d.getTime() / 86400000);
+  const line = lines[day % lines.length];
+  return name ? `${line}, ${name}.` : `${line}.`;
+}
 
 const EXAMPLES = [
   "a tool that helps freelancers chase late invoices",
@@ -88,8 +114,28 @@ const STAGE_LABEL: Record<string, string> = {
 export default function AppHome() {
   const router = useRouter();
   const [idea, setIdea] = useState("");
+  const [name, setName] = useState("");
   const mounted = useMounted();
   const recent = mounted ? readRecent() : [];
+
+  // A saved name wins; otherwise the desktop bridge offers the OS account
+  // name. On the plain web with neither, the greeting just drops the name.
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(NAME_KEY);
+      if (saved) {
+        setName(saved);
+        return;
+      }
+    } catch {
+      /* ignore */
+    }
+    const bridge = (window as { multiplyer?: DesktopBridge }).multiplyer;
+    bridge
+      ?.userName?.()
+      .then((raw) => setName(prettyName(raw)))
+      .catch(() => {});
+  }, []);
 
   const start = (value: string) => {
     const trimmed = value.trim();
@@ -99,13 +145,13 @@ export default function AppHome() {
   return (
     <main className="flex flex-1 flex-col items-center justify-center bg-paper px-6 py-16">
       <div className="w-full max-w-[38rem]">
-        <span className="label">New run</span>
-        <h1 className="display mt-3 text-[2rem] text-ink">
-          What are we validating?
+        <h1 className="display text-center text-[2rem] text-ink">
+          {/* Held to a fixed height pre-mount so the layout never jumps. */}
+          {mounted ? greeting(name) : " "}
         </h1>
-        <p className="mt-2.5 text-[13.5px] leading-[1.6] text-ink-soft">
-          One line is enough. It goes through all six stages, and nothing gets
-          built until the earlier ones have earned it.
+        <p className="mt-2.5 text-center text-[13.5px] leading-[1.6] text-ink-soft">
+          What are we validating? One line is enough — nothing gets built
+          until the earlier stages have earned it.
         </p>
 
         <form

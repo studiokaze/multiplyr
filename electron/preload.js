@@ -9,5 +9,8 @@ contextBridge.exposeInMainWorld("multiplyer", {
   getKeyHint: () => ipcRenderer.invoke("key:get"),
   saveKey: (key) => ipcRenderer.invoke("key:save", key),
   skip: () => ipcRenderer.invoke("onboarding:skip"),
+  // OS account name, for the home-screen greeting. Read in main — the
+  // renderer stays node-free.
+  userName: () => ipcRenderer.invoke("user:name"),
   platform: process.platform,
 });

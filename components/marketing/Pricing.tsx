@@ -91,7 +91,7 @@ export default function Pricing() {
     <section id="pricing" className="relative scroll-mt-28 px-6 py-14 sm:px-10">
       <div className="relative mx-auto max-w-[68rem]">
         <div className="text-center">
-          <h2 className="brand mx-auto text-[1.3rem] sm:text-[1.9rem]">
+          <h2 className="display mx-auto text-[1.75rem] sm:text-[2.5rem]">
             Pricing
           </h2>
           <p className="mx-auto mt-4 text-[14.5px] text-chalk-soft">

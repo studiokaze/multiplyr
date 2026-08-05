@@ -350,6 +350,14 @@ ipcMain.handle("onboarding:skip", () => {
   if (mainWindow) mainWindow.loadURL(appUrl("/app"));
 });
 
+ipcMain.handle("user:name", () => {
+  try {
+    return require("node:os").userInfo().username || "";
+  } catch {
+    return "";
+  }
+});
+
 // ---------------------------------------------------------------------------
 // Boot
 // ---------------------------------------------------------------------------

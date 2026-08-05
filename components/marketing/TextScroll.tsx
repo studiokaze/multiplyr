@@ -66,7 +66,7 @@ export default function TextScroll() {
             ref={(el) => {
               rowRefs.current[i] = el;
             }}
-            className="brand flex w-max whitespace-nowrap text-[14vw] leading-[1.02] will-change-transform sm:text-[7.25rem]"
+            className="display flex w-max whitespace-nowrap text-[17vw] leading-[0.98] tracking-[-0.02em] uppercase will-change-transform sm:text-[9.5rem]"
           >
             {Array.from({ length: COPIES * 2 }, (_, k) => (
               <span
