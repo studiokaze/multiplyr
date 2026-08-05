@@ -560,82 +560,9 @@ details[open] .faq-mark {
    black itself being faintly coloured rather than as shapes moving.
    -------------------------------------------------------------------------- */
 
-@keyframes aurora-a {
-  0% {
-    transform: translate3d(-18%, -8%, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(12%, 10%, 0) scale(1.18);
-  }
-  100% {
-    transform: translate3d(-18%, -8%, 0) scale(1);
-  }
-}
-
-@keyframes aurora-b {
-  0% {
-    transform: translate3d(15%, 12%, 0) scale(1.1);
-  }
-  50% {
-    transform: translate3d(-14%, -10%, 0) scale(0.92);
-  }
-  100% {
-    transform: translate3d(15%, 12%, 0) scale(1.1);
-  }
-}
-
-@keyframes aurora-c {
-  0% {
-    transform: translate3d(-6%, 16%, 0) scale(0.95);
-  }
-  50% {
-    transform: translate3d(10%, -14%, 0) scale(1.22);
-  }
-  100% {
-    transform: translate3d(-6%, 16%, 0) scale(0.95);
-  }
-}
-
-/* Brightness is read far faster than position: a blob drifting 12px/s is
-   perceptually static, the same blob getting brighter and dimmer is not. So
-   every body runs a drift AND a glow, on different periods, so the pair never
-   lines up and the field is always changing somewhere. */
-@keyframes aurora-glow {
-  0%,
-  100% {
-    opacity: 0.45;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.aurora {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(70px);
-  will-change: transform, opacity;
-}
-
-.aurora-a {
-  animation:
-    aurora-a 19s ease-in-out infinite,
-    aurora-glow 11s ease-in-out infinite;
-}
-.aurora-b {
-  animation:
-    aurora-b 23s ease-in-out infinite,
-    aurora-glow 13s ease-in-out -4s infinite;
-}
-.aurora-c {
-  animation:
-    aurora-c 29s ease-in-out infinite,
-    aurora-glow 17s ease-in-out -7s infinite;
-}
-
-/* A wide, soft band of coloured light crossing the page. This is the piece
-   you actually catch moving — it travels a full screen width, so it has the
-   page edges as a reference and reads as motion rather than as a tint. */
+/* A wide, soft sheet of light crossing the page. Travelling a full screen
+   width, it has the page edges as a reference, so it reads as motion rather
+   than as a tint. Monochrome — the black stays black. */
 @keyframes glow-sweep {
   0% {
     transform: translate3d(-70%, 0, 0) rotate(12deg);
@@ -738,10 +665,6 @@ details[open] .faq-mark {
   .dots-sweep,
   .float-y,
   .glow-band,
-  .aurora,
-  .aurora-a,
-  .aurora-b,
-  .aurora-c,
   .hero-word,
   .pulse-glow {
     animation: none !important;
@@ -751,11 +674,6 @@ details[open] .faq-mark {
     transform: none !important;
   }
 
-  /* The blur is the aurora's form, not its motion — stripping it would leave
-     hard-edged circles on the page. Keep it, drop only the movement. */
-  .aurora {
-    filter: blur(70px) !important;
-  }
   .glow-band {
     display: none;
   }
@@ -772,8 +690,8 @@ details[open] .faq-mark {
 }
 
 /* Choosing a plan highlights the whole card, not just its edge: the border
-   brightens, the surface lifts a step, an aurora-tinted glow fills the card
-   from the top, and the card itself rises. */
+   brightens, the surface lifts a step, a soft white glow spreads under it,
+   and the card itself rises. */
 .plan-card {
   transition:
     transform 260ms var(--ease-house),
@@ -787,8 +705,8 @@ details[open] .faq-mark {
   background-color: var(--void-3);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 0 0 1px rgba(var(--aurora-1), 0.14),
-    0 24px 70px -30px rgba(var(--aurora-1), 0.45);
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 24px 70px -30px rgba(255, 255, 255, 0.14);
 }
 
 /* Hairline that fades out at both ends, so section breaks do not read as
