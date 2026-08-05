@@ -103,7 +103,7 @@ export default function Welcome() {
           Five agents. One run.
         </h1>
         <p className="mt-2.5 text-[13.5px] leading-[1.6] text-ink-soft">
-          Every idea you type goes through the whole path — nothing gets built
+          Every idea you type goes through the whole path. Nothing gets built
           until the earlier stages have earned it.
         </p>
 
@@ -112,7 +112,7 @@ export default function Welcome() {
             <li key={n} className="flex items-baseline gap-3">
               <span className="label w-5 shrink-0">{n}</span>
               <span className="text-[13px] font-medium text-ink">{name}</span>
-              <span className="text-[12px] text-ink-faint">— {what}</span>
+              <span className="text-[12px] text-ink-faint">{what}</span>
             </li>
           ))}
         </ol>
@@ -183,7 +183,7 @@ export default function Welcome() {
         </div>
 
         <p className="mt-4 text-[11.5px] leading-[1.6] text-ink-faint">
-          Change it any time from {menuName} → Anthropic API key.
+          Change it any time from {menuName}, then Anthropic API key.
         </p>
       </div>
     </main>

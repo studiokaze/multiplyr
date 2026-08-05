@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Multiplyr — validate before you build",
+  title: "Multiplyr, validate before you build",
   description:
     "An AI app builder that researches the market and gives you a build / iterate / kill verdict before it writes a line of code.",
 };

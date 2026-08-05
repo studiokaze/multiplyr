@@ -70,7 +70,7 @@ export default function DownloadCTA() {
           Builds coming soon
         </span>
         <p className="text-[12.5px] text-chalk-faint">
-          Windows, macOS and Linux — direct download, no app store
+          Windows, macOS and Linux. Direct download, no app store
         </p>
       </div>
     );

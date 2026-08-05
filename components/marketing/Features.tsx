@@ -20,7 +20,7 @@ const FEATURES: {
     eyebrow: "Market analysis",
     title: "Validated before it exists",
     description:
-      "Research and market analysis run before a single file is written — who already solves this, who is asking for it, and where the gap actually is.",
+      "Research and market analysis run before a single file is written: who already solves this, who is asking for it, and where the gap actually is.",
     detail:
       "The score is computed from the evidence, so the model cannot talk its way past it.",
   },
@@ -28,7 +28,7 @@ const FEATURES: {
     eyebrow: "Simulate",
     title: "Tested on your segment first",
     description:
-      "A synthetic panel drawn from your target segment meets the idea before any user does — what they reach for, what they object to, where they drop off.",
+      "A synthetic panel drawn from your target segment meets the idea before any user does: what they reach for, what they object to, where they drop off.",
     detail:
       "Objections arrive while the framing is still cheap to change.",
   },
@@ -36,7 +36,7 @@ const FEATURES: {
     eyebrow: "Build",
     title: "A working app, not a chat log",
     description:
-      "The builder inherits everything the earlier stages learned and writes real files into a live workspace — readable as they land, running in the preview.",
+      "The builder inherits everything the earlier stages learned and writes real files into a live workspace, readable as they land, running in the preview.",
     detail:
       "What gets built is the version of the idea that survived.",
   },
@@ -90,7 +90,7 @@ function StageScore() {
       </div>
 
       <p className="border-l-2 border-rule-strong pl-3 text-[12px] leading-[1.55] text-ink-soft">
-        Gap is pricing and audience, not features — R1 Stripe-only coverage, R2
+        Gap is pricing and audience, not features. R1 Stripe-only coverage, R2
         automated-sounding copy.
       </p>
     </div>
@@ -145,7 +145,7 @@ function StageBuild() {
           "> builder agent invoked",
           "> wrote App.jsx",
           "> wrote README.md",
-          "> done — 2 files generated",
+          "> done, 2 files generated",
         ].map((line, i) => (
           <p
             key={line}

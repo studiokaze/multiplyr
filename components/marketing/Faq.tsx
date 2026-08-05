@@ -6,11 +6,11 @@
 const QA: { q: string; a: string }[] = [
   {
     q: "What is Multiplyr?",
-    a: "A desktop workspace that takes an idea through five agents in order — brainstorm, research, market analysis, simulation, build — so the thing that gets built is the version of the idea the earlier stages justified.",
+    a: "A desktop workspace that takes an idea through five agents in order (brainstorm, research, market analysis, simulation, build) so the thing that gets built is the version of the idea the earlier stages justified.",
   },
   {
     q: "How is it different from other AI builders?",
-    a: "Most builders go straight from your prompt to code. Multiplyr does the work you would do before writing code — sharpening the framing, checking who else exists, weighing demand, pressure-testing on your segment — and carries that context into the build, in one place.",
+    a: "Most builders go straight from your prompt to code. Multiplyr does the work you would do before writing code: sharpening the framing, checking who else exists, weighing demand, pressure-testing on your segment. It carries that context into the build, in one place.",
   },
   {
     q: "What do I need to run it?",
@@ -18,7 +18,7 @@ const QA: { q: string; a: string }[] = [
   },
   {
     q: "What does it cost?",
-    a: "The app is a free download. You pay Anthropic directly for the model usage your runs consume — there is no markup and no subscription.",
+    a: "The app is a free download. You pay Anthropic directly for the model usage your runs consume. There is no markup and no subscription.",
   },
   {
     q: "Where does my idea go?",

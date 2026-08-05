@@ -208,17 +208,10 @@ body {
 @keyframes resolve-word {
   from {
     opacity: 0;
-    filter: blur(9px);
-    letter-spacing: 0.14em;
-    transform: translateY(3px);
-  }
-  60% {
-    opacity: 1;
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
-    filter: blur(0);
-    letter-spacing: -0.035em; /* matches .display */
     transform: none;
   }
 }
@@ -226,27 +219,33 @@ body {
 @keyframes resolve-block {
   from {
     opacity: 0;
-    filter: blur(7px);
-    transform: translateY(12px) scale(0.988);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
-    filter: blur(0);
     transform: none;
   }
 }
 
 .enter {
-  animation: resolve-block 780ms var(--ease-resolve) both;
-  animation-delay: calc(var(--stagger, 0) * 85ms);
+  animation: resolve-block 560ms var(--ease-resolve) both;
+  animation-delay: calc(var(--stagger, 0) * 55ms);
 }
 
-/* Headline words animate individually; inline-block so transforms apply. */
+/*
+  Headline words animate individually; inline-block so transforms apply.
+  Note what is NOT animated here: blur and letter-spacing. Blur leaves type
+  visibly soft for most of the run, and animating letter-spacing reflows the
+  line on every frame so the words jitter as they settle. Both read as
+  "unclear". Opacity and transform are composited — the type stays sharp the
+  whole way.
+*/
 .hero-word {
   display: inline-block;
   margin-right: 0.26em;
-  animation: resolve-word 900ms var(--ease-resolve) both;
-  animation-delay: calc(var(--stagger, 0) * 85ms);
+  animation: resolve-word 620ms var(--ease-resolve) both;
+  animation-delay: calc(var(--stagger, 0) * 55ms);
+  will-change: transform, opacity;
 }
 
 .hero-word:last-child {

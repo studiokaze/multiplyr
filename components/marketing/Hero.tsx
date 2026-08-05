@@ -1,6 +1,5 @@
 "use client";
 
-import { AGENTS } from "./agents";
 import DownloadCTA from "./DownloadCTA";
 
 /**
@@ -36,31 +35,13 @@ export default function Hero() {
         >
           Five agents in one workspace, in the order that actually gets it
           right. Your idea is sharpened, researched, weighed against the market
-          and pressure-tested on real demand — and only then built.
+          and pressure-tested on real demand, and only then built.
         </p>
 
         <div className="enter mt-10" style={at(afterWords + 2)}>
           <DownloadCTA />
         </div>
 
-        <ul
-          className="enter mx-auto mt-14 flex max-w-[46rem] flex-wrap items-center justify-center gap-x-2 gap-y-2"
-          style={at(afterWords + 3)}
-        >
-          {AGENTS.map((a, i) => (
-            <li key={a.n} className="flex items-center gap-2">
-              <span className="rounded-full border border-edge bg-void-2/60 px-3 py-1.5 text-[12.5px] text-chalk-soft">
-                {a.name}
-              </span>
-              {i < AGENTS.length - 1 && (
-                <span
-                  aria-hidden="true"
-                  className="hidden h-px w-4 bg-edge-strong sm:block"
-                />
-              )}
-            </li>
-          ))}
-        </ul>
       </div>
     </section>
   );

@@ -124,7 +124,7 @@ export default function WorkspaceShot() {
             <div className="mt-1.5 space-y-1 pl-[14px] font-mono text-[8px] text-ink-soft">
               <p>&gt; wrote App.jsx</p>
               <p>&gt; wrote README.md</p>
-              <p>&gt; done — 2 files generated</p>
+              <p>&gt; done, 2 files generated</p>
             </div>
           </div>
         </div>
@@ -172,7 +172,7 @@ export default function WorkspaceShot() {
                       {client}
                     </p>
                     <p className="truncate text-[7px] text-neutral-500">
-                      {id} — {late}
+                      {id} · {late}
                     </p>
                   </div>
                   <span
