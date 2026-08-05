@@ -241,7 +241,7 @@ function createMainWindow(initialPath) {
     height: 900,
     minWidth: 960,
     minHeight: 600,
-    backgroundColor: "#fbfaf8",
+    backgroundColor: "#0b0b0d",
     title: "Multiplyer",
     show: false,
     autoHideMenuBar: process.platform !== "darwin",

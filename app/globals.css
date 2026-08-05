@@ -2,28 +2,31 @@
 
 /*
   Multiplyer design tokens.
-  Committed to a single light treatment — warm paper, true ink, hairline rules.
-  Colour is rationed: the only saturated pixels in the product are the verdict,
-  because the verdict is the product.
+  The app is dark like the site now — one product, one night. The historical
+  names stay (paper/ink) so every component keeps working: "paper" is the
+  page, "ink" is what writes on it, and in the dark the ink is light.
+  Elevation runs lighter-is-closer: paper < surface < sunk.
+  Colour is rationed: the only saturated pixels in the product are the
+  verdict, because the verdict is the product.
 */
 :root {
-  --paper: #fbfaf8;
-  --surface: #ffffff;
-  --sunk: #f4f2ee;
+  --paper: #0b0b0d;
+  --surface: #101013;
+  --sunk: #17171c;
 
-  --ink: #0a0a0a;
-  --ink-soft: #57554f;
-  --ink-faint: #8c8981;
+  --ink: #f2f1ee;
+  --ink-soft: #a9a7a1;
+  --ink-faint: #6f6d68;
 
-  --rule: #e7e4dd;
-  --rule-strong: #d6d2c8;
+  --rule: rgba(255, 255, 255, 0.07);
+  --rule-strong: rgba(255, 255, 255, 0.16);
 
-  --build: #0f6b45;
-  --build-bg: #edf5f0;
-  --iterate: #96601a;
-  --iterate-bg: #f8f2e7;
-  --kill: #a52822;
-  --kill-bg: #f9eeed;
+  --build: #4ecb84;
+  --build-bg: rgba(78, 203, 132, 0.1);
+  --iterate: #d9a24a;
+  --iterate-bg: rgba(217, 162, 74, 0.1);
+  --kill: #e5615a;
+  --kill-bg: rgba(229, 97, 90, 0.1);
 
   /*
     The marketing site is a separate visual system from the app: the site

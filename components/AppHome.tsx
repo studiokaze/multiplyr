@@ -256,7 +256,7 @@ export default function AppHome() {
             }}
             className="mt-8"
           >
-            <div className="overflow-hidden rounded-[14px] border border-rule-strong bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_-16px_rgba(0,0,0,0.1)] focus-within:border-ink/40">
+            <div className="overflow-hidden rounded-[14px] border border-rule-strong bg-surface shadow-[0_0_0_1px_rgba(255,255,255,0.03),0_18px_48px_-24px_rgba(0,0,0,0.9)] transition-colors duration-200 focus-within:border-white/30">
               <textarea
                 value={idea}
                 onChange={(e) => setIdea(e.target.value)}

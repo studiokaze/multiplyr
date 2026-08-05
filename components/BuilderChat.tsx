@@ -374,7 +374,7 @@ export default function BuilderChat({
               {VERDICT[analysis.verdict].line}
             </p>
 
-            <div className="mt-4 border-t border-black/[0.06] bg-surface/60 px-4 py-3.5">
+            <div className="mt-4 border-t border-white/[0.06] bg-surface/60 px-4 py-3.5">
               <p className="text-[13px] leading-[1.55] text-ink">
                 {analysis.reasoning}
               </p>

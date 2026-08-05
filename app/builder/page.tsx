@@ -101,7 +101,7 @@ function Workspace() {
               aria-pressed={view === v}
               className={`rounded-[5px] px-3 py-1.5 text-[12px] font-medium capitalize transition-colors duration-150 ${
                 view === v
-                  ? "bg-surface text-ink shadow-[0_1px_2px_rgba(0,0,0,0.06)]"
+                  ? "bg-surface text-ink shadow-[0_1px_2px_rgba(0,0,0,0.4)]"
                   : "text-ink-faint hover:text-ink-soft"
               }`}
             >
