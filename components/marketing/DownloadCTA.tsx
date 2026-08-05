@@ -83,7 +83,7 @@ export default function DownloadCTA() {
       <div className="flex flex-col items-center gap-3">
         <a
           href={`https://github.com/${GITHUB_REPO}/releases/latest`}
-          className="inline-flex items-center gap-2.5 spring-hover rounded-full bg-chalk px-7 py-3.5 text-[14px] font-medium text-void"
+          className="cta-primary inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-[14px] font-semibold"
         >
           Download the app
         </a>
@@ -100,7 +100,7 @@ export default function DownloadCTA() {
     <div className="flex flex-col items-center gap-3.5">
       <a
         href={primary.href}
-        className="group inline-flex items-center gap-2.5 spring-hover rounded-full bg-chalk px-7 py-3.5 text-[14px] font-medium text-void"
+        className="cta-primary group inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-[14px] font-semibold"
       >
         <Glyph platform={platform} />
         Download for {OS_NAME[platform]}

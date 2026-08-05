@@ -20,7 +20,7 @@ const LINES: { text: string; reverse: boolean }[] = [
 ];
 
 /** px of horizontal travel per px of vertical scroll */
-const SPEED = 0.32;
+const SPEED = 1.05;
 const COPIES = 8;
 
 export default function TextScroll() {

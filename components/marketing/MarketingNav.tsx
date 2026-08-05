@@ -72,7 +72,7 @@ export default function MarketingNav() {
           {RELEASES_PUBLISHED ? (
             <a
               href="/download"
-              className="spring-hover flex items-center gap-2 rounded-full bg-chalk px-4 py-2 text-[13px] font-medium text-void"
+              className="cta-primary flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-semibold"
             >
               {platform !== "unknown" && <Glyph platform={platform} />}
               Download

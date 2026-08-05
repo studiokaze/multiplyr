@@ -46,13 +46,7 @@ export default function Faq() {
             // one question closes whichever other one was open. No JS.
             <details key={q} name="faq" className="group bg-void-2">
               <summary className="relative flex cursor-pointer list-none items-center justify-between gap-6 px-6 py-5 text-[15px] font-medium text-chalk-soft hover:text-chalk [&::-webkit-details-marker]:hidden group-open:text-chalk">
-                {/* plain label underneath, gradient copy fades in over it */}
-                <span className="faq-q">
-                  {q}
-                  <span aria-hidden="true" className="faq-q-grad">
-                    {q}
-                  </span>
-                </span>
+                <span>{q}</span>
                 <span
                   aria-hidden="true"
                   className="faq-mark relative h-3 w-3 shrink-0 text-chalk-faint"

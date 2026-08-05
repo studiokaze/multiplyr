@@ -49,15 +49,6 @@
   */
   --signal: #e9b44c;
   --signal-dim: rgba(233, 180, 76, 0.16);
-
-  /*
-    Aurora palette for the background field. Cool blues that never resolve
-    into a single blob: they drift past each other at different speeds so the
-    colour under the page is always changing without ever announcing itself.
-  */
-  --aurora-1: 78, 140, 255;
-  --aurora-2: 60, 200, 230;
-  --aurora-3: 120, 110, 240;
 }
 
 @theme inline {
@@ -388,6 +379,26 @@ body {
   transform: translateY(-2px);
 }
 
+/* The primary CTA: pure white, ringed and lit so it pops off the black
+   instead of sitting on it — chalk alone read as dull grey. */
+.cta-primary {
+  background: #fff;
+  color: #000;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.28),
+    0 10px 34px rgba(255, 255, 255, 0.14);
+  transition:
+    transform 350ms var(--ease-spring),
+    box-shadow 350ms var(--ease-house);
+}
+
+.cta-primary:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.4),
+    0 14px 44px rgba(255, 255, 255, 0.22);
+}
+
 /*
   Blanket smoothness: every interactive surface on the site eases the same
   properties over the same duration on the same curve. Without this, half the
@@ -441,39 +452,6 @@ body {
    is wrapped and animated on open. grid-template-rows 0fr -> 1fr is the one
    way to ease to an unknown content height without measuring it in JS.
    -------------------------------------------------------------------------- */
-
-/*
-  Hovering or opening a question runs a cool gradient through the text itself
-  rather than behind it. Two layers are stacked so the colour can fade in:
-  background-clip:text cannot be transitioned, but opacity can, so the plain
-  label sits underneath and the gradient copy fades over it.
-*/
-.faq-q {
-  position: relative;
-  display: inline-block;
-}
-
-.faq-q-grad {
-  position: absolute;
-  inset: 0;
-  background-image: linear-gradient(
-    92deg,
-    rgb(var(--aurora-2)),
-    rgb(var(--aurora-1)) 55%,
-    rgb(var(--aurora-3))
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  opacity: 0;
-  transition: opacity 260ms var(--ease-house);
-  pointer-events: none;
-}
-
-summary:hover .faq-q-grad,
-details[open] .faq-q-grad {
-  opacity: 1;
-}
 
 .faq-body {
   display: grid;
