@@ -2,7 +2,7 @@ import { RELEASES_PUBLISHED, GITHUB_REPO } from "@/lib/downloads";
 
 /**
  * Pricing. Credits are the unit because a run's cost is dominated by model
- * usage, and the five stages differ wildly in what they consume: a research
+ * usage, and the stages differ wildly in what they consume: a research
  * pass with live web search costs far more than a brainstorm.
  */
 
@@ -23,7 +23,7 @@ const PLANS: Plan[] = [
     blurb: "Enough to take one real idea through the whole pipeline.",
     features: [
       "$5 in credits, once",
-      "All five agents, no stages held back",
+      "All six agents, no stages held back",
       "Bring your own Anthropic key for unlimited runs",
       "Every generated file is yours to keep",
     ],

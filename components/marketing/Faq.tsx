@@ -6,7 +6,7 @@
 const QA: { q: string; a: string }[] = [
   {
     q: "What is Multiplyer?",
-    a: "A desktop workspace that takes an idea through five agents in order (brainstorm, research, market analysis, simulation, build) so the thing that gets built is the version of the idea the earlier stages justified.",
+    a: "A desktop workspace that takes an idea through six agents in order (brainstorm, research, market analysis, simulation, build, marketing) so the thing that gets built is the version of the idea the earlier stages justified.",
   },
   {
     q: "How is it different from other AI builders?",
@@ -44,9 +44,13 @@ export default function Faq() {
           {QA.map(({ q, a }) => (
             <details key={q} className="group bg-void-2">
               <summary className="relative flex cursor-pointer list-none items-center justify-between gap-6 px-6 py-5 text-[15px] font-medium text-chalk-soft hover:text-chalk [&::-webkit-details-marker]:hidden group-open:text-chalk">
-                {/* gradient wash, behind the row content */}
-                <span aria-hidden="true" className="faq-row absolute inset-0" />
-                <span className="relative">{q}</span>
+                {/* plain label underneath, gradient copy fades in over it */}
+                <span className="faq-q">
+                  {q}
+                  <span aria-hidden="true" className="faq-q-grad">
+                    {q}
+                  </span>
+                </span>
                 <span
                   aria-hidden="true"
                   className="faq-mark relative h-3 w-3 shrink-0 text-chalk-faint"

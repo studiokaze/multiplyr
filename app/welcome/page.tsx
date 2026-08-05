@@ -30,6 +30,7 @@ const STAGES = [
   ["03", "Market analysis", "an honest build / iterate / kill verdict"],
   ["04", "Simulate", "12 synthetic users meet it before anyone real"],
   ["05", "Build", "a working demo from whatever survived"],
+  ["06", "Market", "launch copy and posts for that exact segment"],
 ] as const;
 
 export default function Welcome() {
@@ -100,7 +101,7 @@ export default function Welcome() {
         </div>
 
         <h1 className="display mt-6 text-[1.75rem] text-ink">
-          Five agents. One run.
+          Six agents. One run.
         </h1>
         <p className="mt-2.5 text-[13.5px] leading-[1.6] text-ink-soft">
           Every idea you type goes through the whole path. Nothing gets built

@@ -100,7 +100,7 @@ export default function AppHome() {
           What are we validating?
         </h1>
         <p className="mt-2.5 text-[13.5px] leading-[1.6] text-ink-soft">
-          One line is enough. It goes through all five stages, and nothing gets
+          One line is enough. It goes through all six stages, and nothing gets
           built until the earlier ones have earned it.
         </p>
 

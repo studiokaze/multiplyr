@@ -26,12 +26,48 @@ const PATCHES: {
   { className: "left-[6%] top-[90%] h-[320px] w-[400px]", o: 0.65, t: 10, d: 5600, sweep: 8 },
 ];
 
+/**
+ * Colour bodies drifting behind the page. Kept low-opacity and heavily
+ * blurred so they tint the black rather than read as shapes.
+ */
+const AURORAS: { className: string; rgb: string; alpha: number }[] = [
+  {
+    className: "aurora-a left-[-14%] top-[-8%] h-[620px] w-[720px]",
+    rgb: "var(--aurora-1)",
+    alpha: 0.16,
+  },
+  {
+    className: "aurora-b right-[-16%] top-[22%] h-[560px] w-[660px]",
+    rgb: "var(--aurora-2)",
+    alpha: 0.12,
+  },
+  {
+    className: "aurora-c left-[8%] top-[58%] h-[600px] w-[700px]",
+    rgb: "var(--aurora-3)",
+    alpha: 0.13,
+  },
+  {
+    className: "aurora-b right-[-10%] top-[80%] h-[520px] w-[620px]",
+    rgb: "var(--aurora-1)",
+    alpha: 0.1,
+  },
+];
+
 export default function Backdrop() {
   return (
     <div
       aria-hidden="true"
       className="pointer-events-none absolute inset-0 overflow-hidden"
     >
+      {AURORAS.map((a, i) => (
+        <div
+          key={`aurora-${i}`}
+          className={`aurora ${a.className}`}
+          style={{
+            background: `radial-gradient(circle, rgba(${a.rgb}, ${a.alpha}) 0%, transparent 70%)`,
+          }}
+        />
+      ))}
       {PATCHES.map((p, i) => (
         <div
           key={i}

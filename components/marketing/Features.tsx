@@ -40,6 +40,14 @@ const FEATURES: {
     detail:
       "What gets built is the version of the idea that survived.",
   },
+  {
+    eyebrow: "Market",
+    title: "Launched, not just shipped",
+    description:
+      "The marketing agent takes the segment, the objections and the wedge the earlier stages found, and writes the launch copy and social posts for exactly those people.",
+    detail:
+      "It markets the product you actually built, to the audience the research named.",
+  },
 ];
 
 /** One glyph per feature: a gauge, a panel of people, a file. */
@@ -76,6 +84,15 @@ function FeatureIcon({
         <circle cx="9" cy="8" r="3" />
         <path d="M3 20a6 6 0 0 1 12 0" />
         <path d="M17 6.5a3 3 0 0 1 0 6M18.5 20a6 6 0 0 0-3-5.2" />
+      </svg>
+    );
+  }
+  if (index === 3) {
+    return (
+      <svg {...common}>
+        <path d="M4 10v4a1 1 0 0 0 1 1h2.5L14 19V5L7.5 9H5a1 1 0 0 0-1 1Z" />
+        <path d="M17.5 9.5a4 4 0 0 1 0 5" />
+        <path d="M7.5 15v4" />
       </svg>
     );
   }
@@ -219,7 +236,29 @@ function StageBuild() {
   );
 }
 
-const STAGES = [StageScore, StageSimulate, StageBuild];
+function StageMarket() {
+  return (
+    <div className="flex h-full w-full flex-col justify-center gap-3 p-7">
+      <span className="font-mono text-[9px] uppercase tracking-[0.09em] text-ink-faint">
+        Drafted for the segment
+      </span>
+      {[
+        ["X", "Every freelancer has that one client who pays on day 34. We wrote the follow-up so you don't have to."],
+        ["LinkedIn", "Chasing invoices is the least fun part of going solo. Here is what changed when it got automated."],
+        ["Reddit r/freelance", "Built the polite-but-firm reminder I always struggled to write. Free while it is in beta."],
+      ].map(([where, copy]) => (
+        <div key={where} className="rounded-[8px] border border-rule bg-sunk p-3">
+          <span className="font-mono text-[8.5px] uppercase tracking-[0.09em] text-ink-faint">
+            {where}
+          </span>
+          <p className="mt-1 text-[11.5px] leading-[1.5] text-ink">{copy}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const STAGES = [StageScore, StageSimulate, StageBuild, StageMarket];
 
 /* ------------------------------------------------------------------------- */
 

@@ -33,9 +33,9 @@ export default function Hero() {
           className="enter mx-auto mt-7 max-w-[54ch] text-[16px] leading-[1.65] text-chalk-soft sm:text-[17px]"
           style={at(afterWords + 1)}
         >
-          Five agents in one workspace, in the order that actually gets it
+          Six agents in one workspace, in the order that actually gets it
           right. Your idea is sharpened, researched, weighed against the market
-          and pressure-tested on real demand, and only then built.
+          pressure-tested on real demand, built, and then marketed.
         </p>
 
         <div className="enter mt-10" style={at(afterWords + 2)}>

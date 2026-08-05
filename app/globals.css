@@ -47,6 +47,15 @@
   */
   --signal: #e9b44c;
   --signal-dim: rgba(233, 180, 76, 0.16);
+
+  /*
+    Aurora palette for the background field. Cool blues that never resolve
+    into a single blob: they drift past each other at different speeds so the
+    colour under the page is always changing without ever announcing itself.
+  */
+  --aurora-1: 78, 140, 255;
+  --aurora-2: 60, 200, 230;
+  --aurora-3: 120, 110, 240;
 }
 
 @theme inline {
@@ -398,25 +407,35 @@ body {
    -------------------------------------------------------------------------- */
 
 /*
-  Hovering a question washes a gradient across the row, warm on the left where
-  the text is and fading out to the right. A flat background colour reads as a
-  table row; this reads as the row lighting up.
+  Hovering or opening a question runs a cool gradient through the text itself
+  rather than behind it. Two layers are stacked so the colour can fade in:
+  background-clip:text cannot be transitioned, but opacity can, so the plain
+  label sits underneath and the gradient copy fades over it.
 */
-.faq-row {
-  background-image: linear-gradient(
-    100deg,
-    var(--signal-dim),
-    rgba(255, 255, 255, 0.05) 42%,
-    transparent 78%
-  );
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  opacity: 0;
-  transition: opacity 260ms var(--ease-house);
+.faq-q {
+  position: relative;
+  display: inline-block;
 }
 
-summary:hover .faq-row,
-details[open] .faq-row {
+.faq-q-grad {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    92deg,
+    rgb(var(--aurora-2)),
+    rgb(var(--aurora-1)) 55%,
+    rgb(var(--aurora-3))
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0;
+  transition: opacity 260ms var(--ease-house);
+  pointer-events: none;
+}
+
+summary:hover .faq-q-grad,
+details[open] .faq-q-grad {
   opacity: 1;
 }
 
@@ -542,6 +561,68 @@ details[open] .faq-mark {
    Slow and dim by design: felt, not watched.
    -------------------------------------------------------------------------- */
 
+/* --------------------------------------------------------------------------
+   Aurora field — the page's own background motion.
+   Three soft colour bodies drifting on different periods and directions. The
+   periods are deliberately coprime (37s / 43s / 53s) so they never resync into
+   a visible loop: the composite takes ~22 hours to repeat, which is another
+   way of saying it never does. Blurred and low-opacity, so it reads as the
+   black itself being faintly coloured rather than as shapes moving.
+   -------------------------------------------------------------------------- */
+
+@keyframes aurora-a {
+  0% {
+    transform: translate3d(-18%, -8%, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(12%, 10%, 0) scale(1.18);
+  }
+  100% {
+    transform: translate3d(-18%, -8%, 0) scale(1);
+  }
+}
+
+@keyframes aurora-b {
+  0% {
+    transform: translate3d(15%, 12%, 0) scale(1.1);
+  }
+  50% {
+    transform: translate3d(-14%, -10%, 0) scale(0.92);
+  }
+  100% {
+    transform: translate3d(15%, 12%, 0) scale(1.1);
+  }
+}
+
+@keyframes aurora-c {
+  0% {
+    transform: translate3d(-6%, 16%, 0) scale(0.95);
+  }
+  50% {
+    transform: translate3d(10%, -14%, 0) scale(1.22);
+  }
+  100% {
+    transform: translate3d(-6%, 16%, 0) scale(0.95);
+  }
+}
+
+.aurora {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  will-change: transform;
+}
+
+.aurora-a {
+  animation: aurora-a 37s ease-in-out infinite;
+}
+.aurora-b {
+  animation: aurora-b 43s ease-in-out infinite;
+}
+.aurora-c {
+  animation: aurora-c 53s ease-in-out infinite;
+}
+
 /* Brighter grid for the backdrop layers — the base .dot-field reads as
    texture; this one reads as light. */
 .dot-field-bright {
@@ -653,8 +734,15 @@ details[open] .faq-mark {
   .dots-breathe,
   .dots-crawl,
   .dots-sweep,
+  .aurora-a,
+  .aurora-b,
+  .aurora-c,
   .float-y,
   .orbit-tile,
+  .aurora,
+  .aurora-a,
+  .aurora-b,
+  .aurora-c,
   .hero-word,
   .pulse-glow {
     animation: none !important;

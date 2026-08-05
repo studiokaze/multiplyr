@@ -1,5 +1,5 @@
 /**
- * The five stages, in the order they run. Single source of truth for the site
+ * The six stages, in the order they run. Single source of truth for the site
  * so the spine, the product shot and the nav can never drift apart.
  */
 export type Agent = {
@@ -46,4 +46,12 @@ export const AGENTS: Agent[] = [
     body: "Generates a working app from the framing that survived, writing real files into a live workspace you can read and run as they land.",
     output: "Working app",
   },
+  {
+    n: "06",
+    name: "Market",
+    role: "Get it seen",
+    body: "Turns everything the earlier stages learned about the segment into launch copy and social posts, aimed at exactly the people the simulation said would adopt.",
+    output: "Launch copy · social posts",
+  },
 ];
+
