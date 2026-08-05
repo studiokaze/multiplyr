@@ -42,6 +42,52 @@ const FEATURES: {
   },
 ];
 
+/** One glyph per feature: a gauge, a panel of people, a file. */
+function FeatureIcon({
+  index,
+  className = "",
+}: {
+  index: number;
+  className?: string;
+}) {
+  const common = {
+    width: 22,
+    height: 22,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.7,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    "aria-hidden": true,
+    className,
+  };
+  if (index === 0) {
+    return (
+      <svg {...common}>
+        <path d="M3.5 15a8.5 8.5 0 1 1 17 0" />
+        <path d="M12 15l4-4" />
+      </svg>
+    );
+  }
+  if (index === 1) {
+    return (
+      <svg {...common}>
+        <circle cx="9" cy="8" r="3" />
+        <path d="M3 20a6 6 0 0 1 12 0" />
+        <path d="M17 6.5a3 3 0 0 1 0 6M18.5 20a6 6 0 0 0-3-5.2" />
+      </svg>
+    );
+  }
+  return (
+    <svg {...common}>
+      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+      <path d="M14 3v5h5" />
+      <path d="M10.5 12.5 9 14l1.5 1.5M14 12.5 15.5 14 14 15.5" />
+    </svg>
+  );
+}
+
 /* ---- stage visuals: the product's own light UI, one per feature ---------- */
 
 function StageScore() {
@@ -195,8 +241,13 @@ export default function Features() {
       <div className="mx-auto max-w-[68rem]">
         <div className="mb-16 text-center">
           <h2 className="display mx-auto max-w-[20ch] text-[2rem] sm:text-[3rem]">
-            Three things no chat window does.
+            What can Multiplyr do for you?
           </h2>
+          <p className="mx-auto mt-4 max-w-[52ch] text-[15px] leading-[1.6] text-chalk-soft">
+            Three things a chat window cannot: it checks the market before it
+            writes, tests the idea on your segment, and hands the builder
+            everything the earlier stages learned.
+          </p>
         </div>
 
         <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16">
@@ -214,12 +265,18 @@ export default function Features() {
                     className="group/row block w-full py-6 text-left"
                   >
                     <h3
-                      className={`display text-[1.5rem] transition-colors duration-300 sm:text-[1.9rem] ${
+                      className={`display flex items-center gap-3 text-[1.5rem] transition-colors duration-300 sm:text-[1.9rem] ${
                         isActive
-                          ? "text-chalk"
+                          ? "text-signal"
                           : "text-chalk-faint group-hover/row:text-chalk"
                       }`}
                     >
+                      <FeatureIcon
+                        index={i}
+                        className={`shrink-0 transition-colors duration-300 ${
+                          isActive ? "text-signal" : "text-chalk-faint"
+                        }`}
+                      />
                       {f.title}
                     </h3>
 

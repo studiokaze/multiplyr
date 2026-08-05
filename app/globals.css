@@ -397,6 +397,29 @@ body {
    way to ease to an unknown content height without measuring it in JS.
    -------------------------------------------------------------------------- */
 
+/*
+  Hovering a question washes a gradient across the row, warm on the left where
+  the text is and fading out to the right. A flat background colour reads as a
+  table row; this reads as the row lighting up.
+*/
+.faq-row {
+  background-image: linear-gradient(
+    100deg,
+    var(--signal-dim),
+    rgba(255, 255, 255, 0.05) 42%,
+    transparent 78%
+  );
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 260ms var(--ease-house);
+}
+
+summary:hover .faq-row,
+details[open] .faq-row {
+  opacity: 1;
+}
+
 .faq-body {
   display: grid;
   grid-template-rows: 0fr;

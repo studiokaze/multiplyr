@@ -43,8 +43,10 @@ export default function Faq() {
         <div className="sheen relative mt-10 grid gap-px overflow-hidden rounded-[14px] border border-edge bg-edge" style={{ "--t": "11s" } as React.CSSProperties}>
           {QA.map(({ q, a }) => (
             <details key={q} className="group bg-void-2">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-6 px-6 py-5 text-[15px] font-medium text-chalk-soft hover:bg-void-3 hover:text-chalk [&::-webkit-details-marker]:hidden group-open:text-chalk">
-                {q}
+              <summary className="relative flex cursor-pointer list-none items-center justify-between gap-6 px-6 py-5 text-[15px] font-medium text-chalk-soft hover:text-chalk [&::-webkit-details-marker]:hidden group-open:text-chalk">
+                {/* gradient wash, behind the row content */}
+                <span aria-hidden="true" className="faq-row absolute inset-0" />
+                <span className="relative">{q}</span>
                 <span
                   aria-hidden="true"
                   className="faq-mark relative h-3 w-3 shrink-0 text-chalk-faint"
