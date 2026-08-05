@@ -2,10 +2,12 @@ import Backdrop from "./Backdrop";
 import ClosingCta from "./ClosingCta";
 import Faq from "./Faq";
 import Features from "./Features";
+import Film from "./Film";
 import Footer from "./Footer";
 import Hero from "./Hero";
 import MarketingNav from "./MarketingNav";
 import Pricing from "./Pricing";
+import TextScroll from "./TextScroll";
 import WorkspaceShot from "./WorkspaceShot";
 
 export default function Marketing() {
@@ -35,9 +37,11 @@ export default function Marketing() {
         </section>
 
         <Features />
+        <Film />
         <Pricing />
         <Faq />
         <ClosingCta />
+        <TextScroll />
         <Footer />
       </main>
     </div>
