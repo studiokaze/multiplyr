@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DOWNLOADS, GITHUB_REPO, RELEASES_PUBLISHED } from "@/lib/downloads";
+import { GITHUB_REPO, RELEASES_PUBLISHED } from "@/lib/downloads";
 import { Glyph, usePlatform } from "./DownloadCTA";
 import Mark from "./Mark";
 
@@ -10,8 +10,6 @@ const LINKS = [
   { label: "Pricing", href: "#pricing" },
   { label: "FAQ", href: "#faq" },
 ];
-
-const RELEASES = `https://github.com/${GITHUB_REPO}/releases/latest`;
 
 export default function MarketingNav() {
   // Lift the bar off the page once scrolled, so it reads as a floating
@@ -26,7 +24,6 @@ export default function MarketingNav() {
   }, []);
 
   const platform = usePlatform();
-  const primary = platform === "unknown" ? null : DOWNLOADS[platform][0];
 
   return (
     <div className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4">
@@ -72,7 +69,7 @@ export default function MarketingNav() {
 
           {RELEASES_PUBLISHED ? (
             <a
-              href={primary?.href ?? RELEASES}
+              href="/download"
               className="spring-hover flex items-center gap-2 rounded-full bg-chalk px-4 py-2 text-[13px] font-medium text-void"
             >
               {platform !== "unknown" && <Glyph platform={platform} />}
