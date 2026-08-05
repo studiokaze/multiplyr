@@ -15,7 +15,10 @@ Calibration rules — these override any instinct to be helpful:
 - Do not soften a kill. The founder is better off hearing it now.
 
 reasoning: 2-4 sentences. Lead with the verdict's actual cause. Reference specific findings from the research, not generalities.
-keyRisks: 2-4 concrete risks. Each one must be a thing that could actually kill the product, not a generic startup risk like "execution" or "competition".`;
+keyRisks: 2-4 concrete risks. Each one must be a thing that could actually kill the product, not a generic startup risk like "execution" or "competition".
+
+niches: map 4-6 slices of this market by demand against crowding, so the founder can see where the opening actually is. Ground both numbers in the research rather than guessing: a slice the competitors clearly serve is crowded, a slice nobody in the demand signals mentioned has low demand. The map is useless if every slice scores alike, so make the spread real: at least one slice should be crowded and at least one should be quiet.
+bestNiche: the slice with the best demand-to-crowding ratio, named exactly as in the list.`;
 
 export const ANALYZE_TOOL_SCHEMA = {
   type: "object" as const,
@@ -40,8 +43,49 @@ export const ANALYZE_TOOL_SCHEMA = {
       items: { type: "string" },
       description: "Concrete, product-specific risks. No generic startup risks.",
     },
+    niches: {
+      type: "array",
+      minItems: 4,
+      maxItems: 6,
+      description:
+        "Slices of this market the product could occupy, mapped by demand against crowding. Include at least one that is crowded and one that is quiet, so the map shows a real spread rather than every option looking equally good.",
+      items: {
+        type: "object",
+        properties: {
+          name: {
+            type: "string",
+            description:
+              "The segment in 2-5 words, specific enough to target. Not 'small businesses'.",
+          },
+          demand: {
+            type: "integer",
+            minimum: 0,
+            maximum: 100,
+            description:
+              "How strongly this slice wants it, grounded in the research signals rather than guessed.",
+          },
+          crowding: {
+            type: "integer",
+            minimum: 0,
+            maximum: 100,
+            description:
+              "How well existing products already serve this slice. High means saturated.",
+          },
+          note: {
+            type: "string",
+            description: "One short line on why this slice scores that way.",
+          },
+        },
+        required: ["name", "demand", "crowding", "note"],
+      },
+    },
+    bestNiche: {
+      type: "string",
+      description:
+        "Name of the niche with the best demand-to-crowding ratio. Must match one of the names above exactly.",
+    },
   },
-  required: ["verdict", "score", "reasoning", "keyRisks"],
+  required: ["verdict", "score", "reasoning", "keyRisks", "niches", "bestNiche"],
 };
 
 export function analyzeUserPrompt(

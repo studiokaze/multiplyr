@@ -30,12 +30,26 @@ export type ResearchResult = {
 
 export type Verdict = "build" | "iterate" | "kill";
 
+/**
+ * A slice of the market the idea could occupy. `demand` and `crowding` are
+ * 0-100; the interesting niches are high demand with low crowding.
+ */
+export type Niche = {
+  name: string;
+  demand: number;
+  crowding: number;
+  note: string;
+};
+
 /** Output of the market-analysis agent (stage 03). */
 export type AnalysisResult = {
   verdict: Verdict;
   score: number;
   reasoning: string;
   keyRisks: string[];
+  /** The niche map. Older sessions may not have it. */
+  niches?: Niche[];
+  bestNiche?: string;
 };
 
 export type Objection = {

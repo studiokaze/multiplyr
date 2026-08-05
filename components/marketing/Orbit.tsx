@@ -14,7 +14,7 @@ import { STACK_TILES } from "./stack";
 const ORBIT_S = 36;
 
 export default function Orbit() {
-  const R = 156; // orbit radius in px
+  const R = 200; // orbit radius in px
 
   return (
     <section
@@ -37,7 +37,7 @@ export default function Orbit() {
           </p>
         </div>
 
-        <div className="relative mx-auto mt-2 flex h-[420px] max-w-[460px] items-center justify-center">
+        <div className="relative mx-auto mt-2 flex h-[540px] max-w-[600px] items-center justify-center">
           <div
             aria-hidden="true"
             className="orbit-ring absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.08]"
@@ -70,11 +70,11 @@ export default function Orbit() {
                   >
                     <span
                       title={t.name}
-                      className={`orbit-tile flex h-[54px] w-[54px] items-center justify-center rounded-[15px] border border-white/10 ${t.bg} shadow-[0_18px_50px_-12px_rgba(0,0,0,0.85)]`}
+                      className={`orbit-tile flex h-[96px] w-[96px] items-center justify-center rounded-[24px] border border-white/10 ${t.bg} shadow-[0_24px_60px_-14px_rgba(0,0,0,0.9)]`}
                     >
                       <svg
-                        width="26"
-                        height="26"
+                        width="46"
+                        height="46"
                         viewBox="0 0 24 24"
                         fill={t.fill}
                         role="img"
@@ -90,19 +90,19 @@ export default function Orbit() {
           </div>
 
           {/* our tile, centre */}
-          <div className="relative z-10 flex h-[72px] w-[72px] items-center justify-center rounded-[18px] border border-white/10 bg-[#141418] shadow-[0_30px_80px_-16px_rgba(0,0,0,0.95)]">
-            <svg width="28" height="28" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <div className="relative z-10 flex h-[112px] w-[112px] items-center justify-center rounded-[28px] border border-white/10 bg-[#141418] shadow-[0_30px_80px_-16px_rgba(0,0,0,0.95)]">
+            <svg width="46" height="46" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <path
                 d="M2.5 3.5L6.5 8L2.5 12.5"
                 stroke="#f6f5f2"
-                strokeWidth="1.6"
+                strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
               <path
                 d="M8.5 12.5H13.5"
                 stroke="#e9b44c"
-                strokeWidth="1.6"
+                strokeWidth="1.5"
                 strokeLinecap="round"
               />
             </svg>
