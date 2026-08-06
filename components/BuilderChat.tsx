@@ -170,6 +170,7 @@ export default function BuilderChat({
   onChooseFraming,
   onRetry,
   onReconsider,
+  onRefine,
   onBuildAnyway,
   onReset,
 }: {
@@ -186,6 +187,7 @@ export default function BuilderChat({
   onChooseFraming: (f: Framing) => void;
   onRetry: (id: StageId) => void;
   onReconsider: () => void;
+  onRefine: () => void;
   onBuildAnyway: () => void;
   onReset: () => void;
 }) {
@@ -252,9 +254,17 @@ export default function BuilderChat({
             );
           })}
           {pickable && (
-            <p className="pt-1 text-[12px] text-ink-faint">
-              Choose a framing, or the strongest one proceeds on its own.
-            </p>
+            <>
+              <button
+                onClick={() => onRetry("brainstorm")}
+                className="block w-full rounded-[8px] border border-dashed border-rule px-3.5 py-2.5 text-left text-[12.5px] text-ink-faint transition-colors duration-150 hover:border-rule-strong hover:text-ink-soft"
+              >
+                None of these — try again
+              </button>
+              <p className="pt-1 text-[12px] text-ink-faint">
+                Choose a framing, or the strongest one proceeds on its own.
+              </p>
+            </>
           )}
         </div>
       </Stage>
@@ -274,7 +284,11 @@ export default function BuilderChat({
               ) : (
                 <ul className="mt-2 space-y-px overflow-hidden rounded-[8px] border border-rule bg-rule">
                   {research.competitors.map((c, i) => (
-                    <li key={i} className="bg-surface px-3 py-2.5">
+                    <li
+                      key={i}
+                      className="stagger-item bg-surface px-3 py-2.5"
+                      style={{ "--i": i } as React.CSSProperties}
+                    >
                       <div className="flex items-baseline gap-2">
                         <span className="text-[13px] font-medium text-ink">
                           {c.name}
@@ -314,7 +328,15 @@ export default function BuilderChat({
               ) : (
                 <ul className="mt-2 space-y-2">
                   {research.demandSignals.map((s, i) => (
-                    <li key={i} className="flex gap-2.5">
+                    <li
+                      key={i}
+                      className="stagger-item flex gap-2.5"
+                      style={
+                        {
+                          "--i": research.competitors.length + i,
+                        } as React.CSSProperties
+                      }
+                    >
                       <span className="label mt-[3px] w-14 shrink-0">
                         {s.strength}
                       </span>
@@ -349,7 +371,7 @@ export default function BuilderChat({
       <Stage id="analyze" stages={stages} onRetry={onRetry}>
         {analysis && (
           <div
-            className={`animate-rise overflow-hidden rounded-[10px] border ${VERDICT[analysis.verdict].rule} ${VERDICT[analysis.verdict].bg}`}
+            className={`verdict-reveal overflow-hidden rounded-[10px] border ${VERDICT[analysis.verdict].rule} ${VERDICT[analysis.verdict].bg}`}
           >
             <div className="flex items-end justify-between px-4 pt-4">
               <div>
@@ -403,29 +425,54 @@ export default function BuilderChat({
         )}
       </Stage>
 
-      {/* The gate. Reachable next steps, so a non-build verdict is not a dead end. */}
+      {/* The gate. Verdict-specific next steps — never a dead end. */}
       {blocked && analysis && (
         <section className="animate-rise border-b border-rule px-5 py-5">
           <span className="label">Simulate &amp; build — held</span>
-          <p className="mt-2.5 text-[12.5px] leading-[1.55] text-ink-soft">
-            The simulation and the builder only run on a build verdict. That
-            gate is the point of this tool, so the useful move is a different
-            framing — not a different opinion.
-          </p>
-          <div className="mt-3.5 flex flex-wrap items-center gap-2">
-            <button
-              onClick={onReconsider}
-              className="rounded-[6px] bg-ink px-3.5 py-2 text-[12.5px] font-medium text-paper transition-opacity duration-150 hover:opacity-85"
-            >
-              Try another framing
-            </button>
-            <button
-              onClick={onReset}
-              className="rounded-[6px] border border-rule px-3.5 py-2 text-[12.5px] text-ink-soft transition-colors duration-150 hover:border-rule-strong hover:text-ink"
-            >
-              New idea
-            </button>
-          </div>
+          {analysis.verdict === "iterate" ? (
+            <>
+              <p className="mt-2.5 text-[12.5px] leading-[1.55] text-ink-soft">
+                The problem is real, this framing is not. Refining feeds the
+                validator&apos;s critique back into brainstorming, so the next
+                framings answer what was weak.
+              </p>
+              <div className="mt-3.5 flex flex-wrap items-center gap-2">
+                <button
+                  onClick={onRefine}
+                  className="rounded-[6px] bg-ink px-3.5 py-2 text-[12.5px] font-medium text-paper transition-opacity duration-150 hover:opacity-85"
+                >
+                  Refine idea
+                </button>
+                <button
+                  onClick={onReconsider}
+                  className="rounded-[6px] border border-rule px-3.5 py-2 text-[12.5px] text-ink-soft transition-colors duration-150 hover:border-rule-strong hover:text-ink"
+                >
+                  Pick another framing
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="mt-2.5 text-[12.5px] leading-[1.55] text-ink-soft">
+                The gate is the point of this tool: the useful move is a
+                different idea, not a different opinion.
+              </p>
+              <div className="mt-3.5 flex flex-wrap items-center gap-2">
+                <button
+                  onClick={onReset}
+                  className="rounded-[6px] bg-ink px-3.5 py-2 text-[12.5px] font-medium text-paper transition-opacity duration-150 hover:opacity-85"
+                >
+                  Try a different idea
+                </button>
+                <button
+                  onClick={onReconsider}
+                  className="rounded-[6px] border border-rule px-3.5 py-2 text-[12.5px] text-ink-soft transition-colors duration-150 hover:border-rule-strong hover:text-ink"
+                >
+                  Pick another framing
+                </button>
+              </div>
+            </>
+          )}
           <button
             onClick={onBuildAnyway}
             className="label mt-3.5 underline decoration-rule-strong underline-offset-2 transition-colors duration-150 hover:text-ink"

@@ -12,14 +12,17 @@ export const maxDuration = 60;
 
 export async function POST(req: Request) {
   try {
-    const { idea } = (await req.json()) as { idea?: string };
+    const { idea, feedback } = (await req.json()) as {
+      idea?: string;
+      feedback?: string;
+    };
     if (!idea?.trim()) {
       return NextResponse.json({ error: "idea is required" }, { status: 400 });
     }
 
     const result = await structured<BrainstormResult>({
       system: BRAINSTORM_SYSTEM,
-      userContent: brainstormUserPrompt(idea.trim()),
+      userContent: brainstormUserPrompt(idea.trim(), feedback?.trim()),
       toolName: "submit_framings",
       toolDescription: "Submit 2-3 sharpened framings of the founder's idea.",
       schema: BRAINSTORM_TOOL_SCHEMA,

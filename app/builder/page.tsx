@@ -3,6 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import BuilderChat from "@/components/BuilderChat";
+import CommandPalette, { type Command } from "@/components/CommandPalette";
 import FileTree from "@/components/FileTree";
 import PreviewPane from "@/components/PreviewPane";
 import { usePipeline } from "@/hooks/usePipeline";
@@ -78,8 +79,24 @@ function Workspace() {
     URL.revokeObjectURL(url);
   };
 
+  const commands: Command[] = [
+    { label: "New idea", hint: "home", run: reset },
+    {
+      label: view === "preview" ? "Show code" : "Show preview",
+      hint: "view",
+      run: () => setView(view === "preview" ? "code" : "preview"),
+    },
+    ...(p.busy
+      ? [{ label: "Cancel run", hint: "stop", run: p.cancel }]
+      : []),
+    ...(p.analysis && !p.busy
+      ? [{ label: "Export brief", hint: ".md", run: exportBrief }]
+      : []),
+  ];
+
   return (
     <main className="app-shell flex flex-col">
+      <CommandPalette commands={commands} />
       <header className="flex h-[46px] shrink-0 items-center justify-between gap-4 border-b border-rule bg-surface px-4">
         <div className="flex min-w-0 items-center gap-3">
           <button
@@ -171,6 +188,7 @@ function Workspace() {
             onChooseFraming={p.chooseFraming}
             onRetry={p.retry}
             onReconsider={p.reconsider}
+            onRefine={p.refine}
             onBuildAnyway={p.buildAnyway}
             onReset={reset}
           />

@@ -45,6 +45,12 @@ export const BRAINSTORM_TOOL_SCHEMA = {
   required: ["framings"],
 };
 
-export function brainstormUserPrompt(idea: string): string {
-  return `Raw idea from the founder:\n\n"""\n${idea}\n"""\n\nSharpen it into 2-3 distinct framings using the submit_framings tool.`;
+export function brainstormUserPrompt(idea: string, feedback?: string): string {
+  const base = `Raw idea from the founder:\n\n"""\n${idea}\n"""`;
+  if (!feedback) {
+    return `${base}\n\nSharpen it into 2-3 distinct framings using the submit_framings tool.`;
+  }
+  // The refine loop (Flow 6b): a validator already judged an earlier framing.
+  // The new framings must answer that critique, not generate blind again.
+  return `${base}\n\nA market validator already rejected one framing of this idea. Its critique:\n\n"""\n${feedback}\n"""\n\nProduce 2-3 NEW framings that directly answer this critique — different segment, different wedge, or different moment. Do not resubmit anything the critique already covers. Use the submit_framings tool.`;
 }

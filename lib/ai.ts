@@ -129,10 +129,14 @@ export async function jsonChat<T>(args: JsonArgs): Promise<T> {
   }
   let lastErr: unknown;
   for (const lane of lanes) {
-    try {
-      return (await lane()) as T;
-    } catch (err) {
-      lastErr = err;
+    // One automatic retry per lane: malformed JSON is usually a one-off, and
+    // the user must never see a parse error for it (Flow 2 edge case).
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        return (await lane()) as T;
+      } catch (err) {
+        lastErr = err;
+      }
     }
   }
   throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));

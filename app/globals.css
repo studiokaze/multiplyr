@@ -129,6 +129,44 @@ body {
   border-top: 1px solid var(--rule);
 }
 
+/* The verdict reveal — the one moment that gets real animation budget.
+   Scale + fade, 180ms, once. Everything around it stays quiet. */
+@keyframes verdict-reveal {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.verdict-reveal {
+  animation: verdict-reveal 180ms var(--ease-house) both;
+}
+
+/* Research findings land one at a time, not as a block. --i staggers. */
+.stagger-item {
+  opacity: 0;
+  animation: rise 300ms var(--ease-house) both;
+  animation-delay: calc(var(--i, 0) * 180ms);
+}
+
+/* A file that just streamed into the tree: soft tint, fading over 600ms. */
+@keyframes file-land {
+  from {
+    background: var(--sunk);
+  }
+  to {
+    background: transparent;
+  }
+}
+
+.file-new {
+  animation: file-land 600ms ease-out both;
+}
+
 /* Full-height app screens. Inside the desktop shell the custom title bar
    owns the top 36px, so the shell subtracts it. */
 .app-shell {

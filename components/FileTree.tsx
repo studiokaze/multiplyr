@@ -95,7 +95,9 @@ export default function FileTree({ files }: { files: GeneratedFile[] }) {
         </div>
         <ul className="min-h-0 flex-1 overflow-y-auto p-1.5">
           {files.map((f) => (
-            <li key={f.path}>
+            // Keyed by path: a file that just streamed in mounts fresh, so
+            // the landing tint runs exactly once per new file (Flow 7).
+            <li key={f.path} className="file-new rounded-[5px]">
               <button
                 onClick={() => setPicked(f.path)}
                 className={`flex w-full items-center gap-2 rounded-[5px] px-2 py-1.5 text-left font-mono text-[11.5px] transition-colors duration-150 ${

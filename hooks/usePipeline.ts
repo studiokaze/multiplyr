@@ -346,10 +346,10 @@ export function usePipeline(idea: string) {
 
   /** Callers own the "running" transition — see the stages initialiser. */
   const runBrainstorm = useCallback(
-    async (signal: AbortSignal) => {
+    async (signal: AbortSignal, feedback?: string) => {
       const result = await postJson<BrainstormResult>(
         "/api/agents/brainstorm",
-        { idea },
+        { idea, feedback },
         signal,
       );
       setBrainstorm(result);
@@ -539,6 +539,45 @@ export function usePipeline(idea: string) {
   );
 
   /**
+   * Flow 6b: an iterate verdict feeds its critique back into brainstorming,
+   * so the new framings answer what was weak instead of generating blind.
+   */
+  const refine = useCallback(() => {
+    const a = data.current.analysis;
+    if (!a) return;
+    const feedback = `Verdict: ${a.verdict} (${a.score}/10). ${a.reasoning}\nKey risks:\n${a.keyRisks
+      .map((r) => `- ${r}`)
+      .join("\n")}`;
+    cancel();
+    const signal = freshSignal();
+    setChosenFraming(null);
+    setResearch(null);
+    setAnalysis(null);
+    setSimulation(null);
+    setFiles([]);
+    setBuildLog([]);
+    setMarketing(null);
+    setStages({ ...IDLE_STAGES, brainstorm: { status: "running" } });
+    data.current = {
+      framing: null,
+      research: null,
+      analysis: null,
+      simulation: null,
+    };
+    runBrainstorm(signal, feedback)
+      .then((result) => {
+        const top = result.framings[0];
+        if (top) {
+          autoPick.current = setTimeout(
+            () => chooseFraming(top),
+            AUTO_PICK_SECONDS * 1000,
+          );
+        }
+      })
+      .catch(attribute);
+  }, [attribute, cancel, chooseFraming, freshSignal, runBrainstorm]);
+
+  /**
    * Deliberate escape hatch: build despite an iterate/kill verdict.
    * Skips the simulation (no point pressure-testing a framing the analysis
    * rejected) and goes straight to the builder. Kept subordinate in the UI —
@@ -655,6 +694,7 @@ export function usePipeline(idea: string) {
     restored,
     chooseFraming,
     reconsider,
+    refine,
     retry,
     buildAnyway,
     cancel,
