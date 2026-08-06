@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "*",
         allow: "/",
         // The workspace, onboarding and admin are app surfaces, not pages.
-        disallow: ["/admin", "/app", "/auth", "/builder", "/welcome", "/api/"],
+        disallow: ["/admin", "/app", "/auth", "/builder", "/api/"],
       },
     ],
     sitemap: `${SITE}/sitemap.xml`,

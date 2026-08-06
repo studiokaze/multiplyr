@@ -9,7 +9,7 @@
  * forked with ELECTRON_RUN_AS_NODE rather than requiring Node on the machine.
  */
 
-const { app, BrowserWindow, Menu, dialog, ipcMain, shell, safeStorage } =
+const { app, BrowserWindow, Menu, dialog, ipcMain, shell } =
   require("electron");
 const { fork } = require("node:child_process");
 const fs = require("node:fs");
@@ -31,55 +31,6 @@ function serverDir() {
   return isDev
     ? path.join(__dirname, "..", ".next", "standalone")
     : path.join(process.resourcesPath, "server");
-}
-
-// ---------------------------------------------------------------------------
-// API key storage
-//
-// A desktop binary must never contain a vendor API key — anything shipped can
-// be extracted from the package. The user supplies their own; we keep it in
-// userData, encrypted with the OS keychain when that is available.
-// ---------------------------------------------------------------------------
-
-function configPath() {
-  return path.join(app.getPath("userData"), "config.json");
-}
-
-function readConfig() {
-  try {
-    return JSON.parse(fs.readFileSync(configPath(), "utf8"));
-  } catch {
-    return {};
-  }
-}
-
-function loadApiKey() {
-  const cfg = readConfig();
-  if (cfg.apiKeyEncrypted && safeStorage.isEncryptionAvailable()) {
-    try {
-      return safeStorage.decryptString(Buffer.from(cfg.apiKeyEncrypted, "base64"));
-    } catch {
-      return "";
-    }
-  }
-  return cfg.apiKey || "";
-}
-
-function saveApiKey(key) {
-  const trimmed = (key || "").trim();
-  const cfg = {};
-  if (trimmed) {
-    if (safeStorage.isEncryptionAvailable()) {
-      cfg.apiKeyEncrypted = safeStorage.encryptString(trimmed).toString("base64");
-    } else {
-      // No OS keychain (some Linux setups). Still user-local, still not shipped.
-      cfg.apiKey = trimmed;
-    }
-  }
-  fs.mkdirSync(path.dirname(configPath()), { recursive: true });
-  fs.writeFileSync(configPath(), JSON.stringify(cfg, null, 2), {
-    mode: 0o600,
-  });
 }
 
 // ---------------------------------------------------------------------------
@@ -155,7 +106,7 @@ async function startServer() {
       NODE_ENV: "production",
       PORT: String(serverPort),
       HOSTNAME: "127.0.0.1",
-      ANTHROPIC_API_KEY: mockBaseUrl ? "mock-key" : loadApiKey(),
+      ANTHROPIC_API_KEY: mockBaseUrl ? "mock-key" : "",
       ...(mockBaseUrl ? { ANTHROPIC_BASE_URL: mockBaseUrl } : {}),
       // Lets the app tailor its "no key" message to the desktop flow.
       MULTIPLYER_DESKTOP: "1",
@@ -185,43 +136,6 @@ function stopServer() {
   if (serverProcess) {
     serverProcess.kill();
     serverProcess = null;
-  }
-}
-
-/** The API key is read at server start, so changing it means a restart. */
-async function restartServer() {
-  stopServer();
-  await startServer();
-}
-
-// ---------------------------------------------------------------------------
-// Key validation — a key is only saved after Anthropic accepts it. Runs in
-// the main process so the renderer never does anything sensitive.
-// ---------------------------------------------------------------------------
-
-async function validateKey(key) {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 12000);
-  try {
-    const res = await fetch("https://api.anthropic.com/v1/models?limit=1", {
-      headers: {
-        "x-api-key": key,
-        "anthropic-version": "2023-06-01",
-      },
-      signal: ctrl.signal,
-    });
-    if (res.ok) return { ok: true };
-    if (res.status === 401) {
-      return { ok: false, error: "Anthropic rejected this key. Check for a typo or a revoked key." };
-    }
-    return { ok: false, error: `Anthropic answered with an unexpected status (${res.status}). Try again.` };
-  } catch {
-    return {
-      ok: false,
-      error: "Could not reach api.anthropic.com. Check your connection and try again.",
-    };
-  } finally {
-    clearTimeout(timer);
   }
 }
 
@@ -266,11 +180,6 @@ function createMainWindow(initialPath) {
   mainWindow.loadURL(appUrl(initialPath));
 }
 
-/** Onboarding doubles as the change-key screen, so there is one surface. */
-function openOnboarding() {
-  if (mainWindow) mainWindow.loadURL(appUrl("/welcome"));
-}
-
 function buildMenu() {
   const template = [
     ...(process.platform === "darwin"
@@ -279,8 +188,6 @@ function buildMenu() {
             label: app.name,
             submenu: [
               { role: "about" },
-              { type: "separator" },
-              { label: "Anthropic API key…", click: openOnboarding },
               { type: "separator" },
               { role: "hide" },
               { role: "hideOthers" },
@@ -293,10 +200,6 @@ function buildMenu() {
     {
       label: "File",
       submenu: [
-        ...(process.platform === "darwin"
-          ? []
-          : [{ label: "Anthropic API key…", click: openOnboarding }]),
-        { type: "separator" },
         { role: process.platform === "darwin" ? "close" : "quit" },
       ],
     },
@@ -321,34 +224,6 @@ function buildMenu() {
 // ---------------------------------------------------------------------------
 // IPC
 // ---------------------------------------------------------------------------
-
-ipcMain.handle("key:get", () => {
-  const key = loadApiKey();
-  // Never hand the full secret back to a renderer; a masked hint is enough
-  // to show "a key is set" without re-exposing it.
-  return key ? `${key.slice(0, 7)}…${key.slice(-4)}` : "";
-});
-
-ipcMain.handle("key:save", async (_event, key) => {
-  const trimmed = String(key ?? "").trim();
-  if (trimmed.length < 8) {
-    return { ok: false, error: "That does not look like an API key." };
-  }
-
-  const verdict = await validateKey(trimmed);
-  if (!verdict.ok) return verdict;
-
-  saveApiKey(trimmed);
-  // The key is read at server boot, so a restart makes it live; then land
-  // the user in the app proper.
-  await restartServer();
-  if (mainWindow) mainWindow.loadURL(appUrl("/app"));
-  return { ok: true };
-});
-
-ipcMain.handle("onboarding:skip", () => {
-  if (mainWindow) mainWindow.loadURL(appUrl("/app"));
-});
 
 // Agent runs execute on Multiplyer's hosted API — our provider keys never
 // ship inside the binary. Mock mode keeps everything local.
@@ -413,7 +288,7 @@ if (!singleInstance) {
       return;
     }
     // Managed providers mean no key gate: everyone lands in the app. The
-    // welcome screen stays reachable from the menu for own-key holdouts.
+    // there is nothing to configure.
     const entryPath = () => "/app";
     createMainWindow(entryPath());
 
