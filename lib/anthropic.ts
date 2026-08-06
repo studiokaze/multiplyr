@@ -12,12 +12,11 @@ let client: Anthropic | null = null;
 
 export function anthropic(): Anthropic {
   if (!process.env.ANTHROPIC_API_KEY) {
-    // The desktop build stores the key in the OS keychain, so telling a
-    // desktop user to edit .env.local would send them nowhere useful.
+    // Reached only when no managed provider is configured either — the
+    // legacy own-key path is a fallback, so say what is actually wrong
+    // rather than sending a web visitor to a .env file they cannot touch.
     throw new Error(
-      process.env.MULTIPLYER_DESKTOP === "1"
-        ? "No Anthropic API key set. Open the File menu (Multiplyer menu on macOS) and choose “Anthropic API key…” to add one."
-        : "ANTHROPIC_API_KEY is not set. Copy .env.example to .env.local and add your key.",
+      "Model providers are not configured on this deployment yet. Runs will work once they are — nothing to do on your side.",
     );
   }
   client ??= new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
