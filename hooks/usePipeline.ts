@@ -50,6 +50,10 @@ function load(idea: string): PipelineSnapshot | null {
     // restore would crash the UI, so start those sessions fresh.
     if (!snap.stages?.analyze || !snap.stages?.simulate || !snap.stages?.market)
       return null;
+    // A snapshot that never got past brainstorm has nothing worth restoring —
+    // resuming it just parks the user on a dead RETRY screen. Start fresh.
+    if (snap.stages.brainstorm?.status !== "done" || !snap.brainstorm)
+      return null;
     return { ...snap, stages: settle(snap.stages) };
   } catch {
     return null;
