@@ -210,6 +210,8 @@ function Workspace() {
             buildLog={p.buildLog}
             marketing={p.marketing}
             restored={p.restored}
+            editing={p.editing}
+            onEdit={p.runEdit}
             onChooseFraming={p.chooseFraming}
             onRetry={p.retry}
             onReconsider={p.reconsider}

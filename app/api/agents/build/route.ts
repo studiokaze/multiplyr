@@ -3,9 +3,11 @@ import { hasProviders, jsonChat } from "@/lib/ai";
 import { MODEL, anthropic } from "@/lib/anthropic";
 import {
   BUILD_SYSTEM,
+  EDIT_SYSTEM,
   LIST_FILES_TOOL,
   WRITE_FILE_TOOL,
   buildUserPrompt,
+  editUserPrompt,
 } from "@/lib/agents/buildPrompt";
 import type {
   AnalysisResult,
@@ -31,10 +33,12 @@ function safePath(raw: unknown): string | null {
 }
 
 export async function POST(req: Request) {
-  const { framing, analysis, simulation } = (await req.json()) as {
+  const { framing, analysis, simulation, edit } = (await req.json()) as {
     framing?: Framing;
     analysis?: AnalysisResult;
     simulation?: SimulationResult | null;
+    /** Flow 9: edit mode — an instruction against the existing files. */
+    edit?: { instruction?: string; files?: GeneratedFile[] };
   };
 
   const encoder = new TextEncoder();
@@ -51,6 +55,80 @@ export async function POST(req: Request) {
       };
 
       try {
+        // ---- Flow 9: edit mode -------------------------------------------
+        if (edit?.instruction?.trim() && Array.isArray(edit.files)) {
+          send({ type: "status", message: "Applying your edit…" });
+
+          // Dev-mock fallback: no providers means no real edit — visibly
+          // stamp the instruction into the files so the flow demos.
+          if (!hasProviders()) {
+            const app = edit.files.find((f) =>
+              f.path.toLowerCase().endsWith("app.jsx"),
+            );
+            if (app) {
+              send({
+                type: "note",
+                message: "simulated edit (no providers configured)",
+              });
+              send({
+                type: "file",
+                file: {
+                  path: app.path,
+                  content: `// edit applied (simulated): ${edit.instruction.trim()}\n${app.content}`,
+                },
+              });
+              send({ type: "done", fileCount: 1 });
+            } else {
+              send({ type: "error", message: "No App.jsx to edit." });
+            }
+            controller.close();
+            closed = true;
+            return;
+          }
+
+          const out = await jsonChat<{ files: GeneratedFile[] }>({
+            system: EDIT_SYSTEM,
+            user: editUserPrompt(edit.files, edit.instruction.trim()),
+            schema: {
+              type: "object",
+              properties: {
+                files: {
+                  type: "array",
+                  minItems: 1,
+                  items: {
+                    type: "object",
+                    properties: {
+                      path: { type: "string" },
+                      content: { type: "string" },
+                    },
+                    required: ["path", "content"],
+                  },
+                },
+              },
+              required: ["files"],
+            },
+            maxTokens: 16000,
+          });
+          let changed = 0;
+          for (const f of out.files ?? []) {
+            const p = safePath(f.path);
+            if (!p || typeof f.content !== "string") continue;
+            send({ type: "file", file: { path: p, content: f.content } });
+            changed++;
+          }
+          if (changed === 0) {
+            send({
+              type: "error",
+              message: "That edit didn't come out right. Try rephrasing it.",
+            });
+          } else {
+            send({ type: "done", fileCount: changed });
+          }
+          controller.close();
+          closed = true;
+          return;
+        }
+
         if (!framing?.angle || !analysis) {
           send({ type: "error", message: "framing and analysis are required" });
           controller.close();

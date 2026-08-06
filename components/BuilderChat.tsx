@@ -167,12 +167,14 @@ export default function BuilderChat({
   buildLog,
   marketing,
   restored,
+  editing,
   onChooseFraming,
   onRetry,
   onReconsider,
   onRefine,
   onBuildAnyway,
   onReset,
+  onEdit,
 }: {
   idea: string;
   stages: Stages;
@@ -184,16 +186,27 @@ export default function BuilderChat({
   buildLog: string[];
   marketing: MarketingResult | null;
   restored: boolean;
+  editing: boolean;
   onChooseFraming: (f: Framing) => void;
   onRetry: (id: StageId) => void;
   onReconsider: () => void;
   onRefine: () => void;
   onBuildAnyway: () => void;
   onReset: () => void;
+  onEdit: (instruction: string) => void;
 }) {
   const pickable =
     stages.brainstorm.status === "done" && stages.research.status === "idle";
   const blocked = stages.build.status === "blocked";
+  const editable = stages.build.status === "done";
+  const [editDraft, setEditDraft] = useState("");
+
+  const sendEdit = () => {
+    const trimmed = editDraft.trim();
+    if (!trimmed || editing) return;
+    onEdit(trimmed);
+    setEditDraft("");
+  };
 
   return (
     <div className="h-full overflow-y-auto bg-surface">
@@ -621,6 +634,39 @@ export default function BuilderChat({
           </div>
         )}
       </Stage>
+
+      {/* Flow 9: the edit loop. Ask for a change; only what changes streams
+          back into the tree, and the preview follows. */}
+      {editable && (
+        <section className="border-b border-rule px-5 py-5">
+          <span className="label">Edit the build</span>
+          <div className="mt-2.5 flex items-stretch gap-1.5">
+            <input
+              value={editDraft}
+              onChange={(e) => setEditDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") sendEdit();
+              }}
+              disabled={editing}
+              placeholder='e.g. "make the header sticky"'
+              className="min-w-0 flex-1 rounded-[8px] border border-rule bg-sunk px-3 py-2.5 font-sans text-[12.5px] text-ink outline-none placeholder:text-ink-faint focus:border-rule-strong disabled:opacity-50"
+            />
+            <button
+              onClick={sendEdit}
+              disabled={!editDraft.trim() || editing}
+              className="shrink-0 rounded-[8px] bg-ink px-3.5 text-[12.5px] font-medium text-paper transition-opacity duration-150 hover:opacity-85 disabled:opacity-25"
+            >
+              {editing ? "Editing…" : "Edit"}
+            </button>
+          </div>
+          {editing && (
+            <p className="mt-2 flex items-center gap-2 text-[11.5px] text-ink-faint">
+              <span className="animate-breathe inline-block h-[5px] w-[5px] rounded-full bg-ink" />
+              Only the files that change will be rewritten.
+            </p>
+          )}
+        </section>
+      )}
     </div>
   );
 }

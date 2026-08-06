@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { MarkGlyph } from "@/components/marketing/Mark";
 import { decodeShare, documentFor } from "@/lib/share";
 import type { GeneratedFile } from "@/lib/types";
@@ -44,12 +45,12 @@ export default function SharePage() {
               : "A build shared from Multiplyer"}
           </span>
         </span>
-        <a
+        <Link
           href="/"
           className="shrink-0 rounded-[7px] bg-ink px-3 py-1.5 text-[12px] font-medium text-paper transition-opacity duration-150 hover:opacity-85"
         >
           Build yours
-        </a>
+        </Link>
       </header>
 
       {state.kind === "ok" && app ? (

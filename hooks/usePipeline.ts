@@ -127,6 +127,7 @@ export function usePipeline(idea: string) {
   const [marketing, setMarketing] = useState<MarketingResult | null>(
     () => boot?.marketing ?? null,
   );
+  const [editing, setEditing] = useState(false);
   const restored = boot !== null;
 
   const booted = useRef(false);
@@ -539,6 +540,71 @@ export function usePipeline(idea: string) {
   );
 
   /**
+   * Flow 9: an edit against the built files. Scoped — the agent returns
+   * only the files that change, and they merge into the tree like any
+   * other streamed file. Files already on screen are never thrown away.
+   */
+  const runEdit = useCallback(
+    async (instruction: string) => {
+      const trimmed = instruction.trim();
+      if (!trimmed || editing) return;
+      setEditing(true);
+      setBuildLog((l) => [...l, `> edit: ${trimmed}`]);
+      try {
+        const signal = freshSignal();
+        const res = await fetch((await apiBase()) + "/api/agents/build", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            edit: { instruction: trimmed, files: filesRef.current },
+          }),
+          signal,
+        });
+        if (!res.body) throw new Error("No stream returned");
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const chunks = buffer.split("\n\n");
+          buffer = chunks.pop() ?? "";
+          for (const chunk of chunks) {
+            const line = chunk.split("\n").find((l) => l.startsWith("data: "));
+            if (!line) continue;
+            let event: BuildEvent;
+            try {
+              event = JSON.parse(line.slice(6)) as BuildEvent;
+            } catch {
+              continue;
+            }
+            if (event.type === "file") {
+              setFiles((prev) => [
+                ...prev.filter((f) => f.path !== event.file.path),
+                event.file,
+              ]);
+              setBuildLog((l) => [...l, `> rewrote ${event.file.path}`]);
+            } else if (event.type === "note" || event.type === "status") {
+              setBuildLog((l) => [...l, `> ${event.message}`]);
+            } else if (event.type === "error") {
+              setBuildLog((l) => [...l, `> ${event.message}`]);
+            }
+          }
+        }
+      } catch (err) {
+        if (!(err instanceof DOMException && err.name === "AbortError")) {
+          const message = err instanceof Error ? err.message : String(err);
+          setBuildLog((l) => [...l, `> edit failed: ${message}`]);
+        }
+      } finally {
+        setEditing(false);
+      }
+    },
+    [editing, freshSignal],
+  );
+
+  /**
    * Flow 6b: an iterate verdict feeds its critique back into brainstorming,
    * so the new framings answer what was weak instead of generating blind.
    */
@@ -599,6 +665,11 @@ export function usePipeline(idea: string) {
   useEffect(() => {
     data.current = { framing: chosenFraming, research, analysis, simulation };
   }, [chosenFraming, research, analysis, simulation]);
+
+  const filesRef = useRef<GeneratedFile[]>([]);
+  useEffect(() => {
+    filesRef.current = files;
+  }, [files]);
 
   useEffect(() => {
     if (!idea || booted.current) return;
@@ -691,6 +762,8 @@ export function usePipeline(idea: string) {
     buildLog,
     marketing,
     busy,
+    editing,
+    runEdit,
     restored,
     chooseFraming,
     reconsider,

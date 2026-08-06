@@ -51,6 +51,33 @@ export const LIST_FILES_TOOL = {
   },
 };
 
+export const EDIT_SYSTEM = `You are the builder agent in EDIT mode. The project already exists; the user wants one specific change. The same sandbox rules apply as when building: App.jsx is plain JSX with no imports/exports, React via the React.* namespace, Tailwind utility classes only, no network calls.
+
+Rules of an edit:
+- Change ONLY what the instruction requires. Do not refactor, rename, restyle or "improve" anything the user did not ask about.
+- Return the COMPLETE new contents of every file you change — never a diff, never a fragment. Files you do not change are not returned at all.
+- If the instruction is ambiguous, pick the most conventional reading and note it in one short line at the top of README.md's changelog section (create "## Changes" if absent) — do not stall.
+- Keep App.jsx under ~200 lines after the edit.`;
+
+export function editUserPrompt(
+  files: { path: string; content: string }[],
+  instruction: string,
+): string {
+  const project = files
+    .map((f) => `=== ${f.path} ===\n${f.content}`)
+    .join("\n\n");
+  return `CURRENT PROJECT FILES
+
+${project}
+
+USER'S EDIT REQUEST
+"""
+${instruction}
+"""
+
+Apply the edit. Return only the files that change, each complete.`;
+}
+
 export function buildUserPrompt(
   framing: Framing,
   analysis: AnalysisResult,

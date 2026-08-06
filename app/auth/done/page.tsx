@@ -15,9 +15,9 @@ export default function AuthDonePage() {
           <MarkGlyph size={36} className="text-chalk" />
         </span>
 
-        <h1 className="brand mt-8 text-[1.3rem] text-chalk">You're in</h1>
+        <h1 className="brand mt-8 text-[1.3rem] text-chalk">You&apos;re in</h1>
         <p className="mx-auto mt-3 max-w-[30ch] text-[13.5px] leading-[1.65] text-chalk-soft">
-          That's everything on the web. Head back to the app.
+          That&apos;s everything on the web. Head back to the app.
         </p>
 
         <a
