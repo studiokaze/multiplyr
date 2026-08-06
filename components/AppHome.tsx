@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
+import CommandPalette, { type Command } from "@/components/CommandPalette";
 import type { PipelineSnapshot, StageId } from "@/lib/types";
 
 const NAME_KEY = "multiplyer:name";
@@ -269,8 +270,26 @@ export default function AppHome() {
     if (trimmed) router.push(`/builder?idea=${encodeURIComponent(trimmed)}`);
   };
 
+  const commands: Command[] = [
+    {
+      label: "New idea",
+      hint: "compose",
+      run: () => {
+        setIdea("");
+        document.querySelector("textarea")?.focus();
+      },
+    },
+    { label: collapsed ? "Expand sidebar" : "Collapse sidebar", hint: "view", run: toggleSidebar },
+    ...recent.slice(0, 6).map((r) => ({
+      label: `Open: ${r.idea}`,
+      hint: r.verdict ?? "run",
+      run: () => start(r.idea),
+    })),
+  ];
+
   return (
     <main className="app-shell flex bg-paper">
+      <CommandPalette commands={commands} />
       {/* First run: what should we call you? Saved locally, asked once. */}
       {askName && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-6">
