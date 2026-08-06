@@ -421,6 +421,23 @@ export default function AppHome() {
         </div>
 
         <div className="border-t border-rule p-3">
+          <button
+            disabled
+            title="Settings — soon"
+            aria-label="Settings"
+            className="flex cursor-default items-center gap-2.5 rounded-[7px] px-3 py-2 text-[12px] text-ink-soft"
+          >
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="2.2" stroke="currentColor" strokeWidth="1.3" />
+              <path
+                d="M8 1.8v1.6M8 12.6v1.6M1.8 8h1.6M12.6 8h1.6M3.6 3.6l1.1 1.1M11.3 11.3l1.1 1.1M12.4 3.6l-1.1 1.1M4.7 11.3l-1.1 1.1"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinecap="round"
+              />
+            </svg>
+            Settings
+          </button>
           <a
             href="https://multiplyer.vercel.app/#pricing"
             target="_blank"
@@ -475,17 +492,64 @@ export default function AppHome() {
                 autoFocus
                 className="w-full resize-none bg-transparent px-4 pt-3.5 font-sans text-[14.5px] leading-[1.55] text-ink outline-none placeholder:text-ink-faint"
               />
-              <div className="flex items-center justify-end px-3 pb-3 pt-1">
+              <div className="flex items-center justify-between px-3 pb-3 pt-1">
+                <div className="flex items-center gap-1.5">
+                  <span className="flex cursor-default items-center gap-1 rounded-[6px] border border-rule px-2 py-1 text-[11px] text-ink-soft">
+                    No project <span className="text-[8px]">▾</span>
+                  </span>
+                  <span className="flex cursor-default items-center gap-1.5 rounded-[6px] border border-rule px-2 py-1 text-[11px] text-ink-soft">
+                    This PC
+                  </span>
+                  <span className="flex cursor-default items-center gap-1 rounded-[6px] px-2 py-1 text-[11px] text-ink-faint">
+                    + Auto
+                  </span>
+                </div>
                 <button
                   type="submit"
                   disabled={!idea.trim()}
-                  className="rounded-[8px] bg-ink px-4 py-2 text-[12.5px] font-medium text-paper transition-opacity duration-150 hover:opacity-85 disabled:opacity-25"
+                  aria-label="Run the pipeline"
+                  className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-ink text-paper transition-opacity duration-150 hover:opacity-85 disabled:opacity-25"
                 >
-                  Run ↵
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path
+                      d="M8 12.5v-9m0 0-3.5 3.5M8 3.5l3.5 3.5"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
                 </button>
               </div>
             </div>
           </form>
+
+          {/* quick actions, as in the reference */}
+          <div className="mt-3 flex items-center justify-center gap-2">
+            <button
+              onClick={() => {
+                setIdea("");
+                document.querySelector("textarea")?.focus();
+              }}
+              className="flex items-center gap-1.5 rounded-[7px] border border-rule px-2.5 py-1.5 text-[11px] text-ink-soft transition-colors duration-150 hover:bg-sunk hover:text-ink"
+            >
+              <span aria-hidden="true" className="text-[9px]">
+                ▶
+              </span>
+              Plan New Idea
+            </button>
+            <span className="flex cursor-default items-center gap-1.5 rounded-[7px] border border-rule px-2.5 py-1.5 text-[11px] text-ink-soft">
+              <kbd className="rounded-[4px] border border-rule bg-sunk px-1.5 py-0.5 font-mono text-[9.5px] text-ink-faint">
+                Tab
+              </kbd>
+              Multitask
+            </span>
+          </div>
+
+          <p className="mt-10 text-center text-[11.5px] text-ink-faint">
+            Every idea runs all six agents — nothing gets built until the
+            verdict says so.
+          </p>
         </div>
       </section>
     </main>
