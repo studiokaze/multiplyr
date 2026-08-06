@@ -341,7 +341,10 @@ ipcMain.handle("menu:popup", (_event, label, x) => {
 // Agent runs execute on Multiplyer's hosted API — our provider keys never
 // ship inside the binary. Mock mode keeps everything local.
 ipcMain.handle("api:base", () =>
-  mockBaseUrl ? "" : "https://multiplyer.vercel.app",
+  // Dev talks to its own local server: it has the keys and, unlike the
+  // hosted functions, no 60-second execution cap — which is what was
+  // killing research and build. Packaged builds use the hosted API.
+  isDev ? "" : "https://multiplyer.vercel.app",
 );
 
 ipcMain.handle("user:name", () => {
