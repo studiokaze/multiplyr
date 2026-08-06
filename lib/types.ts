@@ -28,6 +28,10 @@ export type ResearchResult = {
   searchesRun: string[];
   /** The grounded search pass's prose — the field notes behind the data. */
   summary?: string;
+  /** Chart telemetry — estimated from the evidence, labelled as such. */
+  monthlyInterest?: { month: string; interest: number }[];
+  demandByRegion?: { region: string; share: number }[];
+  audienceSegments?: { name: string; pull: number }[];
 };
 
 export type Verdict = "build" | "iterate" | "kill";

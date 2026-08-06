@@ -17,6 +17,8 @@ Run 3-5 web searches. No more — this needs to finish in seconds, not minutes. 
 
 Be adversarial. You are looking for reasons this is already solved, not reasons to be excited. If the space is crowded, say so plainly. If you find no demand signal at all, that is itself the finding — do not invent one.
 
+Also note, where the searches reveal it: WHERE the demand concentrates (countries/regions), WHICH audience segments feel it hardest, and how interest has trended over the last 12 months (rising, seasonal, flat). These feed the demand charts, so gather what the evidence supports.
+
 After searching, summarise what you found in plain text. Cite the URL for anything you claim.`;
 
 export const RESEARCH_EXTRACT_SYSTEM = `Convert the research you just performed into structured data using the submit_research tool. Only include things you actually found in search results. Do not invent competitors or signals to fill the arrays — empty is a valid and useful answer.`;
@@ -70,8 +72,78 @@ export const RESEARCH_TOOL_SCHEMA = {
       items: { type: "string" },
       description: "The search queries you actually ran.",
     },
+    monthlyInterest: {
+      type: "array",
+      minItems: 12,
+      maxItems: 12,
+      items: {
+        type: "object",
+        properties: {
+          month: {
+            type: "string",
+            description: "Three-letter month, most recent 12, oldest first.",
+          },
+          interest: {
+            type: "integer",
+            minimum: 0,
+            maximum: 100,
+            description: "Relative search/discussion interest, 0-100.",
+          },
+        },
+        required: ["month", "interest"],
+      },
+      description:
+        "ESTIMATED 12-month interest curve for this problem, shaped by what the searches showed (trend direction, seasonality). Estimates are fine; label is 'estimated'.",
+    },
+    demandByRegion: {
+      type: "array",
+      minItems: 3,
+      maxItems: 5,
+      items: {
+        type: "object",
+        properties: {
+          region: { type: "string", description: "Country or region name." },
+          share: {
+            type: "integer",
+            minimum: 5,
+            maximum: 100,
+            description: "Relative share of observed demand, roughly summing to 100.",
+          },
+        },
+        required: ["region", "share"],
+      },
+      description:
+        "Where the demand concentrates geographically, from the evidence (forum origins, market mentions). Estimated shares.",
+    },
+    audienceSegments: {
+      type: "array",
+      minItems: 2,
+      maxItems: 4,
+      items: {
+        type: "object",
+        properties: {
+          name: { type: "string", description: "Short segment label." },
+          pull: {
+            type: "integer",
+            minimum: 5,
+            maximum: 100,
+            description: "How hard this segment pulls, roughly summing to 100.",
+          },
+        },
+        required: ["name", "pull"],
+      },
+      description: "The audience segments that feel this problem hardest.",
+    },
   },
-  required: ["competitors", "demandSignals", "gaps", "searchesRun"],
+  required: [
+    "competitors",
+    "demandSignals",
+    "gaps",
+    "searchesRun",
+    "monthlyInterest",
+    "demandByRegion",
+    "audienceSegments",
+  ],
 };
 
 export function researchUserPrompt(framing: Framing): string {
