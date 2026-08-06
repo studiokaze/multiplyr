@@ -8,6 +8,7 @@ import FileTree from "@/components/FileTree";
 import PreviewPane from "@/components/PreviewPane";
 import { usePipeline } from "@/hooks/usePipeline";
 import { briefFilename, buildBrief } from "@/lib/brief";
+import { encodeShare } from "@/lib/share";
 import type { StageId } from "@/lib/types";
 
 const ORDER: StageId[] = [
@@ -35,6 +36,19 @@ function Workspace() {
   const idea = useSearchParams().get("idea")?.trim() ?? "";
   const p = usePipeline(idea);
   const [view, setView] = useState<View>("preview");
+  const [shared, setShared] = useState(false);
+
+  /**
+   * Bare deploy: the whole build travels in the link's fragment, and the
+   * /share page on the public site rebuilds it. Copy + open — that's it.
+   */
+  const shareBuild = () => {
+    const url = `https://multiplyer.vercel.app/share#${encodeShare(idea, p.files)}`;
+    void navigator.clipboard?.writeText(url).catch(() => {});
+    window.open(url, "_blank", "noopener");
+    setShared(true);
+    setTimeout(() => setShared(false), 2000);
+  };
 
   if (!idea) {
     return (
@@ -91,6 +105,9 @@ function Workspace() {
       : []),
     ...(p.analysis && !p.busy
       ? [{ label: "Export brief", hint: ".md", run: exportBrief }]
+      : []),
+    ...(p.files.length > 0 && !p.busy
+      ? [{ label: "Share build", hint: "link", run: shareBuild }]
       : []),
   ];
 
@@ -154,6 +171,14 @@ function Workspace() {
                   ? `Verdict · ${p.analysis.verdict}`
                   : "Idle"}
             </span>
+          )}
+          {p.files.length > 0 && !p.busy && (
+            <button
+              onClick={shareBuild}
+              className="rounded-[6px] bg-ink px-2.5 py-1.5 text-[12px] font-medium text-paper transition-opacity duration-150 hover:opacity-85"
+            >
+              {shared ? "Link copied ✓" : "Share"}
+            </button>
           )}
           {p.analysis && !p.busy && (
             <button

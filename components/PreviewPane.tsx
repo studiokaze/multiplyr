@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { documentFor } from "@/lib/share";
 import type { GeneratedFile } from "@/lib/types";
 
 /**
@@ -10,44 +11,6 @@ import type { GeneratedFile } from "@/lib/types";
  * source is evaluated as a script, which is why buildPrompt tells the agent to
  * emit import-free, export-free JSX.
  */
-function documentFor(appSource: string): string {
-  return `<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>body { margin: 0; }</style>
-  </head>
-  <body>
-    <div id="root"></div>
-    <div id="err" style="display:none;white-space:pre-wrap;font:12px/1.6 ui-monospace,monospace;color:#a52822;background:#f9eeed;padding:16px"></div>
-    <script type="text/babel" data-presets="react">
-${appSource}
-
-      const rootEl = document.getElementById("root");
-      try {
-        ReactDOM.createRoot(rootEl).render(React.createElement(App));
-      } catch (e) {
-        const box = document.getElementById("err");
-        box.style.display = "block";
-        box.textContent = "Preview failed to render:\\n" + (e && e.message ? e.message : String(e));
-      }
-    </script>
-    <script>
-      window.addEventListener("error", function (e) {
-        var box = document.getElementById("err");
-        box.style.display = "block";
-        box.textContent = "Preview error:\\n" + (e.message || String(e.error));
-      });
-    </script>
-  </body>
-</html>`;
-}
-
 /** Viewport presets, as every builder offers. */
 const DEVICES = {
   desktop: { label: "Desktop", width: null as number | null },
