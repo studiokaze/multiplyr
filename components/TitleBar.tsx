@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useSyncExternalStore } from "react";
+import { MarkGlyph } from "@/components/marketing/Mark";
 
 /**
  * The desktop app's top line, Cursor-style: one slim draggable bar carrying
@@ -67,6 +68,7 @@ export default function TitleBar() {
           <path d="M6 2.5v11" stroke="currentColor" strokeWidth="1.3" />
         </svg>
       </button>
+      <MarkGlyph size={14} className="mr-1.5 shrink-0 text-ink" />
       {MENUS.map((label) => (
         <button
           key={label}

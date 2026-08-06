@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
-import { MarkGlyph } from "@/components/marketing/Mark";
 import type { PipelineSnapshot, StageId } from "@/lib/types";
 
 const NAME_KEY = "multiplyer:name";
@@ -324,12 +323,11 @@ export default function AppHome() {
       {/* ---- sidebar (collapses to a rail, preference persists) ---- */}
       {collapsed ? (
         <aside className="flex w-[52px] shrink-0 flex-col items-center border-r border-rule bg-surface py-4">
-          <MarkGlyph size={18} className="text-ink" />
           <button
             onClick={toggleSidebar}
             title="Expand sidebar"
             aria-label="Expand sidebar"
-            className="mt-4 rounded-[7px] border border-rule bg-sunk p-2 text-ink transition-colors duration-150 hover:border-rule-strong"
+            className="rounded-[7px] border border-rule bg-sunk p-2 text-ink transition-colors duration-150 hover:border-rule-strong"
           >
             <SidebarIcon />
           </button>
@@ -349,20 +347,7 @@ export default function AppHome() {
           </span>
         </aside>
       ) : (
-      <aside className="flex w-[248px] shrink-0 flex-col border-r border-rule bg-surface">
-        <div className="flex items-center gap-2.5 px-4 pb-3 pt-4">
-          <MarkGlyph size={18} className="text-ink" />
-          <span className="brand text-[10px] text-ink">Multiplyer</span>
-          <button
-            onClick={toggleSidebar}
-            title="Collapse sidebar"
-            aria-label="Collapse sidebar"
-            className="ml-auto rounded-[7px] border border-rule bg-sunk p-1.5 text-ink transition-colors duration-150 hover:border-rule-strong"
-          >
-            <SidebarIcon />
-          </button>
-        </div>
-
+      <aside className="flex w-[248px] shrink-0 flex-col border-r border-rule bg-surface pt-3">
         <button
           onClick={() => {
             setIdea("");
