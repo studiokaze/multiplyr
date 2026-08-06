@@ -543,8 +543,10 @@ export default function AppHome() {
           <div className="mt-3 flex items-center justify-center gap-2">
             <button
               onClick={() => {
-                setIdea("");
-                document.querySelector("textarea")?.focus();
+                // With an idea typed, this IS the start button: brainstorm
+                // fires and the pipeline carries on from there by itself.
+                if (idea.trim()) start(idea);
+                else document.querySelector("textarea")?.focus();
               }}
               className="flex items-center gap-1.5 rounded-[7px] border border-rule px-2.5 py-1.5 text-[11px] text-ink-soft transition-colors duration-150 hover:bg-sunk hover:text-ink"
             >
