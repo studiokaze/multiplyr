@@ -107,7 +107,7 @@ export async function POST(req: Request) {
               },
               required: ["files"],
             },
-            maxTokens: 16000,
+            maxTokens: 8000,
             prefer: "openrouter",
           });
           let changed = 0;
@@ -161,7 +161,7 @@ export async function POST(req: Request) {
               },
               required: ["files"],
             },
-            maxTokens: 16000,
+            maxTokens: 8000,
             prefer: "openrouter",
           });
           let written = 0;
