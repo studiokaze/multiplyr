@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { hasProviders, jsonChat } from "@/lib/ai";
+import type { ProviderName } from "@/lib/providers";
 
 /**
  * Single place to swap the model for every agent.
@@ -45,6 +46,8 @@ export async function structured<T>(opts: {
   toolDescription: string;
   schema: Anthropic.Tool["input_schema"];
   maxTokens?: number;
+  /** Which managed provider should lead for this agent (routing spec). */
+  prefer?: ProviderName;
 }): Promise<T> {
   // Production lane: Multiplyer's own providers (Groq/Gemini/OpenRouter).
   // The Anthropic path below survives only as the dev-mock fallback.
@@ -60,6 +63,7 @@ export async function structured<T>(opts: {
       user,
       schema: opts.schema,
       maxTokens: opts.maxTokens,
+      prefer: opts.prefer ?? "gemini",
     });
   }
   const res = await anthropic().messages.create({

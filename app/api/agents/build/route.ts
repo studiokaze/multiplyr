@@ -108,6 +108,7 @@ export async function POST(req: Request) {
               required: ["files"],
             },
             maxTokens: 16000,
+            prefer: "openrouter",
           });
           let changed = 0;
           for (const f of out.files ?? []) {
@@ -161,6 +162,7 @@ export async function POST(req: Request) {
               required: ["files"],
             },
             maxTokens: 16000,
+            prefer: "openrouter",
           });
           let written = 0;
           for (const f of out.files ?? []) {
