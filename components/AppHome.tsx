@@ -270,7 +270,7 @@ export default function AppHome() {
   };
 
   return (
-    <main className="flex h-dvh bg-paper">
+    <main className="app-shell flex bg-paper">
       {/* First run: what should we call you? Saved locally, asked once. */}
       {askName && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-6">

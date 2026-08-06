@@ -10,5 +10,7 @@ contextBridge.exposeInMainWorld("multiplyer", {
   userName: () => ipcRenderer.invoke("user:name"),
   // Where agent requests go: the hosted API in production, "" in mock mode.
   apiBase: () => ipcRenderer.invoke("api:base"),
+  // Title-bar menu labels pop the real native menus.
+  menuPopup: (label, x) => ipcRenderer.invoke("menu:popup", label, x),
   platform: process.platform,
 });

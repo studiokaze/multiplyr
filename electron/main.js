@@ -159,6 +159,18 @@ function createMainWindow(initialPath) {
     title: "Multiplyer",
     show: false,
     autoHideMenuBar: process.platform !== "darwin",
+    // Cursor-style top line: the app draws a slim bar with the mark and the
+    // menus; the OS only overlays its window controls on the right.
+    ...(process.platform !== "darwin"
+      ? {
+          titleBarStyle: "hidden",
+          titleBarOverlay: {
+            color: "#0b0b0d",
+            symbolColor: "#f2f1ee",
+            height: 36,
+          },
+        }
+      : {}),
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
@@ -180,8 +192,9 @@ function createMainWindow(initialPath) {
   mainWindow.loadURL(appUrl(initialPath));
 }
 
-function buildMenu() {
-  const template = [
+/** The title bar's HTML labels pop these real native menus. */
+function menuTemplate() {
+  return [
     ...(process.platform === "darwin"
       ? [
           {
@@ -253,8 +266,24 @@ function buildMenu() {
       ],
     },
   ];
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
+
+function buildMenu() {
+  // Registered for accelerators even though the bar itself is hidden.
+  Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate()));
+}
+
+// A title-bar label was clicked: pop that submenu right under it.
+ipcMain.handle("menu:popup", (_event, label, x) => {
+  if (!mainWindow) return;
+  const entry = menuTemplate().find((m) => m.label === label);
+  if (!entry) return;
+  Menu.buildFromTemplate(entry.submenu).popup({
+    window: mainWindow,
+    x: Math.max(0, Math.round(Number(x) || 0)),
+    y: 36,
+  });
+});
 
 // ---------------------------------------------------------------------------
 // IPC

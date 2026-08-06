@@ -129,6 +129,15 @@ body {
   border-top: 1px solid var(--rule);
 }
 
+/* Full-height app screens. Inside the desktop shell the custom title bar
+   owns the top 36px, so the shell subtracts it. */
+.app-shell {
+  height: 100dvh;
+}
+body.has-titlebar .app-shell {
+  height: calc(100dvh - 36px);
+}
+
 /* Motion budget: three effects, all short, none decorative.
    1. content arriving  2. work in progress  3. the verdict landing */
 @keyframes rise {

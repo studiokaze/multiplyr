@@ -79,7 +79,7 @@ function Workspace() {
   };
 
   return (
-    <main className="flex h-dvh flex-col">
+    <main className="app-shell flex flex-col">
       <header className="flex h-[46px] shrink-0 items-center justify-between gap-4 border-b border-rule bg-surface px-4">
         <div className="flex min-w-0 items-center gap-3">
           <button
