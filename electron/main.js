@@ -51,6 +51,27 @@ function freePort() {
   });
 }
 
+function portFree(port) {
+  return new Promise((resolve) => {
+    const srv = net.createServer();
+    srv.once("error", () => resolve(false));
+    srv.listen(port, "127.0.0.1", () => srv.close(() => resolve(true)));
+  });
+}
+
+/**
+ * A STABLE port, not a random one: localStorage is scoped to the origin,
+ * and a new port every launch means a new origin — which wiped the saved
+ * name, past runs and preferences on every restart. Fixed candidates first,
+ * random only as a last resort.
+ */
+async function pickPort() {
+  for (const candidate of [43117, 43118, 43119]) {
+    if (await portFree(candidate)) return candidate;
+  }
+  return freePort();
+}
+
 function waitForServer(port, timeoutMs = 30000) {
   const deadline = Date.now() + timeoutMs;
   return new Promise((resolve, reject) => {
@@ -90,7 +111,7 @@ async function startServer() {
     );
   }
 
-  serverPort = await freePort();
+  serverPort = await pickPort();
 
   // Always capture the child's output. A packaged app that fails silently is
   // undiagnosable for the user and for us; this log is the first thing to ask
