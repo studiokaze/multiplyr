@@ -101,6 +101,23 @@ function greeting(name: string): string {
   return name ? `${line}, ${name}.` : `${line}.`;
 }
 
+function SidebarIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <rect
+        x="1.5"
+        y="2.5"
+        width="13"
+        height="11"
+        rx="2"
+        stroke="currentColor"
+        strokeWidth="1.3"
+      />
+      <path d="M6 2.5v11" stroke="currentColor" strokeWidth="1.3" />
+    </svg>
+  );
+}
+
 function VerdictDot({ verdict }: { verdict: string | null }) {
   const tone =
     verdict === "build"
@@ -123,6 +140,19 @@ export default function AppHome() {
   const [idea, setIdea] = useState("");
   const [name, setName] = useState("");
   const [query, setQuery] = useState("");
+  // Sidebar collapse persists like an editor's does. Starts expanded on the
+  // server render; the saved preference lands right after hydration.
+  const [collapsed, setCollapsed] = useState(false);
+  const toggleSidebar = () => {
+    setCollapsed((c) => {
+      try {
+        localStorage.setItem("multiplyer:sidebar", c ? "open" : "collapsed");
+      } catch {
+        /* ignore */
+      }
+      return !c;
+    });
+  };
   const mounted = useMounted();
   const recent = mounted ? readRecent() : [];
   const shown = query
@@ -133,6 +163,13 @@ export default function AppHome() {
     : TIPS[0];
 
   useEffect(() => {
+    try {
+      if (localStorage.getItem("multiplyer:sidebar") === "collapsed") {
+        queueMicrotask(() => setCollapsed(true));
+      }
+    } catch {
+      /* ignore */
+    }
     try {
       const saved = localStorage.getItem(NAME_KEY);
       if (saved) {
@@ -156,20 +193,46 @@ export default function AppHome() {
 
   return (
     <main className="flex h-dvh bg-paper">
-      {/* ---- sidebar ---- */}
+      {/* ---- sidebar (collapses to a rail, preference persists) ---- */}
+      {collapsed ? (
+        <aside className="flex w-[52px] shrink-0 flex-col items-center border-r border-rule bg-surface py-4">
+          <MarkGlyph size={18} className="text-ink" />
+          <button
+            onClick={toggleSidebar}
+            title="Expand sidebar"
+            aria-label="Expand sidebar"
+            className="mt-4 rounded-[6px] p-2 text-ink-soft transition-colors duration-150 hover:bg-sunk hover:text-ink"
+          >
+            <SidebarIcon />
+          </button>
+          <button
+            onClick={() => {
+              setIdea("");
+              setQuery("");
+            }}
+            title="New run"
+            aria-label="New run"
+            className="mt-1 rounded-[6px] p-2 text-[15px] leading-none text-ink-soft transition-colors duration-150 hover:bg-sunk hover:text-ink"
+          >
+            +
+          </button>
+          <span className="mt-auto flex h-[26px] w-[26px] items-center justify-center rounded-full bg-ink text-[11px] font-medium text-paper">
+            {name ? name[0] : "•"}
+          </span>
+        </aside>
+      ) : (
       <aside className="flex w-[248px] shrink-0 flex-col border-r border-rule bg-surface">
         <div className="flex items-center gap-2.5 px-4 pb-3 pt-4">
           <MarkGlyph size={18} className="text-ink" />
           <span className="brand text-[10px] text-ink">Multiplyer</span>
-        </div>
-
-        <div className="px-3">
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search runs"
-            className="w-full rounded-[7px] border border-rule bg-sunk px-3 py-2 text-[12.5px] text-ink outline-none placeholder:text-ink-faint focus:border-rule-strong"
-          />
+          <button
+            onClick={toggleSidebar}
+            title="Collapse sidebar"
+            aria-label="Collapse sidebar"
+            className="ml-auto rounded-[6px] p-1.5 text-ink-faint transition-colors duration-150 hover:bg-sunk hover:text-ink"
+          >
+            <SidebarIcon />
+          </button>
         </div>
 
         <button
@@ -177,16 +240,37 @@ export default function AppHome() {
             setIdea("");
             setQuery("");
           }}
-          className="mx-3 mt-2 flex items-center gap-2 rounded-[7px] px-3 py-2 text-left text-[12.5px] font-medium text-ink transition-colors duration-150 hover:bg-sunk"
+          className="mx-3 flex items-center gap-2 rounded-[7px] px-3 py-2 text-left text-[12.5px] font-medium text-ink transition-colors duration-150 hover:bg-sunk"
         >
           <span className="text-[14px] leading-none">+</span> New run
         </button>
 
+        <div className="mt-1 px-3">
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search"
+            className="w-full rounded-[7px] border border-transparent bg-transparent px-3 py-2 text-[12.5px] text-ink outline-none placeholder:text-ink-soft focus:border-rule focus:bg-sunk"
+          />
+        </div>
+
+        <button
+          disabled
+          className="mx-3 flex cursor-default items-center justify-between rounded-[7px] px-3 py-2 text-left text-[12.5px] text-ink-soft"
+        >
+          Automations
+          <span className="label">soon</span>
+        </button>
+        <a
+          href="/welcome"
+          className="mx-3 flex items-center rounded-[7px] px-3 py-2 text-[12.5px] text-ink-soft transition-colors duration-150 hover:bg-sunk hover:text-ink"
+        >
+          Customize
+        </a>
+
         <div className="mt-4 min-h-0 flex-1 overflow-y-auto px-3 pb-3">
           {shown.length > 0 && (
-            <span className="label px-3">
-              {query ? "Matches" : "Past runs"}
-            </span>
+            <span className="label px-3">{query ? "Matches" : "Runs"}</span>
           )}
           <ul className="mt-1.5 space-y-0.5">
             {shown.map((r) => (
@@ -224,7 +308,7 @@ export default function AppHome() {
             rel="noreferrer"
             className="block rounded-[7px] px-3 py-2 text-[12px] font-medium text-ink-soft transition-colors duration-150 hover:bg-sunk hover:text-ink"
           >
-            Upgrade to Pro
+            Upgrade to a Pro account
           </a>
           <div className="mt-1 flex items-center gap-2.5 px-3 py-2">
             <span className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full bg-ink text-[11px] font-medium text-paper">
@@ -241,6 +325,7 @@ export default function AppHome() {
           </div>
         </div>
       </aside>
+      )}
 
       {/* ---- composer ---- */}
       <section className="flex min-w-0 flex-1 items-center justify-center px-8">
@@ -266,25 +351,46 @@ export default function AppHome() {
                     start(idea);
                   }
                 }}
-                placeholder="Describe the app. One line is enough."
+                placeholder="Plan, build — one line is enough"
                 rows={3}
                 autoFocus
                 className="w-full resize-none bg-transparent px-4 pt-3.5 text-[14.5px] leading-[1.55] text-ink outline-none placeholder:text-ink-faint"
               />
               <div className="flex items-center justify-between px-3 pb-3 pt-1">
-                <span className="rounded-[6px] border border-rule px-2 py-1 font-mono text-[10px] text-ink-faint">
-                  claude-sonnet-4-6
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="rounded-[6px] border border-rule px-2 py-1 font-mono text-[10px] text-ink-faint">
+                    Auto · multi-model
+                  </span>
+                  <span className="rounded-[6px] border border-rule px-2 py-1 font-mono text-[10px] text-ink-faint">
+                    6 agents
+                  </span>
+                </div>
                 <button
                   type="submit"
                   disabled={!idea.trim()}
                   className="rounded-[8px] bg-ink px-4 py-2 text-[12.5px] font-medium text-paper transition-opacity duration-150 hover:opacity-85 disabled:opacity-25"
                 >
-                  Run the pipeline ↵
+                  Run ↵
                 </button>
               </div>
             </div>
           </form>
+
+          {/* keyboard-hint chips, as in the reference */}
+          <div className="mt-3 flex items-center justify-center gap-2">
+            <span className="flex items-center gap-1.5 rounded-[7px] border border-rule px-2.5 py-1.5 text-[11px] text-ink-soft">
+              <kbd className="rounded-[4px] border border-rule bg-sunk px-1.5 py-0.5 font-mono text-[9.5px] text-ink-faint">
+                Enter
+              </kbd>
+              Run new idea
+            </span>
+            <span className="flex items-center gap-1.5 rounded-[7px] border border-rule px-2.5 py-1.5 text-[11px] text-ink-soft">
+              <kbd className="rounded-[4px] border border-rule bg-sunk px-1.5 py-0.5 font-mono text-[9.5px] text-ink-faint">
+                Shift+Enter
+              </kbd>
+              New line
+            </span>
+          </div>
 
           <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
             {EXAMPLES.map((example) => (
