@@ -207,15 +207,6 @@ export default function AppHome() {
     });
   };
 
-  // The title bar's sidebar icon reaches this screen through a DOM event.
-  useEffect(() => {
-    const onToggle = () => toggleSidebar();
-    window.addEventListener("multiplyer:toggle-sidebar", onToggle);
-    return () =>
-      window.removeEventListener("multiplyer:toggle-sidebar", onToggle);
-    // toggleSidebar is stable in behaviour; it only wraps a setState.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   const mounted = useMounted();
   const recent = mounted ? readRecent() : [];
   const shown = query
@@ -348,15 +339,25 @@ export default function AppHome() {
         </aside>
       ) : (
       <aside className="flex w-[248px] shrink-0 flex-col border-r border-rule bg-surface pt-3">
-        <button
-          onClick={() => {
-            setIdea("");
-            setQuery("");
-          }}
-          className="mx-3 flex items-center gap-2 rounded-[7px] px-3 py-2 text-left text-[12.5px] font-medium text-ink transition-colors duration-150 hover:bg-sunk"
-        >
-          <span className="text-[14px] leading-none">+</span> New run
-        </button>
+        <div className="mx-3 flex items-center gap-1.5">
+          <button
+            onClick={() => {
+              setIdea("");
+              setQuery("");
+            }}
+            className="flex flex-1 items-center gap-2 rounded-[7px] px-3 py-2 text-left text-[12.5px] font-medium text-ink transition-colors duration-150 hover:bg-sunk"
+          >
+            <span className="text-[14px] leading-none">+</span> New run
+          </button>
+          <button
+            onClick={toggleSidebar}
+            title="Collapse sidebar"
+            aria-label="Collapse sidebar"
+            className="shrink-0 rounded-[7px] border border-rule bg-sunk p-2 text-ink transition-colors duration-150 hover:border-rule-strong"
+          >
+            <SidebarIcon />
+          </button>
+        </div>
 
         <div className="mt-1 px-3">
           <input
