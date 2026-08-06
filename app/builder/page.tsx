@@ -74,6 +74,9 @@ function Workspace() {
     router.push("/app");
   };
 
+  // Back is not reset: the run stays saved and listed on the dashboard.
+  const goHome = () => router.push("/app");
+
   const exportBrief = () => {
     const markdown = buildBrief({
       idea,
@@ -94,7 +97,8 @@ function Workspace() {
   };
 
   const commands: Command[] = [
-    { label: "New idea", hint: "home", run: reset },
+    { label: "Back to dashboard", hint: "keeps run", run: goHome },
+    { label: "New idea", hint: "clears run", run: reset },
     {
       label: view === "preview" ? "Show code" : "Show preview",
       hint: "view",
@@ -117,7 +121,17 @@ function Workspace() {
       <header className="flex h-[46px] shrink-0 items-center justify-between gap-4 border-b border-rule bg-surface px-4">
         <div className="flex min-w-0 items-center gap-3">
           <button
-            onClick={reset}
+            onClick={goHome}
+            title="Back to dashboard"
+            aria-label="Back to dashboard"
+            className="shrink-0 rounded-[6px] border border-rule p-1.5 text-ink-soft transition-colors duration-150 hover:border-rule-strong hover:text-ink"
+          >
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M10.5 3 5.5 8l5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <button
+            onClick={goHome}
             className="brand shrink-0 text-[10.5px] text-ink"
           >
             Multiplyer
