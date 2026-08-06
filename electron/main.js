@@ -204,6 +204,18 @@ function buildMenu() {
       ],
     },
     {
+      label: "Edit",
+      submenu: [
+        { role: "undo" },
+        { role: "redo" },
+        { type: "separator" },
+        { role: "cut" },
+        { role: "copy" },
+        { role: "paste" },
+        { role: "selectAll" },
+      ],
+    },
+    {
       label: "View",
       submenu: [
         { role: "reload" },
@@ -215,6 +227,29 @@ function buildMenu() {
         { type: "separator" },
         { role: "togglefullscreen" },
         ...(isDev ? [{ role: "toggleDevTools" }] : []),
+      ],
+    },
+    {
+      label: "Help",
+      submenu: [
+        {
+          label: "Multiplyer website",
+          click: () => shell.openExternal("https://multiplyer.vercel.app"),
+        },
+        {
+          label: "Release notes",
+          click: () =>
+            shell.openExternal(
+              "https://github.com/studiokaze/multiplyer/releases",
+            ),
+        },
+        {
+          label: "Report an issue",
+          click: () =>
+            shell.openExternal(
+              "https://github.com/studiokaze/multiplyer/issues/new",
+            ),
+        },
       ],
     },
   ];

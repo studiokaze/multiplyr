@@ -131,15 +131,28 @@ function prettyName(raw: string): string {
   return first ? first[0].toUpperCase() + first.slice(1) : "";
 }
 
-/** Claude-style: rotates daily between action lines and a time line. */
-function greeting(name: string): string {
-  const d = new Date();
-  const h = d.getHours();
+/**
+ * Claude-style, and different every visit: a counter bumps on each open, so
+ * coming back never reads the same twice in a row.
+ */
+const LINES: { t: string; q?: boolean }[] = [
+  { t: "Let's get rolling" },
+  { t: "Hello again" },
+  { t: "What's on the mission", q: true },
+  { t: "Back at it" },
+  { t: "Where were we", q: true },
+  { t: "What are we making today", q: true },
+  { t: "Good to see you" },
+];
+
+function greeting(name: string, visit: number): string {
+  const h = new Date().getHours();
   const timeLine =
     h < 5 ? "Late one" : h < 12 ? "Morning" : h < 17 ? "Afternoon" : "Evening";
-  const lines = ["Let's get rolling", "Back at it", timeLine, "Where were we"];
-  const line = lines[Math.floor(d.getTime() / 86400000) % lines.length];
-  return name ? `${line}, ${name}.` : `${line}.`;
+  const pool = [...LINES, { t: timeLine }];
+  const { t, q } = pool[visit % pool.length];
+  const mark = q ? "?" : ".";
+  return name ? `${t}, ${name}${mark}` : `${t}${mark}`;
 }
 
 function SidebarIcon() {
@@ -201,6 +214,7 @@ export default function AppHome() {
     : recent;
   const [askName, setAskName] = useState(false);
   const [nameDraft, setNameDraft] = useState("");
+  const [visit, setVisit] = useState(0);
   const placeholder = useTypingPlaceholder(mounted && idea.length === 0);
 
   useEffect(() => {
@@ -208,6 +222,14 @@ export default function AppHome() {
       if (localStorage.getItem("multiplyer:sidebar") === "collapsed") {
         queueMicrotask(() => setCollapsed(true));
       }
+    } catch {
+      /* ignore */
+    }
+    // Visit counter drives the greeting rotation — new line every open.
+    try {
+      const n = Number(localStorage.getItem("multiplyer:visits") ?? "0") + 1;
+      localStorage.setItem("multiplyer:visits", String(n));
+      queueMicrotask(() => setVisit(n));
     } catch {
       /* ignore */
     }
@@ -428,7 +450,7 @@ export default function AppHome() {
       <section className="flex min-w-0 flex-1 items-center justify-center px-8">
         <div className="w-full max-w-[40rem] pb-16">
           <h1 className="display text-center text-[1.9rem] text-ink">
-            {mounted ? greeting(name) : " "}
+            {mounted ? greeting(name, visit) : " "}
           </h1>
 
           <form
