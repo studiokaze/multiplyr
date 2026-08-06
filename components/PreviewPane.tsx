@@ -108,18 +108,39 @@ export default function PreviewPane({ files }: { files: GeneratedFile[] }) {
 
       {app ? (
         <div className="min-h-0 flex-1 overflow-auto p-4">
-          <div
-            className="mx-auto h-full overflow-hidden rounded-[10px] border border-rule bg-white shadow-[0_10px_40px_-18px_rgba(0,0,0,0.35)]"
-            style={{ maxWidth: width ?? "100%" }}
-          >
-            <iframe
-              key={`${srcDoc.length}-${reloads}`}
-              title="Live preview"
-              srcDoc={srcDoc}
-              sandbox="allow-scripts"
-              className="h-full w-full border-0 bg-white"
-            />
-          </div>
+          {device === "mobile" ? (
+            /* Demo mode: the app in a device chassis, to be tested like a
+               real phone — bezel, notch, home bar and all. */
+            <div className="mx-auto flex h-full max-w-[390px] flex-col rounded-[44px] border-[10px] border-[#1b1b1f] bg-[#1b1b1f] shadow-[0_24px_64px_-20px_rgba(0,0,0,0.8),inset_0_0_0_2px_#000]">
+              <div className="relative shrink-0 rounded-t-[34px] bg-white">
+                <span className="absolute left-1/2 top-2 h-[22px] w-[110px] -translate-x-1/2 rounded-full bg-[#1b1b1f]" />
+                <div className="h-[34px]" />
+              </div>
+              <iframe
+                key={`${srcDoc.length}-${reloads}`}
+                title="Device demo"
+                srcDoc={srcDoc}
+                sandbox="allow-scripts"
+                className="min-h-0 w-full flex-1 border-0 bg-white"
+              />
+              <div className="flex shrink-0 justify-center rounded-b-[34px] bg-white pb-2 pt-1.5">
+                <span className="h-[4px] w-[110px] rounded-full bg-[#1b1b1f]/70" />
+              </div>
+            </div>
+          ) : (
+            <div
+              className="mx-auto h-full overflow-hidden rounded-[10px] border border-rule bg-white shadow-[0_10px_40px_-18px_rgba(0,0,0,0.35)]"
+              style={{ maxWidth: width ?? "100%" }}
+            >
+              <iframe
+                key={`${srcDoc.length}-${reloads}`}
+                title="Live preview"
+                srcDoc={srcDoc}
+                sandbox="allow-scripts"
+                className="h-full w-full border-0 bg-white"
+              />
+            </div>
+          )}
         </div>
       ) : (
         <div className="flex flex-1 items-center justify-center p-8">
