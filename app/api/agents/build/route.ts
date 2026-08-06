@@ -141,7 +141,9 @@ export async function POST(req: Request) {
         if (hasProviders()) {
           send({ type: "status", message: "Builder agent starting…" });
           const out = await jsonChat<{ files: GeneratedFile[] }>({
-            system: BUILD_SYSTEM,
+            system: `${BUILD_SYSTEM}
+
+IMPORTANT: there is no write_file tool here. Return EVERY file at once in the single JSON object's "files" array.`,
             user: buildUserPrompt(framing, analysis, simulation),
             schema: {
               type: "object",
@@ -164,8 +166,15 @@ export async function POST(req: Request) {
             maxTokens: 8000,
             prefer: "openrouter",
           });
+          // Salvage the tool-call habit: a bare {path, content} is one file.
+          const rawOut = out as { files?: GeneratedFile[]; path?: string; content?: string };
+          const outFiles =
+            rawOut.files ??
+            (rawOut.path && rawOut.content
+              ? [{ path: rawOut.path, content: rawOut.content }]
+              : []);
           let written = 0;
-          for (const f of out.files ?? []) {
+          for (const f of outFiles) {
             const p = safePath(f.path);
             if (!p || typeof f.content !== "string") {
               send({ type: "note", message: `refused path: ${String(f.path)}` });
