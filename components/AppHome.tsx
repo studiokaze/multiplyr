@@ -207,6 +207,16 @@ export default function AppHome() {
       return !c;
     });
   };
+
+  // The title bar's sidebar icon reaches this screen through a DOM event.
+  useEffect(() => {
+    const onToggle = () => toggleSidebar();
+    window.addEventListener("multiplyer:toggle-sidebar", onToggle);
+    return () =>
+      window.removeEventListener("multiplyer:toggle-sidebar", onToggle);
+    // toggleSidebar is stable in behaviour; it only wraps a setState.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const mounted = useMounted();
   const recent = mounted ? readRecent() : [];
   const shown = query

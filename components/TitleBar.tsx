@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useSyncExternalStore } from "react";
-import { MarkGlyph } from "@/components/marketing/Mark";
 
 /**
  * The desktop app's top line, Cursor-style: one slim draggable bar carrying
@@ -45,7 +44,29 @@ export default function TitleBar() {
       className="flex h-[36px] shrink-0 select-none items-center gap-1 border-b border-rule bg-paper pl-3 pr-[150px]"
       style={{ WebkitAppRegion: "drag" } as React.CSSProperties}
     >
-      <MarkGlyph size={15} className="mr-2 shrink-0 text-ink" />
+      {/* Sidebar toggle, not a logo — broadcasts to whichever screen listens. */}
+      <button
+        onClick={() =>
+          window.dispatchEvent(new Event("multiplyer:toggle-sidebar"))
+        }
+        title="Toggle sidebar"
+        aria-label="Toggle sidebar"
+        className="mr-1.5 rounded-[5px] p-1.5 text-ink-soft transition-colors duration-150 hover:bg-sunk hover:text-ink"
+        style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties}
+      >
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <rect
+            x="1.5"
+            y="2.5"
+            width="13"
+            height="11"
+            rx="2"
+            stroke="currentColor"
+            strokeWidth="1.3"
+          />
+          <path d="M6 2.5v11" stroke="currentColor" strokeWidth="1.3" />
+        </svg>
+      </button>
       {MENUS.map((label) => (
         <button
           key={label}
