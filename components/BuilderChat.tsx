@@ -83,6 +83,60 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
+/**
+ * The research process, made visible: real web search takes seconds, so the
+ * wait narrates itself as staged work instead of one spinning word.
+ */
+const RESEARCH_STEPS = [
+  "Scanning the live market",
+  "Profiling competitors",
+  "Reading demand signals",
+  "Mapping the gap nobody holds",
+];
+
+function ResearchProgress() {
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    if (step >= RESEARCH_STEPS.length - 1) return;
+    const t = setTimeout(() => setStep((s) => s + 1), 5500);
+    return () => clearTimeout(t);
+  }, [step]);
+
+  return (
+    <ol className="space-y-2.5">
+      {RESEARCH_STEPS.map((label, i) => {
+        const state = i < step ? "done" : i === step ? "live" : "next";
+        return (
+          <li key={label} className="flex items-center gap-2.5">
+            {state === "done" ? (
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true" className="shrink-0 text-ink">
+                <path d="M3.5 8.5 6.5 11.5 12.5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            ) : state === "live" ? (
+              <span className="animate-breathe inline-block h-[6px] w-[6px] shrink-0 rounded-full bg-ink" />
+            ) : (
+              <span className="inline-block h-[6px] w-[6px] shrink-0 rounded-full bg-rule-strong" />
+            )}
+            <span
+              className={`text-[12.5px] ${
+                state === "next"
+                  ? "text-ink-faint"
+                  : state === "live"
+                    ? "text-ink"
+                    : "text-ink-soft"
+              }`}
+            >
+              {label}
+              {state === "live" && "…"}
+            </span>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 function Indicator({ status }: { status: StageStatus }) {
   if (status === "running") {
     return (
@@ -283,8 +337,24 @@ export default function BuilderChat({
       </Stage>
 
       <Stage id="research" stages={stages} onRetry={onRetry}>
+        {stages.research.status === "running" && <ResearchProgress />}
         {research && (
           <div className="space-y-5">
+            {research.summary && (
+              <details className="group rounded-[8px] border border-rule bg-sunk">
+                <summary className="cursor-pointer list-none px-3 py-2.5 text-[12px] font-medium text-ink-soft transition-colors duration-150 hover:text-ink [&::-webkit-details-marker]:hidden">
+                  Field notes from the live web
+                  <span className="label ml-2">
+                    {research.searchesRun?.length
+                      ? `${research.searchesRun.length} searches`
+                      : "grounded"}
+                  </span>
+                </summary>
+                <p className="whitespace-pre-wrap border-t border-rule px-3 py-2.5 text-[12px] leading-[1.6] text-ink-soft">
+                  {research.summary}
+                </p>
+              </details>
+            )}
             <div>
               <div className="flex items-baseline justify-between">
                 <span className="label">Competitors</span>

@@ -26,6 +26,8 @@ export type ResearchResult = {
   demandSignals: DemandSignal[];
   gaps: string[];
   searchesRun: string[];
+  /** The grounded search pass's prose — the field notes behind the data. */
+  summary?: string;
 };
 
 export type Verdict = "build" | "iterate" | "kill";
