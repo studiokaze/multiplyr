@@ -180,6 +180,10 @@ IMPORTANT: there is no write_file tool here. Return EVERY file at once in the si
               send({ type: "note", message: `refused path: ${String(f.path)}` });
               continue;
             }
+            // Narrated, paced landing: the tree fills file by file in real
+            // time instead of one silent burst at the end.
+            send({ type: "status", message: `Writing ${p}…` });
+            await new Promise((r) => setTimeout(r, 350));
             send({ type: "file", file: { path: p, content: f.content } });
             written++;
           }
