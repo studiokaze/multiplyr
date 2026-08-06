@@ -81,6 +81,14 @@ async function startServer() {
       `Missing server bundle at ${entry}. Run "npm run build:desktop" first.`,
     );
   }
+  // A plain `next build` regenerates standalone WITHOUT the static assets,
+  // which boots into an unstyled page. Refuse loudly instead.
+  if (!fs.existsSync(path.join(dir, ".next", "static"))) {
+    throw new Error(
+      `Server bundle at ${dir} has no static assets — it came from a plain ` +
+        `"next build". Run "npm run build:desktop" and relaunch.`,
+    );
+  }
 
   serverPort = await freePort();
 
