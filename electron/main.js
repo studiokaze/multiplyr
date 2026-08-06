@@ -94,6 +94,25 @@ function waitForServer(port, timeoutMs = 30000) {
   });
 }
 
+
+/** Dev only: the standalone server does not read the repo's .env.local, so
+ *  provider keys are parsed here and handed to the fork — local runs then
+ *  work even without the hosted API. Packaged builds skip this entirely. */
+function devProviderEnv() {
+  if (!isDev) return {};
+  try {
+    const raw = fs.readFileSync(path.join(__dirname, "..", ".env.local"), "utf8");
+    const out = {};
+    for (const name of ["GEMINI_API_KEY", "OPENROUTER_API_KEY", "GROQ_API_KEY"]) {
+      const m = raw.match(new RegExp("^" + name + "=(.+)$", "m"));
+      if (m && m[1].trim()) out[name] = m[1].trim();
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
 async function startServer() {
   const dir = serverDir();
   const entry = path.join(dir, "server.js");
@@ -136,6 +155,7 @@ async function startServer() {
       PORT: String(serverPort),
       HOSTNAME: "127.0.0.1",
       ANTHROPIC_API_KEY: mockBaseUrl ? "mock-key" : "",
+      ...devProviderEnv(),
       ...(mockBaseUrl ? { ANTHROPIC_BASE_URL: mockBaseUrl } : {}),
       // Lets the app tailor its "no key" message to the desktop flow.
       MULTIPLYER_DESKTOP: "1",
