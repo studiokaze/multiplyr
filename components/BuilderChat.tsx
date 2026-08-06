@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { DemandFlow, InterestBars } from "@/components/charts";
 import NicheMap from "@/components/NicheMap";
 import type {
   AnalysisResult,
@@ -398,6 +399,44 @@ export default function BuilderChat({
                 </ul>
               )}
             </div>
+
+            {/* Demand telemetry: the shape of the market, drawn. */}
+            {(research.monthlyInterest?.length ||
+              research.demandByRegion?.length) && (
+              <div className="space-y-3">
+                {research.monthlyInterest &&
+                  research.monthlyInterest.length > 0 && (
+                    <div className="overflow-hidden rounded-[8px] border border-rule bg-sunk">
+                      <div className="flex items-baseline justify-between px-3 pt-2.5">
+                        <span className="label">Interest, last 12 months</span>
+                        <span className="label">estimated</span>
+                      </div>
+                      <div className="px-2 pb-1.5 pt-1">
+                        <InterestBars data={research.monthlyInterest} />
+                      </div>
+                    </div>
+                  )}
+                {research.demandByRegion &&
+                  research.demandByRegion.length > 0 &&
+                  research.audienceSegments &&
+                  research.audienceSegments.length > 0 && (
+                    <div className="overflow-hidden rounded-[8px] border border-rule bg-sunk">
+                      <div className="flex items-baseline justify-between px-3 pt-2.5">
+                        <span className="label">Where demand flows</span>
+                        <span className="label">
+                          regions → segments · estimated
+                        </span>
+                      </div>
+                      <div className="px-2 pb-1.5 pt-1">
+                        <DemandFlow
+                          regions={research.demandByRegion}
+                          segments={research.audienceSegments}
+                        />
+                      </div>
+                    </div>
+                  )}
+              </div>
+            )}
 
             <div>
               <div className="flex items-baseline justify-between">
