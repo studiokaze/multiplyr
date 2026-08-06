@@ -90,23 +90,11 @@ export async function POST(req: Request) {
             system: EDIT_SYSTEM,
             user: editUserPrompt(edit.files, edit.instruction.trim()),
             schema: {
-              type: "object",
-              properties: {
-                files: {
-                  type: "array",
-                  minItems: 1,
-                  items: {
-                    type: "object",
-                    properties: {
-                      path: { type: "string" },
-                      content: { type: "string" },
-                    },
-                    required: ["path", "content"],
-                  },
-                },
-              },
-              required: ["files"],
-            },
+              files: [
+                { path: "App.jsx", content: "<the complete file>" },
+                { path: "README.md", content: "<the complete file>" },
+              ],
+            } as unknown,
             maxTokens: 8000,
             prefer: "openrouter",
           });
@@ -146,23 +134,11 @@ export async function POST(req: Request) {
 IMPORTANT: there is no write_file tool here. Return EVERY file at once in the single JSON object's "files" array.`,
             user: buildUserPrompt(framing, analysis, simulation),
             schema: {
-              type: "object",
-              properties: {
-                files: {
-                  type: "array",
-                  minItems: 1,
-                  items: {
-                    type: "object",
-                    properties: {
-                      path: { type: "string" },
-                      content: { type: "string" },
-                    },
-                    required: ["path", "content"],
-                  },
-                },
-              },
-              required: ["files"],
-            },
+              files: [
+                { path: "App.jsx", content: "<the complete file>" },
+                { path: "README.md", content: "<the complete file>" },
+              ],
+            } as unknown,
             maxTokens: 8000,
             prefer: "openrouter",
           });

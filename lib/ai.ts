@@ -64,7 +64,7 @@ export async function jsonChat<T>(args: JsonArgs): Promise<T> {
 
   const system = `${args.system}\n\nRespond with ONLY a JSON object matching this schema exactly:\n${JSON.stringify(args.schema)}`;
 
-  let lastErr: unknown;
+  let firstErr: unknown;
   for (const lane of lanes) {
     // One automatic retry per lane: malformed JSON is usually a one-off,
     // and a parse error must never reach the user.
@@ -80,11 +80,11 @@ export async function jsonChat<T>(args: JsonArgs): Promise<T> {
         storeCache(key, value);
         return value;
       } catch (err) {
-        lastErr = err;
+        firstErr ??= err;
       }
     }
   }
-  throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
+  throw firstErr instanceof Error ? firstErr : new Error(String(firstErr));
 }
 
 /**
