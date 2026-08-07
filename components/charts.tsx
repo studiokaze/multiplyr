@@ -122,6 +122,51 @@ type FlowIn = {
  * A two-column sankey with cubic links that draw themselves in; link width
  * apportions each region's share across segments by pull.
  */
+type FlowNode = { y: number; h: number; cursor: number };
+
+/** Pure layout, outside render: mutation is fine in a plain function. */
+function flowLayout(
+  shares: number[],
+  usable: number,
+  gap: number,
+  total: number,
+): FlowNode[] {
+  const out: FlowNode[] = [];
+  let y = 8;
+  for (const v of shares) {
+    const h = Math.max(14, (usable * v) / total);
+    out.push({ y, h, cursor: y });
+    y += h + gap;
+  }
+  return out;
+}
+
+function flowLinks(
+  left: FlowNode[],
+  right: FlowNode[],
+  pulls: number[],
+  sTotal: number,
+  x0: number,
+  x1: number,
+): { d: string; w: number }[] {
+  const links: { d: string; w: number }[] = [];
+  const mx = (x0 + x1) / 2;
+  for (const r of left) {
+    right.forEach((sNode, j) => {
+      const w = Math.max(1.5, r.h * (pulls[j] / sTotal));
+      const sy = r.cursor + w / 2;
+      const ty = sNode.cursor + w / 2;
+      r.cursor += w;
+      sNode.cursor += w;
+      links.push({
+        d: `M ${x0} ${sy} C ${mx} ${sy}, ${mx} ${ty}, ${x1} ${ty}`,
+        w,
+      });
+    });
+  }
+  return links;
+}
+
 export function DemandFlow({ regions, segments }: FlowIn) {
   if (!regions?.length || !segments?.length) return null;
   const W = 340;
@@ -134,45 +179,31 @@ export function DemandFlow({ regions, segments }: FlowIn) {
   const sTotal = segments.reduce((s, x) => s + num(x.pull), 0) || 1;
   const usable = H - 16 - GAP * (Math.max(regions.length, segments.length) - 1);
 
-  // Node vertical layout, proportional heights.
-  let y = 8;
-  const left = regions.map((r) => {
-    const h = Math.max(14, (usable * num(r.share)) / rTotal);
-    const node = { ...r, y, h, cursor: y };
-    y += h + GAP;
-    return node;
-  });
-  y = 8;
-  const right = segments.map((s) => {
-    const h = Math.max(14, (usable * num(s.pull)) / sTotal);
-    const node = { ...s, y, h, cursor: y };
-    y += h + GAP;
-    return node;
-  });
+  const leftNodes = flowLayout(
+    regions.map((r) => num(r.share)),
+    usable,
+    GAP,
+    rTotal,
+  );
+  const rightNodes = flowLayout(
+    segments.map((x) => num(x.pull)),
+    usable,
+    GAP,
+    sTotal,
+  );
+  const left = regions.map((r, i) => ({ ...r, ...leftNodes[i] }));
+  const right = segments.map((x, i) => ({ ...x, ...rightNodes[i] }));
 
   const x0 = LABEL + NODE_W;
   const x1 = W - LABEL - NODE_W;
-  const links: {
-    key: string;
-    d: string;
-    w: number;
-  }[] = [];
-  for (const r of left) {
-    for (const s of right) {
-      // Each region's band splits across segments by pull share.
-      const w = Math.max(1.5, r.h * (num(s.pull) / sTotal));
-      const sy = r.cursor + w / 2;
-      const ty = s.cursor + w / 2;
-      r.cursor += w;
-      s.cursor += w;
-      const mx = (x0 + x1) / 2;
-      links.push({
-        key: `${r.region}-${s.name}`,
-        d: `M ${x0} ${sy} C ${mx} ${sy}, ${mx} ${ty}, ${x1} ${ty}`,
-        w,
-      });
-    }
-  }
+  const links = flowLinks(
+    leftNodes,
+    rightNodes,
+    segments.map((x) => num(x.pull)),
+    sTotal,
+    x0,
+    x1,
+  ).map((l, i) => ({ ...l, key: `${i}` }));
 
   return (
     <svg
