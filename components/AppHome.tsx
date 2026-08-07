@@ -543,17 +543,18 @@ export default function AppHome() {
           <div className="mt-3 flex items-center justify-center gap-2">
             <button
               onClick={() => {
-                // Runs what YOU typed. An empty box just gets focus — the
-                // button never invents an idea on its own.
-                if (idea.trim()) start(idea);
-                else document.querySelector("textarea")?.focus();
+                // Surprise me: always launches a run on a random idea.
+                const seed = IDEAS[
+                  Math.floor(Math.random() * IDEAS.length)
+                ].replace(/^Let's build /, "");
+                start(seed);
               }}
               className="flex items-center gap-1.5 rounded-[7px] border border-rule px-2.5 py-1.5 text-[11px] text-ink-soft transition-colors duration-150 hover:bg-sunk hover:text-ink"
             >
               <span aria-hidden="true" className="text-[9px]">
                 ▶
               </span>
-              Plan New Idea
+              Surprise me
             </button>
             <span className="flex cursor-default items-center gap-1.5 rounded-[7px] border border-rule px-2.5 py-1.5 text-[11px] text-ink-soft">
               <kbd className="rounded-[4px] border border-rule bg-sunk px-1.5 py-0.5 font-mono text-[9.5px] text-ink-faint">
