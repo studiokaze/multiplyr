@@ -62,6 +62,21 @@ export function buildBrief(run: {
       for (const g of research.gaps) lines.push(`- ${g}`);
       lines.push(``);
     }
+    if (research.demandByRegion?.length) {
+      lines.push(`### Demand by region (estimated)`, ``);
+      for (const r of research.demandByRegion) {
+        lines.push(`- ${r.region}: ~${r.share}%`);
+      }
+      lines.push(``);
+    }
+    if (research.monthlyInterest?.length) {
+      lines.push(
+        `### Interest, last 12 months (estimated)`,
+        ``,
+        research.monthlyInterest.map((m) => `${m.month} ${m.interest}`).join(" · "),
+        ``,
+      );
+    }
   }
 
   if (analysis) {
@@ -77,6 +92,17 @@ export function buildBrief(run: {
     );
     analysis.keyRisks.forEach((r, i) => lines.push(`${i + 1}. ${r}`));
     lines.push(``);
+    if (analysis.aspects) {
+      const a = analysis.aspects;
+      lines.push(
+        `### The idea, ranked (0-100)`,
+        ``,
+        `| Demand | Openness | Feasibility | Willingness to pay | Timing |`,
+        `| --- | --- | --- | --- | --- |`,
+        `| ${a.demand} | ${a.openness} | ${a.feasibility} | ${a.willingnessToPay} | ${a.timing} |`,
+        ``,
+      );
+    }
     if (analysis.niches?.length) {
       lines.push(
         `### Niche map`,
