@@ -22,6 +22,27 @@ export const maxDuration = 300;
 
 const MAX_TURNS = 8;
 
+
+/**
+ * The sandbox evaluates App.jsx as a script: import/export statements are
+ * fatal there ("Cannot use import statement outside a module"). Models slip
+ * them in no matter what the prompt says, so they are stripped on the way
+ * out — the belt to the prompt's suspenders.
+ */
+function sanitizeJsx(path: string, content: string): string {
+  if (!/\.jsx?$/i.test(path)) return content;
+  return content
+    .split("\n")
+    .filter((line) => !/^\s*import\s/.test(line))
+    .map((line) =>
+      line
+        .replace(/^\s*export\s+default\s+function\s+App/, "function App")
+        .replace(/^\s*export\s+default\s+App\s*;?\s*$/, "")
+        .replace(/^\s*export\s+(const|function|class)\s/, "$1 "),
+    )
+    .join("\n");
+}
+
 /** Reject anything that would escape the in-memory project root. */
 function safePath(raw: unknown): string | null {
   if (typeof raw !== "string") return null;
@@ -102,7 +123,7 @@ export async function POST(req: Request) {
           for (const f of out.files ?? []) {
             const p = safePath(f.path);
             if (!p || typeof f.content !== "string") continue;
-            send({ type: "file", file: { path: p, content: f.content } });
+            send({ type: "file", file: { path: p, content: sanitizeJsx(p, f.content) } });
             changed++;
           }
           if (changed === 0) {
@@ -160,7 +181,7 @@ IMPORTANT: there is no write_file tool here. Return EVERY file at once in the si
             // time instead of one silent burst at the end.
             send({ type: "status", message: `Writing ${p}…` });
             await new Promise((r) => setTimeout(r, 350));
-            send({ type: "file", file: { path: p, content: f.content } });
+            send({ type: "file", file: { path: p, content: sanitizeJsx(p, f.content) } });
             written++;
           }
           if (written === 0) {
