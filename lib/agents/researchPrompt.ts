@@ -21,7 +21,11 @@ Also note, where the searches reveal it: WHERE the demand concentrates (countrie
 
 After searching, summarise what you found in plain text. Cite the URL for anything you claim.`;
 
-export const RESEARCH_EXTRACT_SYSTEM = `Convert the research you just performed into structured data using the submit_research tool. Only include things you actually found in search results. Do not invent competitors or signals to fill the arrays — empty is a valid and useful answer.`;
+export const RESEARCH_EXTRACT_SYSTEM = `Convert the research notes into structured data using the submit_research tool.
+
+- Prefer things the notes actually cite from live search results.
+- If the notes are from prior knowledge (no live web), still name the REAL, well-known competitors and demand patterns for this market — real companies only, url as empty string. A market summary that discusses competitors but returns an empty competitors array is a wrong answer.
+- Never invent a company that does not exist. If the market is genuinely empty, say so via an empty array — that is rare and meaningful.`;
 
 export const RESEARCH_TOOL_SCHEMA = {
   type: "object" as const,

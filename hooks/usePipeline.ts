@@ -132,6 +132,7 @@ export function usePipeline(idea: string) {
     () => boot?.marketing ?? null,
   );
   const [editing, setEditing] = useState(false);
+  const [revising, setRevising] = useState(false);
   const restored = boot !== null;
 
   const booted = useRef(false);
@@ -608,6 +609,32 @@ export function usePipeline(idea: string) {
     [editing, freshSignal],
   );
 
+  /** Chat-back on the marketing copy: revise per instruction, in place. */
+  const runMarketRevise = useCallback(
+    async (instruction: string) => {
+      const trimmed = instruction.trim();
+      if (!trimmed || revising) return;
+      setRevising(true);
+      try {
+        const signal = freshSignal();
+        const result = await postJson<MarketingResult>(
+          "/api/agents/market",
+          {
+            revise: { instruction: trimmed, marketing: marketingRef.current },
+            framing: data.current.framing,
+          },
+          signal,
+        );
+        setMarketing(result);
+      } catch {
+        // The old copy stays on screen; the user can just ask again.
+      } finally {
+        setRevising(false);
+      }
+    },
+    [freshSignal, revising],
+  );
+
   /**
    * Flow 6b: an iterate verdict feeds its critique back into brainstorming,
    * so the new framings answer what was weak instead of generating blind.
@@ -674,6 +701,11 @@ export function usePipeline(idea: string) {
   useEffect(() => {
     filesRef.current = files;
   }, [files]);
+
+  const marketingRef = useRef<MarketingResult | null>(null);
+  useEffect(() => {
+    marketingRef.current = marketing;
+  }, [marketing]);
 
   useEffect(() => {
     if (!idea || booted.current) return;
@@ -768,6 +800,8 @@ export function usePipeline(idea: string) {
     busy,
     editing,
     runEdit,
+    revising,
+    runMarketRevise,
     restored,
     chooseFraming,
     reconsider,

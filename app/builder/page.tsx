@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import BuilderChat from "@/components/BuilderChat";
 import CommandPalette, { type Command } from "@/components/CommandPalette";
@@ -41,10 +41,37 @@ function Workspace() {
   // the verdict get the full page. First file auto-opens it; the header
   // toggle rules after that.
   const [demoOpen, setDemoOpen] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+  const notified = useRef(false);
   const filesArrived = p.files.length > 0;
   useEffect(() => {
     if (filesArrived) queueMicrotask(() => setDemoOpen(true));
   }, [filesArrived]);
+
+  // All six agents done: tell the user once, in-app and via the OS.
+  const allDone = p.stages.market.status === "done";
+  useEffect(() => {
+    if (!allDone || notified.current) return;
+    notified.current = true;
+    queueMicrotask(() =>
+      setToast("Your company is built — all six agents are done."),
+    );
+    const t = setTimeout(() => setToast(null), 8000);
+    try {
+      const fire = () =>
+        new Notification("Multiplyer", {
+          body: "Run complete: validated, built, and ready to market.",
+        });
+      if (Notification.permission === "granted") fire();
+      else if (Notification.permission !== "denied")
+        void Notification.requestPermission().then(
+          (perm) => perm === "granted" && fire(),
+        );
+    } catch {
+      /* notifications unsupported — the toast carries it */
+    }
+    return () => clearTimeout(t);
+  }, [allDone]);
 
   /**
    * Bare deploy: the whole build travels in the link's fragment, and the
@@ -131,6 +158,12 @@ function Workspace() {
   return (
     <main className="app-shell flex flex-col">
       <CommandPalette commands={commands} />
+      {toast && (
+        <div className="verdict-reveal fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-[12px] border border-build/30 bg-build-bg px-4 py-3 shadow-[0_16px_48px_-16px_rgba(0,0,0,0.8)]">
+          <span className="h-[8px] w-[8px] rounded-full bg-build" />
+          <span className="text-[13px] font-medium text-ink">{toast}</span>
+        </div>
+      )}
       <header className="flex h-[46px] shrink-0 items-center justify-between gap-4 border-b border-rule bg-surface px-4">
         <div className="flex min-w-0 items-center gap-3">
           <button
@@ -260,6 +293,8 @@ function Workspace() {
             restored={p.restored}
             editing={p.editing}
             onEdit={p.runEdit}
+            revising={p.revising}
+            onReviseMarket={p.runMarketRevise}
             onChooseFraming={p.chooseFraming}
             onRetry={p.retry}
             onReconsider={p.reconsider}

@@ -18,7 +18,7 @@ export const maxDuration = 90;
 
 export async function POST(req: Request) {
   try {
-    const { framing, analysis, simulation, research } =
+    const { framing, analysis, simulation, research, revise } =
       (await req.json()) as {
         framing?: Framing;
         analysis?: AnalysisResult;
@@ -26,7 +26,34 @@ export async function POST(req: Request) {
         // sessions may retry marketing without research in the snapshot.
         simulation?: SimulationResult | null;
         research?: ResearchResult | null;
+        /** Chat-back: revise existing copy per the user's instruction. */
+        revise?: { instruction?: string; marketing?: MarketingResult };
       };
+
+    if (revise?.instruction?.trim() && revise.marketing) {
+      const result = await structured<MarketingResult>({
+        system: `${MARKET_SYSTEM}
+
+REVISION MODE: the launch copy already exists. Apply the user's requested change and return the COMPLETE updated object. Change only what the request requires — do not rewrite posts the user did not mention.`,
+        userContent: `CURRENT COPY
+${JSON.stringify(revise.marketing, null, 1)}
+
+USER'S CHANGE REQUEST
+"""
+${revise.instruction.trim()}
+"""${framing?.angle ? `
+
+PRODUCT
+Angle: ${framing.angle}
+Target user: ${framing.targetUser}` : ""}`,
+        toolName: "submit_marketing",
+        toolDescription: "Submit the complete revised launch copy.",
+        schema: MARKET_TOOL_SCHEMA,
+        maxTokens: 4000,
+      });
+      return NextResponse.json(result);
+    }
+
     if (!framing?.angle || !analysis) {
       return NextResponse.json(
         { error: "framing and analysis are required" },
