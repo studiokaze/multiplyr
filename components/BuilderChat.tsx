@@ -326,7 +326,7 @@ export default function BuilderChat({
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-px bg-rule min-[900px]:grid-cols-2">
+      <div className="grid grid-cols-1 gap-px bg-rule min-[900px]:grid-cols-2 min-[1400px]:grid-cols-3">
 
       <Stage id="brainstorm" stages={stages} onRetry={onRetry}>
         <div className="space-y-2">
@@ -621,7 +621,7 @@ export default function BuilderChat({
 
       {/* The gate. Verdict-specific next steps — never a dead end. */}
       {blocked && analysis && (
-        <section className="animate-rise bg-surface px-5 py-5 min-[900px]:col-span-2">
+        <section className="animate-rise bg-surface px-5 py-5 min-[900px]:col-span-full">
           <span className="label">Simulate &amp; build — held</span>
           {analysis.verdict === "iterate" ? (
             <>

@@ -270,14 +270,14 @@ function Workspace() {
         className={
           demoOpen
             ? "grid min-h-0 flex-1 grid-cols-1 gap-px bg-rule lg:grid-cols-[minmax(380px,420px)_minmax(0,1fr)]"
-            : "flex min-h-0 flex-1 justify-center bg-paper"
+            : "flex min-h-0 flex-1 bg-paper"
         }
       >
         <div
           className={
             demoOpen
               ? "min-h-0 overflow-hidden"
-              : "min-h-0 w-full max-w-[900px] overflow-hidden border-x border-rule"
+              : "min-h-0 w-full overflow-hidden"
           }
         >
           <BuilderChat
