@@ -56,6 +56,14 @@ export type AnalysisResult = {
   /** The niche map. Older sessions may not have it. */
   niches?: Niche[];
   bestNiche?: string;
+  /** Radar axes, 0-100 each. */
+  aspects?: {
+    demand: number;
+    openness: number;
+    feasibility: number;
+    willingnessToPay: number;
+    timing: number;
+  };
 };
 
 export type Objection = {

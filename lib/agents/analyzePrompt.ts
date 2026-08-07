@@ -18,7 +18,8 @@ reasoning: 2-4 sentences. Lead with the verdict's actual cause. Reference specif
 keyRisks: 2-4 concrete risks. Each one must be a thing that could actually kill the product, not a generic startup risk like "execution" or "competition".
 
 niches: map 4-6 slices of this market by demand against crowding, so the founder can see where the opening actually is. Ground both numbers in the research rather than guessing: a slice the competitors clearly serve is crowded, a slice nobody in the demand signals mentioned has low demand. The map is useless if every slice scores alike, so make the spread real: at least one slice should be crowded and at least one should be quiet.
-bestNiche: the slice with the best demand-to-crowding ratio, named exactly as in the list.`;
+bestNiche: the slice with the best demand-to-crowding ratio, named exactly as in the list.
+aspects: score the idea 0-100 on five axes, each grounded in the research: demand (how loudly people want this), openness (100 = wide open market, 0 = saturated), feasibility (can a small team ship the wedge), willingnessToPay (evidence people pay for solutions here), timing (is now the moment). The radar is useless if all five score alike — spread them honestly.`;
 
 export const ANALYZE_TOOL_SCHEMA = {
   type: "object" as const,
@@ -84,8 +85,29 @@ export const ANALYZE_TOOL_SCHEMA = {
       description:
         "Name of the niche with the best demand-to-crowding ratio. Must match one of the names above exactly.",
     },
+    aspects: {
+      type: "object",
+      description:
+        "0-100 per axis, grounded in the research. Spread them honestly.",
+      properties: {
+        demand: { type: "integer", minimum: 0, maximum: 100 },
+        openness: { type: "integer", minimum: 0, maximum: 100 },
+        feasibility: { type: "integer", minimum: 0, maximum: 100 },
+        willingnessToPay: { type: "integer", minimum: 0, maximum: 100 },
+        timing: { type: "integer", minimum: 0, maximum: 100 },
+      },
+      required: ["demand", "openness", "feasibility", "willingnessToPay", "timing"],
+    },
   },
-  required: ["verdict", "score", "reasoning", "keyRisks", "niches", "bestNiche"],
+  required: [
+    "verdict",
+    "score",
+    "reasoning",
+    "keyRisks",
+    "niches",
+    "bestNiche",
+    "aspects",
+  ],
 };
 
 export function analyzeUserPrompt(

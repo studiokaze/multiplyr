@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { DemandFlow, InterestBars } from "@/components/charts";
+import {
+  AspectRadar,
+  ChartSafe,
+  DemandFlow,
+  DemandMap,
+  InterestBars,
+} from "@/components/charts";
 import NicheMap from "@/components/NicheMap";
 import type {
   AnalysisResult,
@@ -412,7 +418,23 @@ export default function BuilderChat({
                         <span className="label">estimated</span>
                       </div>
                       <div className="px-2 pb-1.5 pt-1">
-                        <InterestBars data={research.monthlyInterest} />
+                        <ChartSafe>
+                          <InterestBars data={research.monthlyInterest} />
+                        </ChartSafe>
+                      </div>
+                    </div>
+                  )}
+                {research.demandByRegion &&
+                  research.demandByRegion.length > 0 && (
+                    <div className="overflow-hidden rounded-[8px] border border-rule bg-sunk">
+                      <div className="flex items-baseline justify-between px-3 pt-2.5">
+                        <span className="label">Demand by geography</span>
+                        <span className="label">estimated</span>
+                      </div>
+                      <div className="px-2 pb-1.5 pt-1">
+                        <ChartSafe>
+                          <DemandMap regions={research.demandByRegion} />
+                        </ChartSafe>
                       </div>
                     </div>
                   )}
@@ -428,10 +450,12 @@ export default function BuilderChat({
                         </span>
                       </div>
                       <div className="px-2 pb-1.5 pt-1">
-                        <DemandFlow
-                          regions={research.demandByRegion}
-                          segments={research.audienceSegments}
-                        />
+                        <ChartSafe>
+                          <DemandFlow
+                            regions={research.demandByRegion}
+                            segments={research.audienceSegments}
+                          />
+                        </ChartSafe>
                       </div>
                     </div>
                   )}
@@ -538,6 +562,17 @@ export default function BuilderChat({
                 ))}
               </ul>
             </div>
+          </div>
+        )}
+        {analysis?.aspects && (
+          <div className="mt-4 overflow-hidden rounded-[8px] border border-rule bg-sunk pb-1">
+            <div className="flex items-baseline justify-between px-3 pt-2.5">
+              <span className="label">The idea, ranked</span>
+              <span className="label">five axes · 0-100</span>
+            </div>
+            <ChartSafe>
+              <AspectRadar aspects={analysis.aspects} tone={analysis.verdict} />
+            </ChartSafe>
           </div>
         )}
         {analysis?.niches && analysis.niches.length > 0 && (
