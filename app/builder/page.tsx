@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import BuilderChat from "@/components/BuilderChat";
 import CommandPalette, { type Command } from "@/components/CommandPalette";
@@ -37,6 +37,14 @@ function Workspace() {
   const p = usePipeline(idea);
   const [view, setView] = useState<View>("preview");
   const [shared, setShared] = useState(false);
+  // The demo pane stays out of the way until there is a demo: research and
+  // the verdict get the full page. First file auto-opens it; the header
+  // toggle rules after that.
+  const [demoOpen, setDemoOpen] = useState(false);
+  const filesArrived = p.files.length > 0;
+  useEffect(() => {
+    if (filesArrived) queueMicrotask(() => setDemoOpen(true));
+  }, [filesArrived]);
 
   /**
    * Bare deploy: the whole build travels in the link's fragment, and the
@@ -104,6 +112,11 @@ function Workspace() {
       hint: "view",
       run: () => setView(view === "preview" ? "code" : "preview"),
     },
+    {
+      label: demoOpen ? "Hide demo pane" : "Show demo pane",
+      hint: "layout",
+      run: () => setDemoOpen(!demoOpen),
+    },
     ...(p.busy
       ? [{ label: "Cancel run", hint: "stop", run: p.cancel }]
       : []),
@@ -141,6 +154,14 @@ function Workspace() {
         </div>
 
         {/* view switch, top centre — the pattern every builder uses */}
+        <div className="flex shrink-0 items-center gap-1.5">
+        <button
+          onClick={() => setDemoOpen((o) => !o)}
+          aria-pressed={demoOpen}
+          className="rounded-[7px] border border-rule px-2.5 py-1.5 text-[12px] text-ink-soft transition-colors duration-150 hover:border-rule-strong hover:text-ink"
+        >
+          {demoOpen ? "Hide demo" : "Show demo"}
+        </button>
         <div className="flex shrink-0 items-center gap-0.5 rounded-[7px] bg-sunk p-0.5">
           {(["preview", "code"] as View[]).map((v) => (
             <button
@@ -161,6 +182,7 @@ function Workspace() {
               )}
             </button>
           ))}
+        </div>
         </div>
 
         <div className="flex shrink-0 items-center gap-3">
@@ -211,8 +233,20 @@ function Workspace() {
         </div>
       </header>
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-px bg-rule lg:grid-cols-[minmax(380px,420px)_minmax(0,1fr)]">
-        <div className="min-h-0 overflow-hidden">
+      <div
+        className={
+          demoOpen
+            ? "grid min-h-0 flex-1 grid-cols-1 gap-px bg-rule lg:grid-cols-[minmax(380px,420px)_minmax(0,1fr)]"
+            : "flex min-h-0 flex-1 justify-center bg-paper"
+        }
+      >
+        <div
+          className={
+            demoOpen
+              ? "min-h-0 overflow-hidden"
+              : "min-h-0 w-full max-w-[900px] overflow-hidden border-x border-rule"
+          }
+        >
           <BuilderChat
             idea={idea}
             stages={p.stages}
@@ -235,13 +269,15 @@ function Workspace() {
           />
         </div>
 
-        <div className="min-h-0 overflow-hidden">
-          {view === "preview" ? (
-            <PreviewPane files={p.files} />
-          ) : (
-            <FileTree files={p.files} />
-          )}
-        </div>
+        {demoOpen && (
+          <div className="min-h-0 overflow-hidden">
+            {view === "preview" ? (
+              <PreviewPane files={p.files} />
+            ) : (
+              <FileTree files={p.files} />
+            )}
+          </div>
+        )}
       </div>
     </main>
   );
