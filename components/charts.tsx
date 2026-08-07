@@ -1,6 +1,7 @@
 "use client";
 
 import { Component, type ReactNode } from "react";
+import { WORLD_PATH } from "@/lib/worldland";
 
 /**
  * The research handout's charts. Hand-rolled SVG on the app's own tokens —
@@ -352,48 +353,19 @@ export function AspectRadar({
 }
 
 /**
- * The demographics map: a deliberately low-poly world, continent blobs lit
- * by demand share. Continent granularity is what the research actually
- * knows, so the map draws exactly that — no fake country precision.
+ * The demographics map: the real world silhouette (generated from public
+ * geodata, equirectangular, Antarctica cropped) with demand as glowing
+ * markers at region anchors — sized by share, labelled in the corner.
  */
-const CONTINENTS: { key: string; label: string; d: string; match: RegExp }[] = [
-  {
-    key: "na",
-    label: "North America",
-    match: /north.?america|\busa?\b|united states|canada|mexico/i,
-    d: "M28 34 L58 22 L92 26 L96 42 L82 52 L72 70 L58 78 L48 64 L34 54 Z",
-  },
-  {
-    key: "sa",
-    label: "South America",
-    match: /south.?america|latin|brazil|latam/i,
-    d: "M72 84 L90 80 L100 96 L92 122 L78 130 L70 108 Z",
-  },
-  {
-    key: "eu",
-    label: "Europe",
-    match: /europe|\buk\b|germany|france/i,
-    d: "M140 28 L166 22 L178 34 L168 48 L148 52 L138 40 Z",
-  },
-  {
-    key: "af",
-    label: "Africa",
-    match: /africa|mena|middle.?east/i,
-    d: "M142 58 L170 54 L182 72 L174 100 L156 112 L144 88 Z",
-  },
-  {
-    key: "as",
-    label: "Asia",
-    match: /asia|india|china|japan|pacific|apac/i,
-    d: "M182 26 L228 20 L262 34 L256 58 L232 72 L204 64 L186 46 Z",
-  },
-  {
-    key: "oc",
-    label: "Oceania",
-    match: /oceania|australia|new zealand/i,
-    d: "M238 94 L262 90 L270 104 L256 116 L240 110 Z",
-  },
-];
+const REGION_ANCHORS: { match: RegExp; label: string; x: number; y: number }[] =
+  [
+    { match: /north.?america|usa?|united states|canada|mexico/i, label: "North America", x: 80, y: 41 },
+    { match: /south.?america|latin|brazil|latam/i, label: "South America", x: 122, y: 95 },
+    { match: /europe|uk|germany|france/i, label: "Europe", x: 195, y: 33 },
+    { match: /africa|mena|middle.?east/i, label: "Africa", x: 200, y: 78 },
+    { match: /asia|india|china|japan|apac|pacific/i, label: "Asia", x: 275, y: 45 },
+    { match: /oceania|australia|new zealand/i, label: "Oceania", x: 314, y: 108 },
+  ];
 
 export function DemandMap({
   regions,
@@ -401,45 +373,45 @@ export function DemandMap({
   regions: { region: string; share: number }[];
 }) {
   if (!regions?.length) return null;
-  const share = (c: (typeof CONTINENTS)[number]) =>
+  const shareFor = (a: (typeof REGION_ANCHORS)[number]) =>
     regions
-      .filter((r) => c.match.test(String(r.region)))
+      .filter((r) => a.match.test(String(r.region)))
       .reduce((s, r) => s + num(r.share), 0);
-  const max = Math.max(...CONTINENTS.map(share), 1);
+  const max = Math.max(...REGION_ANCHORS.map(shareFor), 1);
 
   return (
     <svg
-      viewBox="0 0 290 140"
+      viewBox="0 0 360 148"
       className="w-full"
       role="img"
-      aria-label="Demand by region"
+      aria-label="Demand by region on the world map"
     >
-      {CONTINENTS.map((c, i) => {
-        const v = share(c);
-        const lit = v > 0;
+      <path
+        d={WORLD_PATH}
+        fill="var(--sunk)"
+        stroke="var(--rule-strong)"
+        strokeWidth={0.4}
+      />
+      {REGION_ANCHORS.map((a, i) => {
+        const v = shareFor(a);
+        if (v <= 0) return null;
+        const r = 4 + 14 * Math.sqrt(v / max);
         return (
-          <path
-            key={c.key}
-            d={c.d}
-            className="map-region"
-            style={{ animationDelay: `${i * 90}ms` }}
-            fill={lit ? "var(--build)" : "var(--sunk)"}
-            fillOpacity={lit ? 0.15 + 0.85 * (v / max) : 1}
-            stroke={lit ? "var(--build)" : "var(--rule-strong)"}
-            strokeOpacity={lit ? 0.8 : 1}
-            strokeWidth={1}
-            strokeLinejoin="round"
-          >
-            <title>{lit ? `${c.label}: ~${v}% of demand` : c.label}</title>
-          </path>
+          <g key={a.label} className="map-region" style={{ animationDelay: `${i * 120}ms` }}>
+            <circle cx={a.x} cy={a.y} r={r} fill="var(--build)" fillOpacity={0.16} />
+            <circle cx={a.x} cy={a.y} r={r * 0.55} fill="var(--build)" fillOpacity={0.3} />
+            <circle cx={a.x} cy={a.y} r={2.4} fill="var(--build)">
+              <title>{`${a.label}: ~${v}% of demand`}</title>
+            </circle>
+          </g>
         );
       })}
       {regions.slice(0, 5).map((r, i) => (
         <text
           key={String(r.region)}
-          x={8}
-          y={14 + i * 11}
-          fontSize={7.5}
+          x={6}
+          y={104 + i * 9}
+          fontSize={6.5}
           fill="var(--ink-faint)"
           fontFamily="var(--font-geist-mono)"
         >
