@@ -21,13 +21,16 @@ import type {
   Stages,
 } from "@/lib/types";
 
-const STAGE_META: Record<StageId, { n: string; label: string }> = {
-  brainstorm: { n: "01", label: "Brainstorm" },
-  research: { n: "02", label: "Research" },
-  analyze: { n: "03", label: "Market analysis" },
-  simulate: { n: "04", label: "Simulate" },
-  build: { n: "05", label: "Build" },
-  market: { n: "06", label: "Market" },
+const STAGE_META: Record<
+  StageId,
+  { n: string; label: string; dept: string; wait: string }
+> = {
+  brainstorm: { n: "01", label: "Brainstorm", dept: "Product", wait: "Waiting for your idea" },
+  research: { n: "02", label: "Research", dept: "Market intelligence", wait: "Waiting for a framing" },
+  analyze: { n: "03", label: "Market analysis", dept: "Strategy", wait: "Waiting for research" },
+  simulate: { n: "04", label: "Simulate", dept: "Customer panel", wait: "Waiting for the verdict" },
+  build: { n: "05", label: "Build", dept: "Engineering", wait: "Waiting for the go" },
+  market: { n: "06", label: "Market", dept: "Growth", wait: "Waiting for the build" },
 };
 
 const PLATFORM_LABEL: Record<MarketingResult["posts"][number]["platform"], string> = {
@@ -175,13 +178,32 @@ function Stage({
   children?: React.ReactNode;
 }) {
   const stage = stages[id];
-  // "blocked" is rendered by the dedicated gate section, not as a stage row.
-  if (stage.status === "idle" || stage.status === "blocked") return null;
-  const { n, label } = STAGE_META[id];
+  const { n, label, dept, wait } = STAGE_META[id];
+
+  // The whole company is on the dashboard from the start: agents that have
+  // not run yet sit dimmed with their department, waiting their turn.
+  if (stage.status === "idle" || stage.status === "blocked") {
+    return (
+      <section className="bg-surface px-5 py-5 opacity-45">
+        <div className="flex items-center gap-2.5">
+          <Indicator status={stage.status} />
+          <span className="label">{n}</span>
+          <h2 className="text-[13px] font-medium tracking-tight text-ink">
+            {label}
+          </h2>
+          <span className="label ml-auto">{dept}</span>
+        </div>
+        <p className="mt-3 text-[12px] text-ink-faint">
+          {stage.status === "blocked" ? "Held by the verdict" : wait}
+        </p>
+      </section>
+    );
+  }
+
   const recoverable = stage.status === "error" || stage.status === "cancelled";
 
   return (
-    <section className="animate-rise border-b border-rule px-5 py-5">
+    <section className="animate-rise bg-surface px-5 py-5">
       <div className="flex items-center gap-2.5">
         <Indicator status={stage.status} />
         <span className="label">{n}</span>
@@ -189,6 +211,7 @@ function Stage({
           {label}
         </h2>
         <span className="ml-auto flex items-center gap-3">
+          <span className="label hidden sm:inline">{dept}</span>
           {stage.status === "running" && <span className="label">Working</span>}
           {stage.status === "cancelled" && (
             <span className="label">Cancelled</span>
@@ -290,6 +313,8 @@ export default function BuilderChat({
           </p>
         )}
       </div>
+
+      <div className="grid grid-cols-1 gap-px bg-rule min-[900px]:grid-cols-2">
 
       <Stage id="brainstorm" stages={stages} onRetry={onRetry}>
         <div className="space-y-2">
@@ -584,7 +609,7 @@ export default function BuilderChat({
 
       {/* The gate. Verdict-specific next steps — never a dead end. */}
       {blocked && analysis && (
-        <section className="animate-rise border-b border-rule px-5 py-5">
+        <section className="animate-rise bg-surface px-5 py-5 min-[900px]:col-span-2">
           <span className="label">Simulate &amp; build — held</span>
           {analysis.verdict === "iterate" ? (
             <>
@@ -782,7 +807,7 @@ export default function BuilderChat({
       {/* Flow 9: the edit loop. Ask for a change; only what changes streams
           back into the tree, and the preview follows. */}
       {editable && (
-        <section className="border-b border-rule px-5 py-5">
+        <section className="bg-surface px-5 py-5 min-[900px]:col-span-2">
           <span className="label">Edit the build</span>
           <div className="mt-2.5 flex items-stretch gap-1.5">
             <input
@@ -811,6 +836,7 @@ export default function BuilderChat({
           )}
         </section>
       )}
+      </div>
     </div>
   );
 }
