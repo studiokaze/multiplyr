@@ -32,13 +32,72 @@ type JsonArgs = {
   prefer?: ProviderName;
 };
 
+/**
+ * Models writing multi-KB code inside JSON strings routinely emit literal
+ * newlines and tabs where 
+ belongs — fatal to JSON.parse ("bad control
+ * character"). This walks the text and escapes control characters that sit
+ * inside string literals, leaving structure untouched.
+ */
+function repairJson(s: string): string {
+  let out = "";
+  let inStr = false;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (inStr) {
+      if (c === "\\") {
+        // JSON allows only these escapes; models also emit \' and \x from
+        // code habits. Invalid ones get their backslash doubled instead.
+        const n = s[i + 1] ?? "";
+        const validEsc = '"\\/bfnrtu'.includes(n);
+        const validU =
+          n !== "u" || /^[0-9a-fA-F]{4}$/.test(s.slice(i + 2, i + 6));
+        if (validEsc && validU) {
+          out += c + n;
+          i++;
+        } else {
+          out += "\\\\";
+        }
+        continue;
+      }
+      if (c === '"') {
+        inStr = false;
+        out += c;
+        continue;
+      }
+      const code = c.charCodeAt(0);
+      if (code < 0x20) {
+        out +=
+          code === 10
+            ? "\\n"
+            : code === 13
+              ? "\\r"
+              : code === 9
+                ? "\\t"
+                : "\\u" + code.toString(16).padStart(4, "0");
+        continue;
+      }
+      out += c;
+    } else {
+      if (c === '"') inStr = true;
+      out += c;
+    }
+  }
+  return out;
+}
+
 /** Strip ```json fences and parse the first JSON object in the text. */
 function parseJson(text: string): unknown {
   const cleaned = text.replace(/```(?:json)?/g, "").trim();
   const start = cleaned.indexOf("{");
   const end = cleaned.lastIndexOf("}");
   if (start === -1 || end === -1) throw new Error("No JSON in model output");
-  return JSON.parse(cleaned.slice(start, end + 1));
+  const slice = cleaned.slice(start, end + 1);
+  try {
+    return JSON.parse(slice);
+  } catch {
+    return JSON.parse(repairJson(slice));
+  }
 }
 
 function laneOrder(prefer?: ProviderName): ProviderName[] {
@@ -82,6 +141,41 @@ export async function jsonChat<T>(args: JsonArgs): Promise<T> {
       } catch (err) {
         firstErr ??= err;
       }
+    }
+  }
+  throw firstErr instanceof Error ? firstErr : new Error(String(firstErr));
+}
+
+/**
+ * Plain-text completion across the same lanes — for outputs (like code
+ * files) that must NOT ride inside JSON strings, where models corrupt
+ * escapes constantly. Cached like jsonChat.
+ */
+export async function rawChat(args: {
+  system: string;
+  user: string;
+  maxTokens?: number;
+  prefer?: ProviderName;
+}): Promise<string> {
+  const lanes = laneOrder(args.prefer);
+  if (!lanes.length) throw new Error("No model providers configured.");
+  const key = cacheKey(["raw", args.system, args.user]);
+  const hit = cached<string>(key);
+  if (hit !== undefined) return hit;
+
+  let firstErr: unknown;
+  for (const lane of lanes) {
+    try {
+      const text =
+        lane === "gemini"
+          ? await callGemini({ system: args.system, user: args.user, maxTokens: args.maxTokens })
+          : lane === "openrouter"
+            ? await callOpenRouter({ system: args.system, user: args.user, maxTokens: args.maxTokens })
+            : await callGroq({ system: args.system, user: args.user, maxTokens: args.maxTokens });
+      storeCache(key, text);
+      return text;
+    } catch (err) {
+      firstErr ??= err;
     }
   }
   throw firstErr instanceof Error ? firstErr : new Error(String(firstErr));

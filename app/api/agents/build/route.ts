@@ -1,5 +1,5 @@
 import type Anthropic from "@anthropic-ai/sdk";
-import { hasProviders, jsonChat } from "@/lib/ai";
+import { hasProviders, rawChat } from "@/lib/ai";
 import { MODEL, anthropic } from "@/lib/anthropic";
 import {
   BUILD_SYSTEM,
@@ -22,6 +22,30 @@ export const maxDuration = 300;
 
 const MAX_TURNS = 8;
 
+
+const FILE_FORMAT = `OUTPUT FORMAT — plain text, NOT JSON. Emit exactly this shape:
+===FILE: App.jsx===
+<the complete file>
+===FILE: README.md===
+<the complete file>
+===END===
+Write App.jsx first. Nothing before the first marker, nothing after ===END===.`;
+
+/** Parse ===FILE:=== fenced blocks. No escaping to corrupt, ever. */
+function parseFileBlocks(text: string): GeneratedFile[] {
+  const files: GeneratedFile[] = [];
+  for (const chunk of text.split("===FILE:").slice(1)) {
+    const headEnd = chunk.indexOf("===");
+    if (headEnd === -1) continue;
+    const path = chunk.slice(0, headEnd).trim();
+    let content = chunk.slice(headEnd + 3);
+    const endIdx = content.indexOf("===END===");
+    if (endIdx !== -1) content = content.slice(0, endIdx);
+    content = content.replace(/^[\r\n]+/, "").trimEnd();
+    if (path && content) files.push({ path, content });
+  }
+  return files;
+}
 
 /**
  * The sandbox evaluates App.jsx as a script: import/export statements are
@@ -107,20 +131,17 @@ export async function POST(req: Request) {
             return;
           }
 
-          const out = await jsonChat<{ files: GeneratedFile[] }>({
-            system: EDIT_SYSTEM,
+          const text = await rawChat({
+            system: `${EDIT_SYSTEM}
+
+${FILE_FORMAT}
+Return ONLY the files you change.`,
             user: editUserPrompt(edit.files, edit.instruction.trim()),
-            schema: {
-              files: [
-                { path: "App.jsx", content: "<the complete file>" },
-                { path: "README.md", content: "<the complete file>" },
-              ],
-            } as unknown,
             maxTokens: 8000,
             prefer: "openrouter",
           });
           let changed = 0;
-          for (const f of out.files ?? []) {
+          for (const f of parseFileBlocks(text)) {
             const p = safePath(f.path);
             if (!p || typeof f.content !== "string") continue;
             send({ type: "file", file: { path: p, content: sanitizeJsx(p, f.content) } });
@@ -149,27 +170,17 @@ export async function POST(req: Request) {
         // replayed to the client as the same SSE events the UI always spoke.
         if (hasProviders()) {
           send({ type: "status", message: "Builder agent starting…" });
-          const out = await jsonChat<{ files: GeneratedFile[] }>({
+          const text = await rawChat({
             system: `${BUILD_SYSTEM}
 
-IMPORTANT: there is no write_file tool here. Return EVERY file at once in the single JSON object's "files" array.`,
+IMPORTANT: there is no write_file tool here.
+
+${FILE_FORMAT}`,
             user: buildUserPrompt(framing, analysis, simulation),
-            schema: {
-              files: [
-                { path: "App.jsx", content: "<the complete file>" },
-                { path: "README.md", content: "<the complete file>" },
-              ],
-            } as unknown,
             maxTokens: 8000,
             prefer: "openrouter",
           });
-          // Salvage the tool-call habit: a bare {path, content} is one file.
-          const rawOut = out as { files?: GeneratedFile[]; path?: string; content?: string };
-          const outFiles =
-            rawOut.files ??
-            (rawOut.path && rawOut.content
-              ? [{ path: rawOut.path, content: rawOut.content }]
-              : []);
+          const outFiles = parseFileBlocks(text);
           let written = 0;
           for (const f of outFiles) {
             const p = safePath(f.path);

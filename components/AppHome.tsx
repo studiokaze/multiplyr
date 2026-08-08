@@ -216,6 +216,7 @@ export default function AppHome() {
   const [askName, setAskName] = useState(false);
   const [nameDraft, setNameDraft] = useState("");
   const [visit, setVisit] = useState(0);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const placeholder = useTypingPlaceholder(mounted && idea.length === 0);
 
   useEffect(() => {
@@ -280,6 +281,14 @@ export default function AppHome() {
       },
     },
     { label: collapsed ? "Expand sidebar" : "Collapse sidebar", hint: "view", run: toggleSidebar },
+    {
+      label: "Settings",
+      hint: "name, history",
+      run: () => {
+        setNameDraft(name);
+        setSettingsOpen(true);
+      },
+    },
     ...recent.slice(0, 6).map((r) => ({
       label: `Open: ${r.idea}`,
       hint: r.verdict ?? "run",
@@ -290,6 +299,62 @@ export default function AppHome() {
   return (
     <main className="app-shell flex bg-paper">
       <CommandPalette commands={commands} />
+      {settingsOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-6">
+          <div className="w-full max-w-[24rem] rounded-[14px] border border-rule-strong bg-surface p-6 shadow-[0_24px_64px_-24px_rgba(0,0,0,0.9)]">
+            <h2 className="text-[16px] font-medium text-ink">Settings</h2>
+
+            <label className="label mt-5 block">What we call you</label>
+            <input
+              value={nameDraft}
+              onChange={(e) => setNameDraft(e.target.value)}
+              placeholder="Your name"
+              className="mt-2 w-full rounded-[8px] border border-rule bg-sunk px-3.5 py-2.5 font-sans text-[14px] text-ink outline-none placeholder:text-ink-faint focus:border-rule-strong"
+            />
+
+            <div className="mt-5 flex items-center justify-between gap-3 border-t border-rule pt-4">
+              <span className="text-[12.5px] text-ink-soft">
+                {recent.length} saved run{recent.length === 1 ? "" : "s"}
+              </span>
+              <button
+                onClick={() => {
+                  try {
+                    for (const k of Object.keys(localStorage)) {
+                      if (k.startsWith(STORAGE_PREFIX)) localStorage.removeItem(k);
+                    }
+                  } catch {
+                    /* ignore */
+                  }
+                  setSettingsOpen(false);
+                  router.refresh();
+                }}
+                className="rounded-[7px] border border-kill/30 px-3 py-1.5 text-[12px] text-kill transition-colors duration-150 hover:bg-kill-bg"
+              >
+                Clear run history
+              </button>
+            </div>
+
+            <div className="mt-5 flex items-center justify-end gap-2">
+              <button
+                onClick={() => setSettingsOpen(false)}
+                className="label transition-colors duration-150 hover:text-ink"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  saveName(nameDraft);
+                  setSettingsOpen(false);
+                }}
+                className="rounded-[8px] bg-ink px-4 py-2 text-[12.5px] font-medium text-paper transition-opacity duration-150 hover:opacity-85"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* First run: what should we call you? Saved locally, asked once. */}
       {askName && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-6">
@@ -395,11 +460,13 @@ export default function AppHome() {
           <span className="label">soon</span>
         </button>
         <button
-          disabled
-          className="mx-3 flex cursor-default items-center justify-between rounded-[7px] px-3 py-2 text-left text-[12.5px] text-ink-soft"
+          onClick={() => {
+            setNameDraft(name);
+            setSettingsOpen(true);
+          }}
+          className="mx-3 flex items-center justify-between rounded-[7px] px-3 py-2 text-left text-[12.5px] text-ink-soft transition-colors duration-150 hover:bg-sunk hover:text-ink"
         >
           Customize
-          <span className="label">soon</span>
         </button>
 
         <div className="mt-4 min-h-0 flex-1 overflow-y-auto px-3 pb-3">
@@ -437,10 +504,13 @@ export default function AppHome() {
 
         <div className="border-t border-rule p-3">
           <button
-            disabled
-            title="Settings — soon"
+            onClick={() => {
+              setNameDraft(name);
+              setSettingsOpen(true);
+            }}
+            title="Settings"
             aria-label="Settings"
-            className="flex cursor-default items-center gap-2.5 rounded-[7px] px-3 py-2 text-[12px] text-ink-soft"
+            className="flex w-full items-center gap-2.5 rounded-[7px] px-3 py-2 text-[12px] text-ink-soft transition-colors duration-150 hover:bg-sunk hover:text-ink"
           >
             <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <circle cx="8" cy="8" r="2.2" stroke="currentColor" strokeWidth="1.3" />
